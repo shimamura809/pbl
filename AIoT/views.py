@@ -22,5 +22,6 @@ db = client.pbl
 # データリスト画面 http://127.0.0.1:8000/AIoT/datalist/
 def datalist(request):
   dataset = []
+
   dataset += db.test.find()
   return render_to_response('AIoT/datalist.html', {"dataset":dataset})
