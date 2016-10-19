@@ -12,16 +12,12 @@ import math
 from datetime import datetime
 import locale
 
-# 今日の日付
-dt = datetime.now()
-
-
 client = MongoClient()
 db = client.pbl
 
 # データリスト画面 http://127.0.0.1:8000/AIoT/datalist/
 def datalist(request):
+  dt = str(datetime.now())
   dataset = []
-
-  dataset += db.test.find()
+  dataset += db.test.find({"datetime":{"$lte":dt}, "test":"aaaaa"}).sort("datetime", DESCENDING)
   return render_to_response('AIoT/datalist.html', {"dataset":dataset})

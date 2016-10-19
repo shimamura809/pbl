@@ -101,6 +101,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# 静的ファイルを共通で置く
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+
 TEMPLATE_DIRS = (
     '/Users/owner/pbl/AIoT/templates', # 自分の環境に合わせて変更してください。
 )
