@@ -20,4 +20,4 @@ def datalist(request):
   dt = str(datetime.now())
   dataset = []
   dataset += db.test.find({"datetime":{"$lte":dt}, "test":"aaaaa"}).sort("datetime", DESCENDING)
-  return render_to_response('AIoT/datalist.html', {"dataset":dataset})
+  return render_to_response('AIoT/datalist.html', {"dataset":dataset,"data_len":len(dataset)})

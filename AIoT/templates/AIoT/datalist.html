@@ -27,8 +27,8 @@ padding: 6px;
 text-align: center;
 vertical-align: top;
 color: black;
-background-color: aliceblue;
-border: 1px solid blue;
+background-color: darkgray;
+border: 1px solid black;
 }
 td{
 width: 25%;
@@ -36,7 +36,7 @@ padding: 6px;
 background-color: #fff;
 border: 1px solid #b9b9b9;
 }
-.ave_table {
+.ave_table, .rec_ave_table, .max_table, .min_table {
   width: 35%;
   border-collapse: separate;
   float: right;
@@ -44,6 +44,18 @@ border: 1px solid #b9b9b9;
 .ave_table th {
   background-color: yellow;
   border: 2px solid orange;
+}
+.rec_ave_table th {
+  background-color: lime;
+  border: 2px solid green;
+}
+.max_table th {
+  background-color: pink;
+  border: 2px solid red;
+}
+.min_table th {
+  background-color: aliceblue;
+  border: 2px solid blue;
 }
 </style>
 {% endblock %}
@@ -74,25 +86,87 @@ border: 1px solid #b9b9b9;
     var ave_tmp = 0;
     var ave_moi = 0;
     var cnt = 0;
+    var recently_cnt = 0;
+    var rec_ave_tmp = 0;
+    var rec_ave_moi = 0;
+    var max_tmp = 0;
+    var max_moi = 0;
+    var min_tmp = 9999;
+    var min_moi = 9999;
+    recently_cnt = {{data_len}} - 10;
+    console.log(recently_cnt);
     {% for i in dataset %}
     ave_tmp = ave_tmp + {{ i.tempature }};
     ave_moi = ave_moi + {{ i.moisture }};
+    if ({{i.tempature}} > max_tmp){
+      max_tmp = {{i.tempature}}
+    }
+    if ({{i.moisture}} > max_moi){
+      max_moi = {{i.moisture}}
+    }
+    if ({{i.tempature}} < min_tmp){
+      min_tmp = {{i.tempature}}
+    }
+    if ({{i.tempature}} < min_moi){
+      min_moi = {{i.moisture}}
+    }
+    if (cnt >= recently_cnt){
+      rec_ave_tmp = rec_ave_tmp + {{ i.tempature }};
+      rec_ave_moi = rec_ave_moi + {{ i.moisture }};
+    }
     cnt = cnt + 1;
     {% endfor %}
+    console.log(cnt);
     ave_tmp = ave_tmp/cnt;
-    console.log(ave_tmp);
     ave_moi = ave_moi/cnt;
-    console.log(ave_moi);
+    rec_ave_tmp = rec_ave_tmp/10;
+    rec_ave_moi = rec_ave_moi/10;
     </script>
     <table class="ave_table">
       <thead>
-        <th>平均気温</th>
-        <th>平均水分量</th>
+        <th>平均気温(全体)</th>
+        <th>平均水分量(全体)</th>
       </thead>
       <tbody>
         <tr>
           <td align="center"><script>document.write(ave_tmp);</script></td>
           <td align="center"><script>document.write(ave_moi);</script></td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="rec_ave_table">
+      <thead>
+        <th>平均気温(直近10件)</th>
+        <th>平均水分量(直近10件)</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td align="center"><script>document.write(rec_ave_tmp);</script></td>
+          <td align="center"><script>document.write(rec_ave_moi);</script></td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="max_table">
+      <thead>
+        <th>最大気温</th>
+        <th>最大水分量</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td align="center"><script>document.write(max_tmp);</script></td>
+          <td align="center"><script>document.write(max_moi);</script></td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="min_table">
+      <thead>
+        <th>最小気温</th>
+        <th>最小水分量</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td align="center"><script>document.write(min_tmp);</script></td>
+          <td align="center"><script>document.write(min_moi);</script></td>
         </tr>
       </tbody>
     </table>
