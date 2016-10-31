@@ -1,0 +1,240 @@
+
+{% extends "base.html" %}
+
+{% block title %}データ一覧{% endblock title %}
+
+{% block extrahead %}
+<style>
+h3 {
+  font-family: sans-serif;
+  font-size: 30px;
+  font-weight: bold;
+}
+.container{
+  width: 1460px;
+  }
+table {
+  margin-top: 8px;
+}
+.data_table {
+  width: 60%;
+  border-collapse: separate;
+  float: left;
+}
+th{
+width: 25%;
+padding: 6px;
+text-align: center;
+vertical-align: top;
+color: black;
+background-color: darkgray;
+border: 1px solid black;
+}
+td{
+width: 25%;
+padding: 6px;
+background-color: #fff;
+border: 1px solid #b9b9b9;
+}
+.ave_table, .rec_ave_table, .max_table, .min_table {
+  width: 35%;
+  border-collapse: separate;
+  float: right;
+}
+.ave_table th {
+  background-color: yellow;
+  border: 2px solid orange;
+}
+.rec_ave_table th {
+  background-color: lime;
+  border: 2px solid green;
+}
+.max_table th {
+  background-color: pink;
+  border: 2px solid red;
+}
+.min_table th {
+  background-color: aliceblue;
+  border: 2px solid blue;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <h3 class="page-header">データ一覧</h3>
+    <svg id="line_graph" x="1024" y="560"></svg>
+    <script type="text/javascript">
+    function drawLine(id, datasets) {
+    // コンテナ
+    var margin = {top: 20, right: 20, bottom: 30, left: 40},
+        width = 600 - (margin.left + margin.right),
+        height = 400 - (margin.top + margin.bottom);
+    var svg = d3.select(id)
+            .attr({
+                width : width + (margin.left + margin.right),
+                height : height + (margin.top + margin.bottom)
+            })
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    // スケール
+    var xScale = d3.scale.linear()
+            .domain([20, 80])
+            .range([0, width]);
+    var yScale = d3.scale.linear()
+            .domain([0, 0.45])
+            .range([height, 0]);
+    // 軸
+    var xAxis = d3.svg.axis()
+            .scale(xScale)
+            .orient("bottom");
+    var yAxis = d3.svg.axis()
+            .scale(yScale)
+            .orient("left");
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")") // ←x軸を下側に移動
+        .call(xAxis);
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+    // 描画
+    var line = d3.svg.line()
+            .x(function(d){ return xScale(d.age); })
+            .y(function(d){ return yScale(d.rate); });
+    var colorArr = ['#E74C3C',
+                    '#3498DB',
+                    '#2ECC71',
+                    '#9B59B6',
+                    '#34495e',
+                    '#449248',
+                    '#652681'];
+    for(var i = 0; i < datasets.length; i++) {
+        svg.append("path")
+            .datum(datasets[i])
+            .attr("class", "line")
+            .attr("d", line)
+            .attr("stroke", colorArr[i])
+            .attr("stroke-width", "2px")
+            .attr("fill", "none");
+    }
+}
+
+// データ
+var Dataset1 = [
+    {age: 25, rate: 0.06633412364}
+    // ,{age: 30, rate: 0.1620942}
+    ,{age: 40, rate: 0.1859880326}
+    ,{age: 50, rate: 0.1567057713}
+    ,{age: 60, rate: 0.1850232472}
+    ,{age: 70, rate: 0.1450872925}
+    ,{age: 80, rate: 0.09876733278}
+];
+var Dataset2 = [
+    {age: 25, rate: 0}
+    ,{age: 30, rate: 0.07122905028}
+    ,{age: 40, rate: 0.2346368715}
+    ,{age: 50, rate: 0.3575418994}
+    ,{age: 60, rate: 0.2402234637}
+    ,{age: 70, rate: 0.09497206704}
+    ,{age: 80, rate: 0.001396648045}
+];
+var Dataset3 = [
+    {age: 25, rate: 0.007227671657}
+    ,{age: 30, rate: 0.0586990191}
+    ,{age: 40, rate: 0.1338151781}
+    ,{age: 50, rate: 0.2699019102}
+    ,{age: 60, rate: 0.4212183789}
+    ,{age: 70, rate: 0.1064532783}
+    ,{age: 80, rate: 0.002684563758}
+];
+
+drawLine("#line_graph", [Dataset1, Dataset2, Dataset3]);
+    var ave_tmp = 0;
+    var ave_moi = 0;
+    var cnt = 0;
+    var recently_cnt = 0;
+    var rec_ave_tmp = 0;
+    var rec_ave_moi = 0;
+    var max_tmp = 0;
+    var max_moi = 0;
+    var min_tmp = 9999;
+    var min_moi = 9999;
+    recently_cnt = {{data_len}} - 10;
+    console.log(recently_cnt);
+    {% for i in dataset %}
+    ave_tmp = ave_tmp + {{ i.temperature }};
+    ave_moi = ave_moi + {{ i.moisture }};
+    if ({{i.temperature}} > max_tmp){
+      max_tmp = {{i.temperature}}
+    }
+    if ({{i.moisture}} > max_moi){
+      max_moi = {{i.moisture}}
+    }
+    if ({{i.temperature}} < min_tmp){
+      min_tmp = {{i.temperature}}
+    }
+    if ({{i.temperature}} < min_moi){
+      min_moi = {{i.moisture}}
+    }
+    if (cnt >= recently_cnt){
+      rec_ave_tmp = rec_ave_tmp + {{ i.temperature }};
+      rec_ave_moi = rec_ave_moi + {{ i.moisture }};
+    }
+    cnt = cnt + 1;
+    {% endfor %}
+    console.log(cnt);
+    ave_tmp = ave_tmp/cnt;
+    ave_moi = ave_moi/cnt;
+    rec_ave_tmp = rec_ave_tmp/10;
+    rec_ave_moi = rec_ave_moi/10;
+    </script>
+    <table class="ave_table">
+      <thead>
+        <th>平均気温(全体)</th>
+        <th>平均水分量(全体)</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td align="center"><script>document.write(ave_tmp);</script></td>
+          <td align="center"><script>document.write(ave_moi);</script></td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="rec_ave_table">
+      <thead>
+        <th>平均気温(直近10件)</th>
+        <th>平均水分量(直近10件)</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td align="center"><script>document.write(rec_ave_tmp);</script></td>
+          <td align="center"><script>document.write(rec_ave_moi);</script></td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="max_table">
+      <thead>
+        <th>最大気温</th>
+        <th>最大水分量</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td align="center"><script>document.write(max_tmp);</script></td>
+          <td align="center"><script>document.write(max_moi);</script></td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="min_table">
+      <thead>
+        <th>最小気温</th>
+        <th>最小水分量</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td align="center"><script>document.write(min_tmp);</script></td>
+          <td align="center"><script>document.write(min_moi);</script></td>
+        </tr>
+      </tbody>
+    </table>
+
+{% endblock content %}
