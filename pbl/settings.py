@@ -106,6 +106,13 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 
+#メディアファイルの置き場所
+BASE_PATH = os.path.abspath(os.path.split(__file__)[0])
+MEDIA_ROOT = os.path.join(BASE_PATH, 'static')
+MEDIA_URL = '/static_site/'
+
+STATIC_DOC_ROOT=os.path.dirname(__file__)+os.sep+'..'+os.sep+'media'
+
 TEMPLATE_DIRS = (
     '/Users/owner/pbl/AIoT/templates', # 自分の環境に合わせて変更してください。
 )
