@@ -68,16 +68,16 @@ border: 1px solid #b9b9b9;
           <th>datetime</th>
           <th>気温</th>
           <th>水分量</th>
-          <th>テスト</th>
+          <th>照度</th>
         </tr>
       </thead>
       <tbody>
         {% for i in dataset %}
         <tr>
           <td align="center">{{ i.datetime }}</td>
-          <td align="center">{{ i.tempature }}</td>
+          <td align="center">{{ i.temperature }}</td>
           <td align="center">{{ i.moisture }}</td>
-          <td align="center">{{ i.test }}</td>
+          <td align="center">{{ i.illuminance }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -96,22 +96,22 @@ border: 1px solid #b9b9b9;
     recently_cnt = {{data_len}} - 10;
     console.log(recently_cnt);
     {% for i in dataset %}
-    ave_tmp = ave_tmp + {{ i.tempature }};
+    ave_tmp = ave_tmp + {{ i.temperature }};
     ave_moi = ave_moi + {{ i.moisture }};
-    if ({{i.tempature}} > max_tmp){
-      max_tmp = {{i.tempature}}
+    if ({{i.temperature}} > max_tmp){
+      max_tmp = {{i.temperature}}
     }
     if ({{i.moisture}} > max_moi){
       max_moi = {{i.moisture}}
     }
-    if ({{i.tempature}} < min_tmp){
-      min_tmp = {{i.tempature}}
+    if ({{i.temperature}} < min_tmp){
+      min_tmp = {{i.temperature}}
     }
-    if ({{i.tempature}} < min_moi){
+    if ({{i.temperature}} < min_moi){
       min_moi = {{i.moisture}}
     }
     if (cnt >= recently_cnt){
-      rec_ave_tmp = rec_ave_tmp + {{ i.tempature }};
+      rec_ave_tmp = rec_ave_tmp + {{ i.temperature }};
       rec_ave_moi = rec_ave_moi + {{ i.moisture }};
     }
     cnt = cnt + 1;
