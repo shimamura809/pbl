@@ -11,7 +11,7 @@ h3 {
   font-weight: bold;
 }
 .container{
-  width: 1460px;
+  width: 1200px;
   }
 table {
   margin-top: 8px;
@@ -20,6 +20,17 @@ table {
   width: 50%;
   border-collapse: separate;
   float: left;
+}
+.data_table_scr {
+  height:400px;
+  width:350px;
+  overflow-y:scroll;
+  float: left;
+}
+.memo {
+  height:300px;
+  width:400px;
+  float: right;
 }
 th{
 width: 25%;
@@ -62,10 +73,10 @@ border: 1px solid #b9b9b9;
 
 {% block content %}
     <h3 class="page-header">データ一覧</h3>
-    <svg id="svg1" width="256" height="256">
+    <svg class="zu1" id="svg1" width="256" height="256">
     <image id="zu1" x="0" y="0" width="100%" height="100%" opacity="1"></image>
     </svg>
-    <div style="height:400px; width:600px; overflow-y:scroll; float: left;">
+    <div class="data_table_scr">
     <table class="data_table">
       <thead>
         <tr>
@@ -76,17 +87,24 @@ border: 1px solid #b9b9b9;
         </tr>
       </thead>
       <tbody>
-        {% for i in dataset %}
+      {% for i in dataset %}
         <tr>
           <td align="center">{{ i.datetime }}</td>
           <td align="center">{{ i.temperature }}</td>
           <td align="center">{{ i.moisture }}</td>
           <td align="center">{{ i.illuminance }}</td>
         </tr>
-        {% endfor %}
+      {% endfor %}
       </tbody>
     </table>
     </div>
+
+    <form class="memo">
+    <p>メモ<br>
+      <textarea name="textarea" rows="10" cols="50" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}">テキストを入力</textarea></p>
+      <p><input type="submit" value="送信する"></p>
+    </form>
+
     <script type="text/javascript">
     d3.select("#zu1").attr("xlink:href","/site_media/"+"zu1.jpg");
     var ave_tmp = 0;
