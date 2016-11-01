@@ -32,11 +32,11 @@ def detail(request):
     else:
         gt = dt_from_14digits_to_iso(dt+"000000")
         print("query")
-    lt = gt + timedelta(days = 1)
+    lt = gt + timedelta(hours = 23, minutes = 50)
     print(lt)
     dataset = []
-    dataset += db.collect_data.find({"datetime":{"$gte":gt, "$lt":lt}}).sort("datetime", DESCENDING)
-    return render_to_response('AIoT/detail.html', {"dataset":dataset})
+    dataset += db.collect_data.find({"datetime":{"$gte":gt, "$lte":lt}}).sort("datetime", ASCENDING)
+    return render_to_response('AIoT/detail.html', {"dataset":dataset,"data_len":len(dataset)})
 
 def dt_from_14digits_to_iso(dt):
   from datetime import datetime
