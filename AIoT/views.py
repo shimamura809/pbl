@@ -36,7 +36,7 @@ def detail(request):
     print(lt)
     dataset = []
     dataset += db.collect_data.find({"datetime":{"$gte":gt, "$lte":lt}}).sort("datetime", ASCENDING)
-    return render_to_response('AIoT/detail.html', {"dataset":dataset,"data_len":len(dataset)})
+    return render_to_response('AIoT/detail.html', {"dataset":dataset,"data_len":len(dataset),"datetime":gt})
 
 def dt_from_14digits_to_iso(dt):
   from datetime import datetime

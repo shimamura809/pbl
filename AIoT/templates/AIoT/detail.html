@@ -10,9 +10,13 @@ h3 {
   font-size: 30px;
   font-weight: bold;
 }
-/*.container{
-  width: 1460px;
-  }*/
+.container{
+  /*width: 1460px;*/
+  background-color: snow;
+  border-width: 0px 4px;
+  border-style: ridge;
+  border-color: green;
+  }
 table {
   margin-top: 8px;
 }
@@ -61,17 +65,21 @@ border: 1px solid #b9b9b9;
   float:right;
   display: inline-block;
   position: relative;
+}
+#line_graph {
   background-color: white;
-  border: 1px solid black;
+  border: 3px solid;
+  /*border-color: red;*/
 }
 #picture {
   float: left;
   display: inline-block;
-  border: 1px solid green;
+  border: 3px solid green;
   background-color: white;
 }
 body{
-    background-color: rgba(90,250,80,0.3);
+    /*background-color: rgba(90,250,80,0.3);*/
+    background-color: greenyellow;
   }
 #memo_area {
   float: left;
@@ -81,89 +89,177 @@ body{
   float: right;
   display: inline;
 }
+p.tabs
+  {
+    margin: 0px;
+    padding: 0px;
+    /*position: absolute;*/
+  }
+  p.tabs a
+  {
+    display: block;
+    width: 13em;
+    float: left;
+    margin: 0px 3px 0px 0px;
+    padding: 8px;
+    text-align: center;
+    border-radius: 15px 15px 0px 0px;
+    cursor: pointer;
+  }
+  p.tabs a.select_tab
+  {
+    color: black;
+    padding: 8px;
+  }
+  p.tabs a.waiting_tab
+  {
+    color: black;
+    opacity: 0.5;
+  }
+  p.tabs a:hover
+  {
+    color: white;
+  }
+  #temperature_tab {
+    background-color: red;
+  }
+  #moisture_tab {
+    background-color: blue;
+  }
+  #illuminance_tab {
+    background-color: yellow;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
-    <h3 class="page-header">詳細ページ</h3>
+    <h3 class="page-header" id="header"></h3>
     <svg id="picture" width="400" height="350">
     <image id="zu1" x="0" y="0" width="100%" height="100%" opacity="1"></image>
     </svg>
     <div id="graph_erea" x="600" y="560">
+    <div class="tabbox" id="tabbox"></div>
     <svg id="line_graph" x="1024" y="560"></svg></div>
     <div id="memo_area" x="600" y="560">
       <p>メモ用の場所</p>
     </div>
     <script type="text/javascript">
     d3.select("#zu1").attr("xlink:href","/site_media/"+"zu1.jpg");
-    function drawLine(id, datasets) {
-    // コンテナ
+    d3.select("#header").text("{{datetime.year}}年 {{datetime.month}}月 {{datetime.day}}日 詳細データ");
+
+function make_linegraph(target) {
+    //共通部分
     var margin = {top: 20, right: 20, bottom: 30, left: 40},
         width = 700 - (margin.left + margin.right),
         height = 400 - (margin.top + margin.bottom);
-    var svg = d3.select(id)
+    var svg = d3.select("#line_graph")
             .attr({
-                width : width + (margin.left + margin.right),
-                height : height + (margin.top + margin.bottom)
-            })
+              width : width + (margin.left + margin.right),
+              height : height + (margin.top + margin.bottom)})
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    // スケール
     var xScale = d3.time.scale()
-            .domain([datasets[0]["datetime"], datasets[data_len-1]["datetime"]])
-            // .domain([0, 1])
+            .domain([parameter_data[0]["datetime"], parameter_data[data_len-1]["datetime"]])
             .range([0, width]);
-    var yScale = d3.scale.linear()
-            .domain([0, 1])
-            .range([height, 0]);
-    // 軸
     var xAxis = d3.svg.axis()
             .scale(xScale)
             .orient("bottom")
-            .ticks(d3.time.minute, 30)
+            .ticks(d3.time.minute, 60)
             .tickFormat(d3.time.format('%_H:%M'))
             .innerTickSize(-height)  // 目盛線の長さ（内側）
             .outerTickSize(2)
             .tickPadding(8); // 目盛線の長さ（外側）
-    var yAxis = d3.svg.axis()
-            .scale(yScale)
-            .orient("left")
-            .innerTickSize(-width)  // 目盛線の長さ（内側）
-            .outerTickSize(2)
-            .tickPadding(8); // 目盛線の長さ（外側）;
+
+    //選択パラメータにより変化
+    if (target == "temperature") {
+      var yScale = d3.scale.linear().domain([0,40]).range([height, 0]);
+      var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(8).innerTickSize(-width).outerTickSize(2).tickPadding(8);
+      var line = d3.svg.line().x(function(d) { return xScale(d.datetime)}).y(function(d) { return yScale(d.temperature)});
+      var line_color = "red";
+    } else if (target == "moisture") {
+      var yScale = d3.scale.linear().domain([0,100]).range([height, 0]);
+      var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(10).innerTickSize(-width).outerTickSize(2).tickPadding(8);
+      var line = d3.svg.line().x(function(d) { return xScale(d.datetime)}).y(function(d) { return yScale(d.moisture)});
+      var line_color = "blue";
+    } else if (target == "illuminance") {
+      var yScale = d3.scale.linear().domain([0,1000]).range([height, 0]);
+      var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(20).innerTickSize(-width).outerTickSize(2).tickPadding(8);
+      var line = d3.svg.line().x(function(d) { return xScale(d.datetime)}).y(function(d) { return yScale(d.illuminance)});
+      var line_color = "yellow";
+    }
+
+    document.getElementById("line_graph").style.borderColor = line_color;
+
     svg.append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")") // ←x軸を下側に移動
+        .attr("transform", "translate(0," + height + ")")
         .call(xAxis);
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
-    // 描画
-    var line = d3.svg.line()
-            .x(function(d){ return xScale(d.datetime); })
-            .y(function(d){
-              if (i == 0) {
-                return yScale(d.temperature);
-              } else if (i == 1) {
-                return  yScale(d.moisture);
-              } else if (i == 2) {
-                return  yScale(d.illuminance);
-              }
-            });
-    var colorArr = ['red','blue','yellow'];
-    for(var i = 0; i < 3; i++) {
+    // // 描画
+    // var line = d3.svg.line()
+    //         .x(function(d){ return xScale(d.datetime); })
+    //         .y(function(d){
+    //           if (i == 0) {
+    //             return yScale(d.temperature);
+    //           } else if (i == 1) {
+    //             return  yScale(d.moisture);
+    //           } else if (i == 2) {
+    //             return  yScale(d.illuminance);
+    //           }
+    //         });
+    // var graph_title = function(d){
+    //   if (target == "temperature") {
+    //     return "temperature_line";
+    //   } else if (target == "moisture") {
+    //     return "moisture_line";
+    //   } else if (target == "illuminance") {
+    //     return "temperature_line";
+    //   }
+    // }
+    // var colorArr = ['red','blue','yellow'];
+    // for(var i = 0; i < 3; i++) {
         svg.append("path")
-            .datum(datasets)
+            .datum(parameter_data)
             .attr("class", "line")
             .attr("d", line)
-            .attr("stroke", colorArr[i])
+            .attr("stroke", line_color)
             .attr("stroke-width", "2px")
             .attr("fill", "none");
-    }
+    // }
 }
 
+function select_para(select_para){
+  var before_parameter = document.getElementById(parameter+"_tab");
+  before_parameter.className = 'waiting_tab';
+  parameter = select_para;
+  //変更後のparameterのタブを選択状態に変更
+  var after_parameter = document.getElementById(parameter+"_tab");
+  after_parameter.className = 'select_tab';
+  document.getElementById("line_graph").children[0].remove();
+  make_linegraph(parameter);
+}
+var parameter = "temperature";
+var parameter_list= ["temperature","moisture","illuminance"];
+var tab = d3.select("#tabbox").append("p").attr("class", "tabs");
+tab.selectAll("p.tab")
+.data(parameter_list)
+.enter()
+.append("a")
+.text(function(d){return d})
+.attr("onclick",function(d){return "select_para('"+d+"')"})
+.attr("id", function(d){return d + "_tab"})
+.attr("class", function(d){
+  if(parameter == d){
+    return "select_tab"
+  } else{
+    return "waiting_tab"
+  }
+})
+
 // データ
-var parameter = [];
+var parameter_data = [];
     var ave_tmp = 0;
     var ave_moi = 0;
     var cnt = 0;
@@ -177,8 +273,8 @@ var parameter = [];
     recently_cnt = {{data_len}} - 10;
     data_len = {{data_len}};
     {% for i in dataset %}
-    var month = {{i.datetime.month}} - 1;
-    parameter.push({temperature:{{i.temperature}},moisture:{{i.moisture}},illuminance:{{i.illuminance}},datetime:new Date("{{i.datetime.year}}",month,"{{i.datetime.day}}","{{i.datetime.hour}}","{{i.datetime.minute}}")});
+    var month = {{ i.datetime.month }} - 1;
+    parameter_data.push({temperature:{{i.temperature}},moisture:{{i.moisture}},illuminance:{{i.illuminance}},datetime:new Date("{{i.datetime.year}}",month,"{{i.datetime.day}}","{{i.datetime.hour}}","{{i.datetime.minute}}")});
     ave_tmp = ave_tmp + {{ i.temperature }};
     ave_moi = ave_moi + {{ i.moisture }};
     if ({{i.temperature}} > max_tmp){
@@ -203,7 +299,7 @@ var parameter = [];
     ave_moi = ave_moi/cnt;
     rec_ave_tmp = rec_ave_tmp/10;
     rec_ave_moi = rec_ave_moi/10;
-    drawLine("#line_graph", parameter);
+    make_linegraph("temperature");
     </script>
     <div id="table_area" x="1024" y="560">
     <table class="ave_table">
