@@ -17,20 +17,40 @@ table {
   margin-top: 8px;
 }
 .data_table {
-  width: 50%;
+  height:450px;
+  width:350px;
   border-collapse: separate;
-  float: left;
 }
 .data_table_scr {
-  height:400px;
+  height:450px;
   width:350px;
   overflow-y:scroll;
-  float: left;
+  background-color: white;
+}
+.zu1 {
+  height: 400px;
+  width: 450px;
 }
 .memo {
   height:300px;
   width:400px;
-  float: right;
+}
+.Calendar {
+  width: 340px;
+}
+#area1 {
+  /* boxレイアウトの指定 */
+    display: box;
+    display: -webkit-box;
+    display: -moz-box;
+
+    /* 配置したボックスを左右中央寄せにする */
+    box-pack: center;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 th{
 width: 25%;
@@ -48,7 +68,7 @@ background-color: #fff;
 border: 1px solid #b9b9b9;
 }
 .ave_table, .rec_ave_table, .max_table, .min_table {
-  width: 25%;
+  width: 27%;
   border-collapse: separate;
   clear: both;
 }
@@ -68,15 +88,29 @@ border: 1px solid #b9b9b9;
   background-color: aliceblue;
   border: 2px solid blue;
 }
+#table_area {
+  /* boxレイアウトの指定 */
+    display: box;
+    display: -webkit-box;
+    display: -moz-box;
+
+    /* 配置したボックスを左右中央寄せにする */
+    box-pack: center;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
 </style>
 {% endblock %}
 
 {% block content %}
     <h3 class="page-header">データ一覧</h3>
-    <svg class="zu1" id="svg1" width="256" height="256">
-    <image id="zu1" x="0" y="0" width="100%" height="100%" opacity="1"></image>
-    </svg>
+
+    <div id="area1">
     <div class="data_table_scr">
+    水やる？
     <table class="data_table">
       <thead>
         <tr>
@@ -99,11 +133,45 @@ border: 1px solid #b9b9b9;
     </table>
     </div>
 
+    <svg class="zu1" id="svg1" width="400" height="450">
+    <image id="zu1" x="0" y="0" width="100%" height="100%" opacity="1"></image>
+    </svg>
+
+    <div id="area2">
     <form class="memo">
     <p>メモ<br>
       <textarea name="textarea" rows="10" cols="50" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}">テキストを入力</textarea></p>
       <p><input type="submit" value="送信する"></p>
     </form>
+    <!-- <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=340,user-scalable=no;" />
+    <title>Cal Example</title>
+    <link rel="stylesheet" href="cal.css" type="text/css">
+  </head> -->
+  <div class="Calendar">
+    <!-- 0番目のカレンダーを入れる箱ね -->
+    <div id="cal0" class="cal_wrapper">
+      Calendar Loading
+    </div>
+    <!-- <div class="schedule_wrapper">
+      <h3>予定表</h3> -->
+      <!-- 0番目の予定リストを表示する場合は以下のタグを配置 -->
+      <!-- <div id="schedule0" class="schedule_list">
+        <ol>
+          <li value="210">テスト</li>
+        </ol>
+      </div>
+    </div> -->
+    <!-- 1番目のカレンダーを入れる箱ね -->
+    <!-- <div id="cal1" class="cal_wrapper">
+      Calendar Loading
+    </div> -->
+    <!-- <script type="text/javascript" charset="UTF-8" src="cal.js"></script> -->
+  </div>
+
+    </div>
+    </div>
 
     <script type="text/javascript">
     d3.select("#zu1").attr("xlink:href","/site_media/"+"zu1.jpg");
@@ -146,6 +214,7 @@ border: 1px solid #b9b9b9;
     rec_ave_tmp = rec_ave_tmp/10;
     rec_ave_moi = rec_ave_moi/10;
     </script>
+    <div id="table_area">
     <table class="ave_table">
       <thead>
         <th>平均気温(全体)</th>
@@ -194,5 +263,6 @@ border: 1px solid #b9b9b9;
         </tr>
       </tbody>
     </table>
+    </div>
 
 {% endblock content %}
