@@ -16,11 +16,11 @@ h3 {
 table {
   margin-top: 8px;
 }
-.data_table {
+/*.data_table {
   height:450px;
   width:350px;
   border-collapse: separate;
-}
+}*/
 .data_table_scr {
   height:450px;
   width:350px;
@@ -102,6 +102,69 @@ border: 1px solid #b9b9b9;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
+#chat-frame {
+  min-width: 320px;
+  max-width: 800px;
+  margin: auto;
+  padding: 1em 2em;
+  background-color: #D8F3F0;
+}
+.chat-talk {
+  overflow: hidden;
+  margin: 0 0 1em 0;
+  padding: 0;
+}
+.chat-talk span {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+.chat-talk .talk-icon {
+  float: left;
+  width: auto;
+}
+.chat-talk .talk-content {
+  position: relative;
+  box-sizing: border-box;
+  width: auto;
+  min-height: 50px;
+  border-radius: 10px;
+  background-color: #fff;
+  margin: 0 auto 0 70px;
+  padding: 1em;
+}
+.chat-talk .talk-icon img {
+  max-width: 100%;
+  height: auto;
+  vertical-align: bottom;
+  border: 2px solid #fff;
+  border-radius: 50%;
+}
+.chat-talk .talk-content:before {
+  position: absolute;
+  top: 15px;
+  left: -20px;
+  display: block;
+  width: 0;
+  height: 0;
+  content: '';
+  border: 10px solid transparent;
+  border-right-color: #FFFFFF;
+}
+.chat-talk.mytalk .talk-icon {
+  float: right;
+}
+.chat-talk.mytalk .talk-content {
+  margin: 0 70px 0 auto;
+  color: #000;
+  background: #78FF6C;
+}
+.chat-talk.mytalk .talk-content:before {
+  right: -20px;
+  left: auto;
+  border-color: transparent;
+  border-left-color: #78FF6C;
+}
 </style>
 {% endblock %}
 
@@ -110,8 +173,28 @@ border: 1px solid #b9b9b9;
 
     <div id="area1">
     <div class="data_table_scr">
-    水やる？
-    <table class="data_table">
+
+    <div id="chat-frame">
+    <p class="chat-talk">
+    <span class="talk-icon">
+    <svg class="zu2" id="svg1" width="50" height="50">
+    <image id="zu2" x="0" y="0" width="100%" height="100%" opacity="1"></image>
+    </svg>
+    </span>
+    <span class="talk-content">
+      {% for i in dataset %}
+        {{ i.datetime }}<br>
+        気温：{{ i.temperature }}</br>
+        水分量：{{ i.moisture }}</br>
+        照度：{{ i.illuminance }}</br>
+    {% endfor %}
+    </span>
+    <span class="talk-content">
+    わたぬき、水やる？
+    </span>
+    </p>
+    </div>
+    <!-- <table class="data_table">
       <thead>
         <tr>
           <th>datetime</th>
@@ -130,7 +213,7 @@ border: 1px solid #b9b9b9;
         </tr>
       {% endfor %}
       </tbody>
-    </table>
+    </table> -->
     </div>
 
     <svg class="zu1" id="svg1" width="400" height="450">
@@ -535,6 +618,7 @@ cal_init();
 
     <script type="text/javascript">
     d3.select("#zu1").attr("xlink:href","/site_media/"+"zu1.jpg");
+    d3.select("#zu2").attr("xlink:href","/site_media/"+"zu1.jpg");
     var ave_tmp = 0;
     var ave_moi = 0;
     var cnt = 0;
