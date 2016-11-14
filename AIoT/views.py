@@ -19,7 +19,7 @@ db = client.pbl
 def datalist(request):
   dt = datetime.now()
   dataset = []
-  dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING)
+  dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING).limit(1)
   return render_to_response('AIoT/datalist.html', {"dataset":dataset,"data_len":len(dataset)})
 
 
