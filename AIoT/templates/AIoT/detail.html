@@ -30,32 +30,29 @@ background-color: darkgray;
 border: 1px solid black;
 }
 td{
-width: 25%;
+width: 100%;
 padding: 6px;
 background-color: #fff;
 border: 1px solid #b9b9b9;
 }
-.ave_table, .rec_ave_table, .max_table, .min_table {
-  width: 100%;
+.tmp_table, .moi_table, .ill_table {
+  /*width: 100%;*/
+  width: 700px;
   border-collapse: separate;
   /*float: right;*/
   /*display: inline;*/
 }
-.ave_table th {
-  background-color: yellow;
-  border: 2px solid orange;
-}
-.rec_ave_table th {
-  background-color: lime;
-  border: 2px solid green;
-}
-.max_table th {
+.tmp_table th {
   background-color: pink;
   border: 2px solid red;
 }
-.min_table th {
+.moi_table th {
   background-color: aliceblue;
   border: 2px solid blue;
+}
+.ill_table th {
+  background-color: yellow;
+  border: 2px solid orange;
 }
 .tick line{
     opacity: 0.3;
@@ -154,7 +151,9 @@ p.tabs
         <a id="memo_write_button" onclick="memo_write()" class="btn btn-default btn-sm">write</a>
       </form>
     </div>
-    <div id="table_area" width=700 height=560></div>
+    <div id="table_area" width=700 height=560>
+      <p><font size="6px" color="blue">データまとめ</font></p>
+    </div>
     <script type="text/javascript">
     d3.select("#zu1").attr("xlink:href","/site_media/"+"zu1.jpg");
     d3.select("#header").text("{{datetime.year}}年 {{datetime.month}}月 {{datetime.day}}日 詳細データ");
@@ -362,17 +361,22 @@ function set_data() {
     min_tmp = "null";
     min_moi = "null";
     min_ill = "null";
+    var t_body_list = [max_tmp,min_tmp,ave_tmp];
+    var m_body_list = [max_moi,min_moi,ave_moi];
+    var i_body_list = [max_ill,min_ill,ave_ill];
+  } else{
+    var t_body_list = [floatnum(max_tmp),floatnum(min_tmp),floatnum(ave_tmp)];
+    var m_body_list = [floatnum(max_moi),floatnum(min_moi),floatnum(ave_moi)];
+    var i_body_list = [floatnum(max_ill),floatnum(min_ill),floatnum(ave_ill)];
   }
+  make_table(t_body_list,m_body_list,i_body_list);
 }
 
 //表作成用関数
-function make_table() {
+function make_table(t_body_list,m_body_list,i_body_list) {
   var t_thead_list = ["最大温度","最小温度","平均温度"];
   var m_thead_list = ["最大湿度","最小湿度","平均湿度"];
   var i_thead_list = ["最大照度","最小照度","平均照度"];
-  var t_body_list = [max_tmp,min_tmp,ave_tmp];
-  var m_body_list = [max_moi,min_moi,ave_moi];
-  var i_body_list = [max_ill,min_ill,ave_ill];
   var t_table = d3.select("#table_area").append("table").attr("class", "tmp_table");
   var m_table = d3.select("#table_area").append("table").attr("class", "moi_table");
   var i_table = d3.select("#table_area").append("table").attr("class", "ill_table");
@@ -388,28 +392,14 @@ function make_table() {
   t_tbody.selectAll("t_body").data(t_body_list).enter().append("th").text(function(d){return d});
   m_tbody.selectAll("m_body").data(m_body_list).enter().append("th").text(function(d){return d});
   i_tbody.selectAll("i_body").data(i_body_list).enter().append("th").text(function(d){return d});
-  // t_thead.append("th").text("最小温度");
-  // t_thead.append("th").text("平均温度");
-  // t_thead.append("th").text("最大温度");
-  // t_thead.append("th").text("最小温度");
-  // t_thead.append("th").text("平均温度");
-
-  // .selectAll("thead")
-  // .append("th").text("最大湿度")
-  // .append("th").text("最小湿度")
-  // .append("th").text("平均湿度");
-
-  // .selectAll("thead")
-  // .append("th").text("最大照度")
-  // .append("th").text("最小照度")
-  // .append("th").text("平均照度");
-
-  // .selectAll("thead")
-  // .append("th").text("最大温度")
-  // .append("th").text("最小温度")
-  // .append("th").text("平均温度");
 }
-make_table();
+
+//小数点1位になるように四捨五入する関数
+function floatnum(number) {
+  var _pow = Math.pow(10,1);
+  return Math.round(number*_pow)/_pow;
+}
+
 
 // データ
 var parameter_data = [];
