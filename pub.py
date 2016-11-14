@@ -3,20 +3,20 @@ import paho.mqtt.client as mqtt
 import random
 import datetime
 
-host = '192.168.10.246'
+host = '210.152.14.37'
 port = 1883
 topic = 'AIoT/data/'
 
 def temperature():
-	tmp1 = random.random()
+	tmp1 = random.randint(0,40)
 	return tmp1
 
 def moisture():
-	tmp2 = random.random()
+	tmp2 = random.randint(0,100)
 	return tmp2
 
 def illuminance():
-    tmp3 = random.random()
+    tmp3 = random.randint(300,800)
     return tmp3
 
 client = mqtt.Client(protocol=mqtt.MQTTv311)

@@ -1,7 +1,7 @@
 
 {% extends "base.html" %}
 
-{% block title %}データ一覧{% endblock title %}
+{% block title %}{{datetime.month}}月{{datetime.day}}日{% endblock title %}
 
 {% block extrahead %}
 <style>
@@ -30,32 +30,29 @@ background-color: darkgray;
 border: 1px solid black;
 }
 td{
-width: 25%;
+width: 100%;
 padding: 6px;
 background-color: #fff;
 border: 1px solid #b9b9b9;
 }
-.ave_table, .rec_ave_table, .max_table, .min_table {
-  width: 100%;
+.tmp_table, .moi_table, .ill_table {
+  /*width: 100%;*/
+  width: 700px;
   border-collapse: separate;
   /*float: right;*/
   /*display: inline;*/
 }
-.ave_table th {
-  background-color: yellow;
-  border: 2px solid orange;
-}
-.rec_ave_table th {
-  background-color: lime;
-  border: 2px solid green;
-}
-.max_table th {
+.tmp_table th {
   background-color: pink;
   border: 2px solid red;
 }
-.min_table th {
+.moi_table th {
   background-color: aliceblue;
   border: 2px solid blue;
+}
+.ill_table th {
+  background-color: yellow;
+  border: 2px solid orange;
 }
 .tick line{
     opacity: 0.3;
@@ -131,6 +128,10 @@ p.tabs
   #illuminance_tab {
     background-color: yellow;
   }
+  #memo_write_button {
+    font-size: 1.4em;
+    padding: 2px 180px;
+  }
 </style>
 {% endblock %}
 
@@ -141,14 +142,60 @@ p.tabs
     </svg>
     <div id="graph_erea" width="400" height="440">
     <div class="tabbox" id="tabbox"></div>
-    <svg id="line_graph" x="1024" y="560"></svg></div>
+    <svg id="line_graph" x="1024" y="560">
+    </svg></div>
     <div id="memo_area" width="600" height="560">
-      <p>メモ用の場所</p>
+      <p><font size="6px" color="blue">Memo</font></p>
+      <form name="memo_form" action="Sample.html">
+        <textarea id="memo" name="memo" rows="10" cols="56" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}"></textarea><br>
+        <a id="memo_write_button" onclick="memo_write()" class="btn btn-default btn-sm">write</a>
+      </form>
+    </div>
+    <div id="table_area" width=700 height=560>
+      <p><font size="6px" color="blue">データまとめ</font></p>
     </div>
     <script type="text/javascript">
     d3.select("#zu1").attr("xlink:href","/site_media/"+"zu1.jpg");
     d3.select("#header").text("{{datetime.year}}年 {{datetime.month}}月 {{datetime.day}}日 詳細データ");
 
+//memoをデータベースに転送
+function memo_write() {
+  var memo_text = document.memo_form.memo.value;
+  memo_text = memo_text.replace(/\r\n/g, '\n');
+  var memo_lines = memo_text.split('\n');
+  $.ajax({
+          type: 'GET',
+          url: make_url() + "&memo=" + memo_lines,
+          dataType: 'json',
+        });
+}
+
+//データベースのメモを表示
+function memo_get() {
+  var memo_text = "";
+  var cnt = 0;
+  {% for i in memo_data %}
+  if (cnt == 0) {
+    memo_text = memo_text + "{{i}}";
+  }
+  else {
+    memo_text = memo_text + "\n" + "{{i}}";
+  }
+  cnt++
+  {% endfor %}
+  document.memo_form.memo.value = memo_text;
+}
+
+//url作成用関数
+function make_url() {
+  var year = "{{datetime.year}}";
+  var month = ("0"+"{{datetime.month}}").slice(-2);
+  var day = ("0"+"{{datetime.day}}").slice(-2);
+  var url = "{% url 'AIoT:detail_json' %}" + "?datetime=" + year + month + day;
+  return url;
+}
+
+//折れ線グラフ作成用関数
 function make_linegraph(target) {
     //共通部分
     var margin = {top: 20, right: 20, bottom: 30, left: 40},
@@ -160,78 +207,72 @@ function make_linegraph(target) {
               height : height + (margin.top + margin.bottom)})
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    var xScale = d3.time.scale()
-            .domain([parameter_data[0]["datetime"], parameter_data[data_len-1]["datetime"]])
-            .range([0, width]);
-    var xAxis = d3.svg.axis()
-            .scale(xScale)
-            .orient("bottom")
-            .ticks(d3.time.minute, 60)
-            .tickFormat(d3.time.format('%_H:%M'))
-            .innerTickSize(-height)  // 目盛線の長さ（内側）
-            .outerTickSize(2)
-            .tickPadding(8); // 目盛線の長さ（外側）
+    //データがある場合の挙動
+    if (data_len != 0) {
+      var xScale = d3.time.scale()
+              .domain([parameter_data[0]["datetime"], parameter_data[data_len-1]["datetime"]])
+              .range([0, width]);
+      var xAxis = d3.svg.axis()
+              .scale(xScale)
+              .orient("bottom")
+              .ticks(d3.time.minute, 30)
+              .tickFormat(d3.time.format('%_H:%M'))
+              .innerTickSize(-height)  // 目盛線の長さ（内側）
+              .outerTickSize(2)
+              .tickPadding(8); // 目盛線の長さ（外側）
 
-    //選択パラメータにより変化
-    if (target == "temperature") {
-      var yScale = d3.scale.linear().domain([0,40]).range([height, 0]);
-      var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(8).innerTickSize(-width).outerTickSize(2).tickPadding(8);
-      var line = d3.svg.line().x(function(d) { return xScale(d.datetime)}).y(function(d) { return yScale(d.temperature)});
-      var line_color = "red";
-    } else if (target == "moisture") {
-      var yScale = d3.scale.linear().domain([0,100]).range([height, 0]);
-      var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(10).innerTickSize(-width).outerTickSize(2).tickPadding(8);
-      var line = d3.svg.line().x(function(d) { return xScale(d.datetime)}).y(function(d) { return yScale(d.moisture)});
-      var line_color = "blue";
-    } else if (target == "illuminance") {
-      var yScale = d3.scale.linear().domain([0,1000]).range([height, 0]);
-      var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(20).innerTickSize(-width).outerTickSize(2).tickPadding(8);
-      var line = d3.svg.line().x(function(d) { return xScale(d.datetime)}).y(function(d) { return yScale(d.illuminance)});
-      var line_color = "yellow";
+      //選択パラメータにより変化
+      if (target == "temperature") {
+        var yScale = d3.scale.linear().domain([0,40]).range([height, 0]);
+        var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(8).innerTickSize(-width).outerTickSize(2).tickPadding(8);
+        var line = d3.svg.line().x(function(d) { return xScale(d.datetime)}).y(function(d) { return yScale(d.temperature)});
+        var line_color = "red";
+      } else if (target == "moisture") {
+        var yScale = d3.scale.linear().domain([0,100]).range([height, 0]);
+        var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(10).innerTickSize(-width).outerTickSize(2).tickPadding(8);
+        var line = d3.svg.line().x(function(d) { return xScale(d.datetime)}).y(function(d) { return yScale(d.moisture)});
+        var line_color = "blue";
+      } else if (target == "illuminance") {
+        var yScale = d3.scale.linear().domain([0,1000]).range([height, 0]);
+        var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(20).innerTickSize(-width).outerTickSize(2).tickPadding(8);
+        var line = d3.svg.line().x(function(d) { return xScale(d.datetime)}).y(function(d) { return yScale(d.illuminance)});
+        var line_color = "yellow";
+      }
+      document.getElementById("line_graph").style.borderColor = line_color;
+
+      svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+      svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+      svg.append("path")
+      .datum(parameter_data)
+      .attr("class", "line")
+      .attr("d", line)
+      .attr("stroke", line_color)
+      .attr("stroke-width", "2px")
+      .attr("fill", "none");
     }
-
-    document.getElementById("line_graph").style.borderColor = line_color;
-
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis);
-    // // 描画
-    // var line = d3.svg.line()
-    //         .x(function(d){ return xScale(d.datetime); })
-    //         .y(function(d){
-    //           if (i == 0) {
-    //             return yScale(d.temperature);
-    //           } else if (i == 1) {
-    //             return  yScale(d.moisture);
-    //           } else if (i == 2) {
-    //             return  yScale(d.illuminance);
-    //           }
-    //         });
-    // var graph_title = function(d){
-    //   if (target == "temperature") {
-    //     return "temperature_line";
-    //   } else if (target == "moisture") {
-    //     return "moisture_line";
-    //   } else if (target == "illuminance") {
-    //     return "temperature_line";
-    //   }
-    // }
-    // var colorArr = ['red','blue','yellow'];
-    // for(var i = 0; i < 3; i++) {
-        svg.append("path")
-            .datum(parameter_data)
-            .attr("class", "line")
-            .attr("d", line)
-            .attr("stroke", line_color)
-            .attr("stroke-width", "2px")
-            .attr("fill", "none");
-    // }
+    //データがない場合の挙動
+    else {
+      d3.select("#line_graph")
+      .append("image")
+      .attr({
+        "id" : "no_data",
+        "x":"0",
+        "y":"0",
+        "width":"100%",
+        "height":"100%",
+        "opacity":"1",
+      })
+      .attr("xlink:href","/site_media/"+"no_data.jpg");
+    }
 }
 
+//グラフのパラメーターを選択
 function select_para(select_para){
   var before_parameter = document.getElementById(parameter+"_tab");
   before_parameter.className = 'waiting_tab';
@@ -249,7 +290,15 @@ tab.selectAll("p.tab")
 .data(parameter_list)
 .enter()
 .append("a")
-.text(function(d){return d})
+.text(function(d){
+  if (d == "temperature") {
+    return "温度";
+  } else if (d == "moisture") {
+    return "湿度";
+  } else if (d == "illuminance") {
+    return "照度";
+  }
+})
 .attr("onclick",function(d){return "select_para('"+d+"')"})
 .attr("id", function(d){return d + "_tab"})
 .attr("class", function(d){
@@ -260,51 +309,106 @@ tab.selectAll("p.tab")
   }
 })
 
+//データまとめの表作成用関数
+function set_data() {
+  //変数の初期化
+  var cnt = 0;
+  var ave_tmp = 0;
+  var ave_moi = 0;
+  var ave_ill = 0;
+  var max_tmp = 0;
+  var max_moi = 0;
+  var max_ill = 0;
+  var min_tmp = 9999;
+  var min_moi = 9999;
+  var min_ill = 9999;
+  {% for i in dataset %}
+  var month = {{ i.datetime.month }} - 1;
+  parameter_data.push({temperature:{{i.temperature}},moisture:{{i.moisture}},illuminance:{{i.illuminance}},datetime:new Date("{{i.datetime.year}}",month,"{{i.datetime.day}}","{{i.datetime.hour}}","{{i.datetime.minute}}")});
+  ave_tmp = ave_tmp + {{ i.temperature }};
+  ave_moi = ave_moi + {{ i.moisture }};
+  ave_ill = ave_ill + {{ i.illuminance }};
+  if ({{i.temperature}} > max_tmp){
+    max_tmp = {{i.temperature}}
+  }
+  if ({{i.moisture}} > max_moi){
+    max_moi = {{i.moisture}}
+  }
+  if ({{i.illuminance}} > max_ill){
+    max_ill = {{i.illuminance}}
+  }
+  if ({{i.temperature}} < min_tmp){
+    min_tmp = {{i.temperature}}
+  }
+  if ({{i.moisture}} < min_moi){
+    min_moi = {{i.moisture}}
+  }
+  if ({{i.illuminance}} < min_ill){
+    min_ill = {{i.illuminance}}
+  }
+  cnt++;
+  {% endfor %}
+  ave_tmp = ave_tmp/cnt;
+  ave_moi = ave_moi/cnt;
+  ave_ill = ave_ill/cnt;
+  if (data_len == 0){
+    ave_tmp = "null";
+    ave_moi = "null";
+    ave_ill = "null";
+    max_tmp = "null";
+    max_moi = "null";
+    max_ill = "null";
+    min_tmp = "null";
+    min_moi = "null";
+    min_ill = "null";
+    var t_body_list = [max_tmp,min_tmp,ave_tmp];
+    var m_body_list = [max_moi,min_moi,ave_moi];
+    var i_body_list = [max_ill,min_ill,ave_ill];
+  } else{
+    var t_body_list = [floatnum(max_tmp),floatnum(min_tmp),floatnum(ave_tmp)];
+    var m_body_list = [floatnum(max_moi),floatnum(min_moi),floatnum(ave_moi)];
+    var i_body_list = [floatnum(max_ill),floatnum(min_ill),floatnum(ave_ill)];
+  }
+  make_table(t_body_list,m_body_list,i_body_list);
+}
+
+//表作成用関数
+function make_table(t_body_list,m_body_list,i_body_list) {
+  var t_thead_list = ["最大温度","最小温度","平均温度"];
+  var m_thead_list = ["最大湿度","最小湿度","平均湿度"];
+  var i_thead_list = ["最大照度","最小照度","平均照度"];
+  var t_table = d3.select("#table_area").append("table").attr("class", "tmp_table");
+  var m_table = d3.select("#table_area").append("table").attr("class", "moi_table");
+  var i_table = d3.select("#table_area").append("table").attr("class", "ill_table");
+  var t_thead = t_table.append("thead");
+  var m_thead = m_table.append("thead");
+  var i_thead = i_table.append("thead");
+  var t_tbody = t_table.append("tbody");
+  var m_tbody = m_table.append("tbody");
+  var i_tbody = i_table.append("tbody");
+  t_thead.selectAll("t_thead").data(t_thead_list).enter().append("th").text(function(d){return d});
+  m_thead.selectAll("m_thead").data(m_thead_list).enter().append("th").text(function(d){return d});
+  i_thead.selectAll("i_thead").data(i_thead_list).enter().append("th").text(function(d){return d});
+  t_tbody.selectAll("t_body").data(t_body_list).enter().append("th").text(function(d){return d});
+  m_tbody.selectAll("m_body").data(m_body_list).enter().append("th").text(function(d){return d});
+  i_tbody.selectAll("i_body").data(i_body_list).enter().append("th").text(function(d){return d});
+}
+
+//小数点1位になるように四捨五入する関数
+function floatnum(number) {
+  var _pow = Math.pow(10,1);
+  return Math.round(number*_pow)/_pow;
+}
+
+
 // データ
 var parameter_data = [];
-    var ave_tmp = 0;
-    var ave_moi = 0;
-    var cnt = 0;
-    var recently_cnt = 0;
-    var rec_ave_tmp = 0;
-    var rec_ave_moi = 0;
-    var max_tmp = 0;
-    var max_moi = 0;
-    var min_tmp = 9999;
-    var min_moi = 9999;
-    recently_cnt = {{data_len}} - 10;
-    data_len = {{data_len}};
-    {% for i in dataset %}
-    var month = {{ i.datetime.month }} - 1;
-    parameter_data.push({temperature:{{i.temperature}},moisture:{{i.moisture}},illuminance:{{i.illuminance}},datetime:new Date("{{i.datetime.year}}",month,"{{i.datetime.day}}","{{i.datetime.hour}}","{{i.datetime.minute}}")});
-    ave_tmp = ave_tmp + {{ i.temperature }};
-    ave_moi = ave_moi + {{ i.moisture }};
-    if ({{i.temperature}} > max_tmp){
-      max_tmp = {{i.temperature}}
-    }
-    if ({{i.moisture}} > max_moi){
-      max_moi = {{i.moisture}}
-    }
-    if ({{i.temperature}} < min_tmp){
-      min_tmp = {{i.temperature}}
-    }
-    if ({{i.temperature}} < min_moi){
-      min_moi = {{i.moisture}}
-    }
-    if (cnt >= recently_cnt){
-      rec_ave_tmp = rec_ave_tmp + {{ i.temperature }};
-      rec_ave_moi = rec_ave_moi + {{ i.moisture }};
-    }
-    cnt = cnt + 1;
-    {% endfor %}
-    ave_tmp = ave_tmp/cnt;
-    ave_moi = ave_moi/cnt;
-    rec_ave_tmp = rec_ave_tmp/10;
-    rec_ave_moi = rec_ave_moi/10;
-    make_linegraph("temperature");
-    </script>
-    <div id="table_area" width=700 height=560>
-    <table class="ave_table">
+data_len = {{data_len}};
+set_data();
+make_linegraph("temperature");
+memo_get();
+</script>
+    <!-- <table class="ave_table">
       <thead>
         <th>平均気温(全体)</th>
         <th>平均水分量(全体)</th>
@@ -353,5 +457,5 @@ var parameter_data = [];
       </tbody>
     </table>
     </div>
-
+ -->
 {% endblock content %}

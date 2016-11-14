@@ -22,3 +22,10 @@ class collect_data(Document):
     illuminance = FloatField()
 
     meta = DB_ALIAS
+
+class collect_memo(Document):
+    _id         = StringField(max_length=255)
+    datetime    = StringField(max_length=255)
+    memo        = StringField()
+
+    meta = DB_ALIAS
