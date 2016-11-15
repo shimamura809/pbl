@@ -26,9 +26,8 @@ def datalist(request):
     for i in range(len(memo_data[0]["memo"])):
       memo.append("" + memo_data[0]["memo"][i])
   dataset = []
-  dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING)
+  dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING).limit(1)
   return render_to_response('AIoT/datalist.html', {"dataset":dataset,"data_len":len(dataset),"memo_data":memo})
-
 
 # 詳細画面 http://127.0.0.1:8000/AIoT/detail/20161031
 def detail(request):
