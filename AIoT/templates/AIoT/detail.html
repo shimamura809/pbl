@@ -5,10 +5,28 @@
 
 {% block extrahead %}
 <style>
-h3 {
+#header_area {
+  height: 60px;
+}
+#header {
   font-family: sans-serif;
-  font-size: 30px;
+  font-size: 40px;
   font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 33%;
+  margin-right: 31%;
+  display: inline;
+}
+.left {
+  float: left;
+  display: inline;
+  margin-top: 20px;
+}
+.right {
+  float: right;
+  display: inline;
+  margin-top: 20px;
 }
 .container{
   width: 1160px;
@@ -16,6 +34,7 @@ h3 {
   border-width: 0px 4px;
   border-style: ridge;
   border-color: purple;
+  /*display: inline-block;*/
   }
 table {
   margin-top: 8px;
@@ -71,12 +90,15 @@ border: 1px solid #b9b9b9;
 }
 #picture {
   float: left;
-  /*display: inline-block;*/
+  /*display: block;*/
   border: 3px solid green;
   background-color: white;
+  /*position: absolute;*/
+  /*clear: left;*/
 }
 body{
     /*background-color: rgba(90,250,80,0.3);*/
+    /*width:auto;*/
     background-color: mintcream;
   }
 #memo_area {
@@ -130,13 +152,25 @@ p.tabs
   }
   #memo_write_button {
     font-size: 1.4em;
-    padding: 2px 180px;
+    padding: 2px 170px;
+  }
+  .left {
+    float: left;
+    display: inline-block;
+  }
+  .right {
+    float: right;
+    display: inline-block;
   }
 </style>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
 {% endblock %}
 
 {% block content %}
-    <h3 class="page-header" id="header"></h3>
+    <div id="header_area">
+    <div class="left" y="30"></div>
+    <p class="page-header" id="header" align="center"></p>
+    <div class="right" y="30"></div></div><br>
     <svg id="picture" width="400" height="440">
     <image id="zu1" x="0" y="0" width="100%" height="100%" opacity="1"></image>
     </svg>
@@ -147,7 +181,7 @@ p.tabs
     <div id="memo_area" width="600" height="560">
       <p><font size="6px" color="blue">Memo</font></p>
       <form name="memo_form" action="Sample.html">
-        <textarea id="memo" name="memo" rows="10" cols="56" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}"></textarea><br>
+        <textarea id="memo" name="memo" rows="10" cols="58" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}"></textarea><br>
         <a id="memo_write_button" onclick="memo_write()" class="btn btn-default btn-sm">write</a>
       </form>
     </div>
@@ -156,7 +190,7 @@ p.tabs
     </div>
     <script type="text/javascript">
     d3.select("#zu1").attr("xlink:href","/site_media/"+"zu1.jpg");
-    d3.select("#header").text("{{datetime.year}}年 {{datetime.month}}月 {{datetime.day}}日 詳細データ");
+    d3.select("#header").text("{{datetime.year}}年 {{datetime.month}}月 {{datetime.day}}日");
 
 //memoをデータベースに転送
 function memo_write() {
@@ -192,6 +226,7 @@ function make_url() {
   var month = ("0"+"{{datetime.month}}").slice(-2);
   var day = ("0"+"{{datetime.day}}").slice(-2);
   var url = "{% url 'AIoT:detail_json' %}" + "?datetime=" + year + month + day;
+  console.log(url);
   return url;
 }
 
@@ -400,6 +435,22 @@ function floatnum(number) {
   return Math.round(number*_pow)/_pow;
 }
 
+//ページ左右に日付変更用のリンクを作成
+function make_link() {
+  var dt = new Date({{datetime.year}},{{datetime.month}}-1,{{datetime.day}});
+  var prev_dt = moment(dt).subtract(1,"days").format("YYYYMMDD");
+  var next_dt = moment(dt).add(1,"days").format("YYYYMMDD");
+  d3.select(".left").append("a").attr({
+    "id": "prev_day",
+    "class": "btn btn-default btn-sm",
+    "href": "{% url 'AIoT:detail' %}" + "?datetime=" + prev_dt,
+  }).text("前日");
+  d3.select(".right").append("a").attr({
+    "id": "next_day",
+    "class": "btn btn-default btn-sm",
+    "href": "{% url 'AIoT:detail' %}" + "?datetime=" + next_dt,
+  }).text("翌日");
+}
 
 // データ
 var parameter_data = [];
@@ -407,55 +458,6 @@ data_len = {{data_len}};
 set_data();
 make_linegraph("temperature");
 memo_get();
+make_link();
 </script>
-    <!-- <table class="ave_table">
-      <thead>
-        <th>平均気温(全体)</th>
-        <th>平均水分量(全体)</th>
-      </thead>
-      <tbody>
-        <tr>
-          <td align="center"><script>document.write(ave_tmp);</script></td>
-          <td align="center"><script>document.write(ave_moi);</script></td>
-        </tr>
-      </tbody>
-    </table>
-    <table class="rec_ave_table">
-      <thead>
-        <th>平均気温(直近10件)</th>
-        <th>平均水分量(直近10件)</th>
-      </thead>
-      <tbody>
-        <tr>
-          <td align="center"><script>document.write(rec_ave_tmp);</script></td>
-          <td align="center"><script>document.write(rec_ave_moi);</script></td>
-        </tr>
-      </tbody>
-    </table>
-    <table class="max_table">
-      <thead>
-        <th>最大気温</th>
-        <th>最大水分量</th>
-      </thead>
-      <tbody>
-        <tr>
-          <td align="center"><script>document.write(max_tmp);</script></td>
-          <td align="center"><script>document.write(max_moi);</script></td>
-        </tr>
-      </tbody>
-    </table>
-    <table class="min_table">
-      <thead>
-        <th>最小気温</th>
-        <th>最小水分量</th>
-      </thead>
-      <tbody>
-        <tr>
-          <td align="center"><script>document.write(min_tmp);</script></td>
-          <td align="center"><script>document.write(min_moi);</script></td>
-        </tr>
-      </tbody>
-    </table>
-    </div>
- -->
 {% endblock content %}
