@@ -10,7 +10,7 @@ h3 {
   font-size: 30px;
   font-weight: bold;
 }
-.container{
+.container {
   width: 1200px;
   }
 table {
@@ -40,32 +40,30 @@ table {
 }
 #area1 {
   /* boxレイアウトの指定 */
-    display: box;
-    display: -webkit-box;
-    display: -moz-box;
-
-    /* 配置したボックスを左右中央寄せにする */
-    box-pack: center;
-    -webkit-box-pack: center;
-    -moz-box-pack: center;
-
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  display: box;
+  display: -webkit-box;
+  display: -moz-box;
+  /* 配置したボックスを左右中央寄せにする */
+  box-pack: center;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
-th{
-width: 25%;
-padding: 6px;
-text-align: center;
-vertical-align: top;
-color: black;
-background-color: darkgray;
-border: 1px solid black;
+th {
+  width: 25%;
+  padding: 6px;
+  text-align: center;
+  vertical-align: top;
+  color: black;
+  background-color: darkgray;
+  border: 1px solid black;
 }
-td{
-width: 25%;
-padding: 6px;
-background-color: #fff;
-border: 1px solid #b9b9b9;
+td {
+  width: 25%;
+  padding: 6px;
+  background-color: #fff;
+  border: 1px solid #b9b9b9;
 }
 .ave_table, .rec_ave_table, .max_table, .min_table {
   width: 27%;
@@ -90,17 +88,15 @@ border: 1px solid #b9b9b9;
 }
 #table_area {
   /* boxレイアウトの指定 */
-    display: box;
-    display: -webkit-box;
-    display: -moz-box;
-
-    /* 配置したボックスを左右中央寄せにする */
-    box-pack: center;
-    -webkit-box-pack: center;
-    -moz-box-pack: center;
-
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  display: box;
+  display: -webkit-box;
+  display: -moz-box;
+  /* 配置したボックスを左右中央寄せにする */
+  box-pack: center;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 #chat-frame {
   min-width: 320px;
@@ -165,91 +161,98 @@ border: 1px solid #b9b9b9;
   border-color: transparent;
   border-left-color: #78FF6C;
 }
+#memo_write_button {
+    font-size: 1.4em;
+    padding: 2px 150px;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-    <h3 class="page-header">メインページ</h3>
+<h3 class="page-header">メインページ</h3>
 
-    <div id="area1">
-    <div class="data_table_scr">
-
+<div id="area1">
+  <div class="data_table_scr">
     <div id="chat-frame">
-    <p class="chat-talk mytalk">
-    <span class="talk-content">
-      {% for i in dataset %}
-        {{ i.datetime }}<br>
-        気温：{{ i.temperature }}</br>
-        水分量：{{ i.moisture }}</br>
-        照度：{{ i.illuminance }}</br>
+      <p class="chat-talk mytalk">
+        <span class="talk-content">
+          {% for i in dataset %}
+            {{ i.datetime }}<br>
+            気温：{{ i.temperature }}</br>
+            水分量：{{ i.moisture }}</br>
+            照度：{{ i.illuminance }}</br>
+          {% endfor %}
+        </span>
+        <span class="talk-content">
+          わたぬき、水やる？
+        </span>
+      </p>
+    </div>
+  <!-- <table class="data_table">
+    <thead>
+      <tr>
+        <th>datetime</th>
+        <th>気温</th>
+        <th>水分量</th>
+        <th>照度</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for i in dataset %}
+      <tr>
+        <td align="center">{{ i.datetime }}</td>
+        <td align="center">{{ i.temperature }}</td>
+        <td align="center">{{ i.moisture }}</td>
+        <td align="center">{{ i.illuminance }}</td>
+      </tr>
     {% endfor %}
-    </span>
-    <span class="talk-content">
-    わたぬき、水やる？
-    </span>
-    </p>
-    </div>
-    <!-- <table class="data_table">
-      <thead>
-        <tr>
-          <th>datetime</th>
-          <th>気温</th>
-          <th>水分量</th>
-          <th>照度</th>
-        </tr>
-      </thead>
-      <tbody>
-      {% for i in dataset %}
-        <tr>
-          <td align="center">{{ i.datetime }}</td>
-          <td align="center">{{ i.temperature }}</td>
-          <td align="center">{{ i.moisture }}</td>
-          <td align="center">{{ i.illuminance }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table> -->
-    </div>
-
-    <svg class="zu1" id="svg1" width="400" height="450">
+    </tbody>
+  </table> -->
+  </div>
+  <svg class="zu1" id="svg1" width="400" height="450">
     <image id="zu1" x="0" y="0" width="100%" height="100%" opacity="1"></image>
-    </svg>
-
-    <div id="area2">
-    <form class="memo">
+  </svg>
+  <div id="area2">
+    <!-- <form class="memo">
     <p>メモ<br>
       <textarea name="textarea" rows="10" cols="50" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}">テキストを入力</textarea></p>
       <p><input type="submit" value="送信する"></p>
+    </form> -->
+    <div id="memo_area" width="600" height="560">
+      <p><font size="6px" color="blue">Memo</font></p>
+    <form name="memo_form" action="Sample.html">
+      <textarea id="memo" name="memo" rows="10" cols="56" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}"></textarea><br>
+      <a id="memo_write_button" onclick="memo_write()" class="btn btn-default btn-sm">write</a>
     </form>
+    </div>
     <!-- <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=340,user-scalable=no;" />
     <title>Cal Example</title>
     <link rel="stylesheet" href="cal.css" type="text/css">
-  </head> -->
-  <div class="Calendar">
-    <!-- 0番目のカレンダーを入れる箱ね -->
-    <div id="cal0" class="cal_wrapper">
-      Calendar Loading
-    </div>
-    <!-- <div class="schedule_wrapper">
+    </head> -->
+    <div class="Calendar">
+      <!-- 0番目のカレンダーを入れる箱ね -->
+      <div id="cal0" class="cal_wrapper">
+        Calendar Loading
+      </div>
+      <!-- <div class="schedule_wrapper">
       <h3>予定表</h3> -->
       <!-- 0番目の予定リストを表示する場合は以下のタグを配置 -->
       <!-- <div id="schedule0" class="schedule_list">
-        <ol>
-          <li value="210">テスト</li>
-        </ol>
+      <ol>
+      <li value="210">テスト</li>
+      </ol>
       </div>
-    </div> -->
-    <!-- 1番目のカレンダーを入れる箱ね -->
-    <!-- <div id="cal1" class="cal_wrapper">
+      </div> -->
+      <!-- 1番目のカレンダーを入れる箱ね -->
+      <!-- <div id="cal1" class="cal_wrapper">
       Calendar Loading
-    </div> -->
-    <!-- <script type="text/javascript" charset="UTF-8" src="cal.js"></script> -->
+      </div> -->
+      <!-- <script type="text/javascript" charset="UTF-8" src="cal.js"></script> -->
+    </div>
   </div>
-
-    </div>
-    </div>
+</div>
 
 <script type="text/javascript" charset="UTF-8">
 // Cal3.4.5 / 2014-08-05
@@ -257,8 +260,6 @@ border: 1px solid #b9b9b9;
 // charset UTF-8
 
 var calObj = new Array();
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //【以下カレンダー0の設定】
 
@@ -612,48 +613,74 @@ function cal_getMonth(){
 cal_init();
 </script>
 
-    <script type="text/javascript">
-    d3.select("#zu1").attr("xlink:href","/site_media/"+"zu1.jpg");
-    var ave_tmp = 0;
-    var ave_moi = 0;
+<script type="text/javascript">
+  d3.select("#zu1").attr("xlink:href","/site_media/"+"zu1.jpg");
+  //memoをデータベースに転送
+  function memo_write() {
+    var memo_text = document.memo_form.memo.value;
+    memo_text = memo_text.replace(/\r\n/g, '\n');
+    var memo_lines = memo_text.split('\n');
+    $.ajax({
+      type: 'GET',
+      url: make_url() + "&memo=" + memo_lines,
+      dataType: 'json',
+    });
+  }
+  //データベースのメモを表示
+  function memo_get() {
+    var memo_text = "";
     var cnt = 0;
-    var recently_cnt = 0;
-    var rec_ave_tmp = 0;
-    var rec_ave_moi = 0;
-    var max_tmp = 0;
-    var max_moi = 0;
-    var min_tmp = 9999;
-    var min_moi = 9999;
-    recently_cnt = {{data_len}} - 10;
-    console.log(recently_cnt);
-    {% for i in dataset %}
-    ave_tmp = ave_tmp + {{ i.temperature }};
-    ave_moi = ave_moi + {{ i.moisture }};
-    if ({{i.temperature}} > max_tmp){
-      max_tmp = {{i.temperature}}
+    {% for i in memo_data %}
+    if (cnt == 0) {
+      memo_text = memo_text + "{{i}}";
     }
-    if ({{i.moisture}} > max_moi){
-      max_moi = {{i.moisture}}
+    else {
+       memo_text = memo_text + "\n" + "{{i}}";
     }
-    if ({{i.temperature}} < min_tmp){
-      min_tmp = {{i.temperature}}
-    }
-    if ({{i.temperature}} < min_moi){
-      min_moi = {{i.moisture}}
-    }
-    if (cnt >= recently_cnt){
-      rec_ave_tmp = rec_ave_tmp + {{ i.temperature }};
-      rec_ave_moi = rec_ave_moi + {{ i.moisture }};
-    }
-    cnt = cnt + 1;
+    cnt++
     {% endfor %}
-    console.log(cnt);
-    ave_tmp = ave_tmp/cnt;
-    ave_moi = ave_moi/cnt;
-    rec_ave_tmp = rec_ave_tmp/10;
-    rec_ave_moi = rec_ave_moi/10;
-    </script>
-    <!-- <div id="table_area">
+    document.memo_form.memo.value = memo_text;
+  }
+  var ave_tmp = 0;
+  var ave_moi = 0;
+  var cnt = 0;
+  var recently_cnt = 0;
+  var rec_ave_tmp = 0;
+  var rec_ave_moi = 0;
+  var max_tmp = 0;
+  var max_moi = 0;
+  var min_tmp = 9999;
+  var min_moi = 9999;
+  recently_cnt = {{data_len}} - 10;
+  console.log(recently_cnt);
+  {% for i in dataset %}
+  ave_tmp = ave_tmp + {{ i.temperature }};
+  ave_moi = ave_moi + {{ i.moisture }};
+  if ({{i.temperature}} > max_tmp){
+    max_tmp = {{i.temperature}}
+  }
+  if ({{i.moisture}} > max_moi){
+    max_moi = {{i.moisture}}
+  }
+  if ({{i.temperature}} < min_tmp){
+    min_tmp = {{i.temperature}}
+  }
+  if ({{i.temperature}} < min_moi){
+    min_moi = {{i.moisture}}
+  }
+  if (cnt >= recently_cnt){
+    rec_ave_tmp = rec_ave_tmp + {{ i.temperature }};
+    rec_ave_moi = rec_ave_moi + {{ i.moisture }};
+  }
+  cnt = cnt + 1;
+  {% endfor %}
+  console.log(cnt);
+  ave_tmp = ave_tmp/cnt;
+  ave_moi = ave_moi/cnt;
+  rec_ave_tmp = rec_ave_tmp/10;
+  rec_ave_moi = rec_ave_moi/10;
+</script>
+<!-- <div id="table_area">
     <table class="ave_table">
       <thead>
         <th>平均気温(全体)</th>
@@ -702,6 +729,6 @@ cal_init();
         </tr>
       </tbody>
     </table>
-    </div> -->
+</div> -->
 
 {% endblock content %}
