@@ -1,7 +1,7 @@
 
 {% extends "base.html" %}
 
-{% block title %}データ一覧{% endblock title %}
+{% block title %}メインページ{% endblock title %}
 
 {% block extrahead %}
 <style>
@@ -25,7 +25,7 @@ table {
   height:450px;
   width:350px;
   overflow-y:scroll;
-  background-color: white;
+  background-color: #D8F3F0;
 }
 .zu1 {
   height: 400px;
@@ -155,7 +155,7 @@ border: 1px solid #b9b9b9;
   float: right;
 }
 .chat-talk.mytalk .talk-content {
-  margin: 0 70px 0 auto;
+  margin: 10px 10px 0 auto;
   color: #000;
   background: #78FF6C;
 }
@@ -169,18 +169,13 @@ border: 1px solid #b9b9b9;
 {% endblock %}
 
 {% block content %}
-    <h3 class="page-header">データ一覧</h3>
+    <h3 class="page-header">メインページ</h3>
 
     <div id="area1">
     <div class="data_table_scr">
 
     <div id="chat-frame">
-    <p class="chat-talk">
-    <span class="talk-icon">
-    <svg class="zu2" id="svg1" width="50" height="50">
-    <image id="zu2" x="0" y="0" width="100%" height="100%" opacity="1"></image>
-    </svg>
-    </span>
+    <p class="chat-talk mytalk">
     <span class="talk-content">
       {% for i in dataset %}
         {{ i.datetime }}<br>
@@ -506,8 +501,8 @@ function cal_create(calId){
     else if(calObj[calId].click){
       var clickOpenURI = calObj[calId].clickURI;
       clickOpenURI = clickOpenURI.replace(/_YEAR_/ig,year);
-      clickOpenURI = clickOpenURI.replace(/_MONTH_/ig,month);
-      clickOpenURI = clickOpenURI.replace(/_DAY_/ig,dayCnt);
+      clickOpenURI = clickOpenURI.replace(/_MONTH_/ig,("0"+month).slice(-2));
+      clickOpenURI = clickOpenURI.replace(/_DAY_/ig,("0"+dayCnt).slice(-2));
       if((calObj[calId].clickClassName != "" && tdClassNames[calObj[calId].clickClassName]) || calObj[calId].clickClassName == ""){
         tdMouse += " onclick=\"cal_open(\'"+clickOpenURI+"\')\"";
         tdClassArr.push('pointer');
@@ -619,7 +614,6 @@ cal_init();
 
     <script type="text/javascript">
     d3.select("#zu1").attr("xlink:href","/site_media/"+"zu1.jpg");
-    d3.select("#zu2").attr("xlink:href","/site_media/"+"zu1.jpg");
     var ave_tmp = 0;
     var ave_moi = 0;
     var cnt = 0;
@@ -659,7 +653,7 @@ cal_init();
     rec_ave_tmp = rec_ave_tmp/10;
     rec_ave_moi = rec_ave_moi/10;
     </script>
-    <div id="table_area">
+    <!-- <div id="table_area">
     <table class="ave_table">
       <thead>
         <th>平均気温(全体)</th>
@@ -708,6 +702,6 @@ cal_init();
         </tr>
       </tbody>
     </table>
-    </div>
+    </div> -->
 
 {% endblock content %}
