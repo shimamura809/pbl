@@ -14,7 +14,7 @@
   font-weight: bold;
   margin-top: 10px;
   margin-bottom: 10px;
-  margin-left: 33%;
+  margin-left: 31%;
   margin-right: 31%;
   display: inline;
 }
@@ -152,7 +152,7 @@ p.tabs
   }
   #memo_write_button {
     font-size: 1.4em;
-    padding: 2px 170px;
+    /*padding: 2px 170px;*/
   }
   .left {
     float: left;
@@ -181,8 +181,8 @@ p.tabs
     <div id="memo_area" width="600" height="560">
       <p><font size="6px" color="blue">Memo</font></p>
       <form name="memo_form" action="Sample.html">
-        <textarea id="memo" name="memo" rows="10" cols="58" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}"></textarea><br>
-        <a id="memo_write_button" onclick="memo_write()" class="btn btn-default btn-sm">write</a>
+        <textarea id="memo" class="control-form" name="memo" rows="10" cols="58" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}"></textarea><br>
+        <a id="memo_write_button" onclick="memo_write()" class="btn btn-info btn-block">送信</a>
       </form>
     </div>
     <div id="table_area" width=700 height=560>
@@ -442,12 +442,12 @@ function make_link() {
   var next_dt = moment(dt).add(1,"days").format("YYYYMMDD");
   d3.select(".left").append("a").attr({
     "id": "prev_day",
-    "class": "btn btn-default btn-sm",
+    "class": "btn btn-info btn-sm",
     "href": "{% url 'AIoT:detail' %}" + "?datetime=" + prev_dt,
   }).text("前日");
   d3.select(".right").append("a").attr({
     "id": "next_day",
-    "class": "btn btn-default btn-sm",
+    "class": "btn btn-info btn-sm",
     "href": "{% url 'AIoT:detail' %}" + "?datetime=" + next_dt,
   }).text("翌日");
 }
