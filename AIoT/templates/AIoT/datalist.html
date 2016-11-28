@@ -284,44 +284,53 @@ td {
     {% endfor %}
     document.memo_form.memo.value = memo_text;
   }
-  var ave_tmp = 0;
-  var ave_moi = 0;
-  var cnt = 0;
-  var recently_cnt = 0;
-  var rec_ave_tmp = 0;
-  var rec_ave_moi = 0;
-  var max_tmp = 0;
-  var max_moi = 0;
-  var min_tmp = 9999;
-  var min_moi = 9999;
-  recently_cnt = {{data_len}} - 10;
-  console.log(recently_cnt);
-  {% for i in dataset %}
-  ave_tmp = ave_tmp + {{ i.temperature }};
-  ave_moi = ave_moi + {{ i.moisture }};
-  if ({{i.temperature}} > max_tmp){
-    max_tmp = {{i.temperature}}
-  }
-  if ({{i.moisture}} > max_moi){
-    max_moi = {{i.moisture}}
-  }
-  if ({{i.temperature}} < min_tmp){
-    min_tmp = {{i.temperature}}
-  }
-  if ({{i.temperature}} < min_moi){
-    min_moi = {{i.moisture}}
-  }
-  if (cnt >= recently_cnt){
-    rec_ave_tmp = rec_ave_tmp + {{ i.temperature }};
-    rec_ave_moi = rec_ave_moi + {{ i.moisture }};
-  }
-  cnt = cnt + 1;
-  {% endfor %}
-  console.log(cnt);
-  ave_tmp = ave_tmp/cnt;
-  ave_moi = ave_moi/cnt;
-  rec_ave_tmp = rec_ave_tmp/10;
-  rec_ave_moi = rec_ave_moi/10;
+
+  //url作成用関数
+function make_url() {
+  var year = "{{datetime.year}}";
+  var month = ("0"+"{{datetime.month}}").slice(-2);
+  var day = ("0"+"{{datetime.day}}").slice(-2);
+  var url = "{% url 'AIoT:detail_json' %}" + "?datetime=" + year + month + day;
+  return url;
+}
+
+memo_get();
+  // var ave_tmp = 0;
+  // var ave_moi = 0;
+  // var cnt = 0;
+  // var recently_cnt = 0;
+  // var rec_ave_tmp = 0;
+  // var rec_ave_moi = 0;
+  // var max_tmp = 0;
+  // var max_moi = 0;
+  // var min_tmp = 9999;
+  // var min_moi = 9999;
+  // recently_cnt = {{data_len}} - 10;
+  // {% for i in dataset %}
+  // ave_tmp = ave_tmp + {{ i.temperature }};
+  // ave_moi = ave_moi + {{ i.moisture }};
+  // if ({{i.temperature}} > max_tmp){
+  //   max_tmp = {{i.temperature}}
+  // }
+  // if ({{i.moisture}} > max_moi){
+  //   max_moi = {{i.moisture}}
+  // }
+  // if ({{i.temperature}} < min_tmp){
+  //   min_tmp = {{i.temperature}}
+  // }
+  // if ({{i.temperature}} < min_moi){
+  //   min_moi = {{i.moisture}}
+  // }
+  // if (cnt >= recently_cnt){
+  //   rec_ave_tmp = rec_ave_tmp + {{ i.temperature }};
+  //   rec_ave_moi = rec_ave_moi + {{ i.moisture }};
+  // }
+  // cnt = cnt + 1;
+  // {% endfor %}
+  // ave_tmp = ave_tmp/cnt;
+  // ave_moi = ave_moi/cnt;
+  // rec_ave_tmp = rec_ave_tmp/10;
+  // rec_ave_moi = rec_ave_moi/10;
 </script>
 <!-- <div id="table_area">
     <table class="ave_table">

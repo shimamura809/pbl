@@ -298,7 +298,8 @@ function cal_list2day_out(obj){
     d.getElementById(calObj.currentList).style.backgroundColor = '#FFF';
 }
 function cal_open(uri){
-  window.open(uri);
+  //window.open(uri);
+  window.location.href = uri;
 }
 function cal_disp_text(textId){
   var d = window.document;

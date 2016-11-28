@@ -18,16 +18,16 @@ db = client.pbl
 # データリスト画面 http://127.0.0.1:8000/AIoT/datalist/
 def datalist(request):
   dt = datetime.now()
-  memo_dt = dt_from_14digits_to_iso(str(dt.year) + str(dt.month) + str(dt.day) + "000000")
+  memo_dt = str(dt.year) + str(dt.month) + str(dt.day)
   memo_data = []
-  memo_data += db.collect_memo.find({"datetime":dt}).sort("datetime", ASCENDING)
+  memo_data += db.collect_memo.find({"datetime":memo_dt}).sort("datetime", ASCENDING)
   memo = []
   if len(memo_data) > 0:
     for i in range(len(memo_data[0]["memo"])):
       memo.append("" + memo_data[0]["memo"][i])
   dataset = []
   dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING).limit(1)
-  return render_to_response('AIoT/datalist.html', {"dataset":dataset,"data_len":len(dataset),"memo_data":memo})
+  return render_to_response('AIoT/datalist.html', {"dataset":dataset,"data_len":len(dataset),"datetime":dt,"memo_data":memo})
 
 # 詳細画面 http://127.0.0.1:8000/AIoT/detail/20161031
 def detail(request):
