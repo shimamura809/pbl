@@ -18,7 +18,7 @@ db = client.pbl
 # データリスト画面 http://127.0.0.1:8000/AIoT/datalist/
 def datalist(request):
   dt = datetime.now()
-  memo_dt = str(dt.year) + str(dt.month) + str(dt.day)
+  memo_dt = str(dt.year) + ("0"+str(dt.month))[-2:] + ("0"+str(dt.day))[-2:]
   memo_data = []
   memo_data += db.collect_memo.find({"datetime":memo_dt}).sort("datetime", ASCENDING)
   memo = []
@@ -40,7 +40,7 @@ def detail(request):
         memo.append("" + memo_data[0]["memo"][i])
     if dt == 'now':
       dt = datetime.now()
-      gt = dt_from_14digits_to_iso(str(dt.year) + str(dt.month) + str(dt.day) + "000000")
+      gt = dt_from_14digits_to_iso(str(dt.year) + ("0"+str(dt.month))[-2:] + ("0"+str(dt.day))[-2:] + "000000")
     else:
         gt = dt_from_14digits_to_iso(dt+"000000")
     lt = gt + timedelta(hours = 23, minutes = 50)
