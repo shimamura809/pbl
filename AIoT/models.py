@@ -29,3 +29,9 @@ class collect_memo(Document):
     memo        = StringField()
 
     meta = DB_ALIAS
+
+class threshold(Document):
+    _id         = StringField(max_length=255)
+    threshold   = StringField(max_length=255)
+
+    meta = DB_ALIAS

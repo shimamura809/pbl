@@ -201,6 +201,8 @@ p.tabs
     d3.select("#zu1").attr("xlink:href","/site_media/"+"zu1.jpg");
     d3.select("#header").text("{{datetime.year}}年 {{datetime.month}}月 {{datetime.day}}日");
 
+//日付に応じた画像を表示
+
 //memoをデータベースに転送
 function memo_write() {
   var memo_text = document.memo_form.memo.value;
@@ -208,7 +210,7 @@ function memo_write() {
   var memo_lines = memo_text.split('\n');
   $.ajax({
           type: 'GET',
-          url: make_url() + "&memo=" + memo_lines,
+          url: make_url("memo") + "&memo=" + memo_lines,
           dataType: 'json',
         });
 }
@@ -230,11 +232,13 @@ function memo_get() {
 }
 
 //url作成用関数
-function make_url() {
+function make_url(str) {
   var year = "{{datetime.year}}";
   var month = ("0"+"{{datetime.month}}").slice(-2);
   var day = ("0"+"{{datetime.day}}").slice(-2);
-  var url = "{% url 'AIoT:detail_json' %}" + "?datetime=" + year + month + day;
+  if (str == "memo"){
+    var url = "{% url 'AIoT:memo_json' %}" + "?datetime=" + year + month + day;
+  }
   return url;
 }
 
@@ -337,7 +341,7 @@ tab.selectAll("p.tab")
   if (d == "temperature") {
     return "温度";
   } else if (d == "moisture") {
-    return "湿度";
+    return "水分量";
   } else if (d == "illuminance") {
     return "照度";
   }
@@ -418,7 +422,7 @@ function set_data() {
 //表作成用関数
 function make_table(t_body_list,m_body_list,i_body_list) {
   var t_thead_list = ["最大温度","最小温度","平均温度"];
-  var m_thead_list = ["最大湿度","最小湿度","平均湿度"];
+  var m_thead_list = ["最大水分量","最小水分量","平均水分量"];
   var i_thead_list = ["最大照度","最小照度","平均照度"];
   var t_table = d3.select("#table_area").append("table").attr("class", "tmp_table");
   var m_table = d3.select("#table_area").append("table").attr("class", "moi_table");

@@ -16,20 +16,28 @@ h3 {
 table {
   margin-top: 8px;
 }
-/*.data_table {
-  height:450px;
-  width:350px;
-  border-collapse: separate;
-}*/
+body {
+  background-color: mintcream;
+}
 .data_table_scr {
   height:450px;
   width:350px;
   overflow-y:scroll;
   background-color: #D8F3F0;
+  border: 4px solid #ccc;
+}
+#threshold_select{
+  margin-top: 10px;
+  border: 4px solid #ccc;
+  background-color: white;
 }
 .zu1 {
-  height: 400px;
-  width: 450px;
+  height: 590px;
+  width: 430px;
+  border: 4px solid mistyrose;
+  margin-left: 1px;
+  margin-right: 1px;
+  background-color: white;
 }
 .memo {
   height:300px;
@@ -37,8 +45,12 @@ table {
 }
 .Calendar {
   width: 340px;
+  margin: auto;
 }
-#area1 {
+#TABLE_1 tbody{
+  /*border: 4px solid #ccc;*/
+}
+#area0 {
   /* boxレイアウトの指定 */
   display: box;
   display: -webkit-box;
@@ -47,9 +59,18 @@ table {
   box-pack: center;
   -webkit-box-pack: center;
   -moz-box-pack: center;
-  border: 1px solid #ccc;
+  /*border: 1px solid #ccc;*/
   border-radius: 5px;
+  margin-top: 50px;
+  /*margin: auto;*/
 }
+
+#area2 {
+  border: 4px solid #ccc;
+  background-color: white;
+  height: 590px;
+}
+
 th {
   width: 25%;
   padding: 6px;
@@ -65,27 +86,7 @@ td {
   background-color: #fff;
   border: 1px solid #b9b9b9;
 }
-.ave_table, .rec_ave_table, .max_table, .min_table {
-  width: 27%;
-  border-collapse: separate;
-  clear: both;
-}
-.ave_table th {
-  background-color: yellow;
-  border: 2px solid orange;
-}
-.rec_ave_table th {
-  background-color: lime;
-  border: 2px solid green;
-}
-.max_table th {
-  background-color: pink;
-  border: 2px solid red;
-}
-.min_table th {
-  background-color: aliceblue;
-  border: 2px solid blue;
-}
+
 #table_area {
   /* boxレイアウトの指定 */
   display: box;
@@ -163,14 +164,13 @@ td {
 }
 #memo_write_button {
     font-size: 1.4em;
-    padding: 2px 150px;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<h3 class="page-header">メインページ</h3>
 
+<div id="area0">
 <div id="area1">
   <div class="data_table_scr">
     <div id="chat-frame">
@@ -188,68 +188,31 @@ td {
         </span>
       </p>
     </div>
-  <!-- <table class="data_table">
-    <thead>
-      <tr>
-        <th>datetime</th>
-        <th>気温</th>
-        <th>水分量</th>
-        <th>照度</th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for i in dataset %}
-      <tr>
-        <td align="center">{{ i.datetime }}</td>
-        <td align="center">{{ i.temperature }}</td>
-        <td align="center">{{ i.moisture }}</td>
-        <td align="center">{{ i.illuminance }}</td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table> -->
   </div>
+  <div id="threshold_select">
+    <p><font size="5px" color="blue">水分量閾値</font></p>
+    <form name="threshold_form" action="Sample.html">
+      <textarea id="threshold" name="threshold"></textarea><br>
+      <a id="threshold_write_button" onclick="threshold_write()" class="btn btn-info btn-block">更新</a>
+    </form>
+  </div>
+</div>
   <svg class="zu1" id="svg1" width="400" height="450">
     <image id="zu1" x="0" y="0" width="100%" height="100%" opacity="1"></image>
   </svg>
   <div id="area2">
-    <!-- <form class="memo">
-    <p>メモ<br>
-      <textarea name="textarea" rows="10" cols="50" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}">テキストを入力</textarea></p>
-      <p><input type="submit" value="送信する"></p>
-    </form> -->
-    <div id="memo_area" width="600" height="560">
+    <div id="memo_area">
       <p><font size="6px" color="blue">Memo</font></p>
     <form name="memo_form" action="Sample.html">
       <textarea id="memo" name="memo" rows="10" cols="56" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}"></textarea><br>
-      <a id="memo_write_button" onclick="memo_write()" class="btn btn-default btn-sm">write</a>
+      <a id="memo_write_button" onclick="memo_write()" class="btn btn-info btn-block">送信</a>
     </form>
     </div>
-    <!-- <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=340,user-scalable=no;" />
-    <title>Cal Example</title>
-    <link rel="stylesheet" href="cal.css" type="text/css">
-    </head> -->
     <div class="Calendar">
       <!-- 0番目のカレンダーを入れる箱ね -->
       <div id="cal0" class="cal_wrapper">
         Calendar Loading
       </div>
-      <!-- <div class="schedule_wrapper">
-      <h3>予定表</h3> -->
-      <!-- 0番目の予定リストを表示する場合は以下のタグを配置 -->
-      <!-- <div id="schedule0" class="schedule_list">
-      <ol>
-      <li value="210">テスト</li>
-      </ol>
-      </div>
-      </div> -->
-      <!-- 1番目のカレンダーを入れる箱ね -->
-      <!-- <div id="cal1" class="cal_wrapper">
-      Calendar Loading
-      </div> -->
-      <!-- <script type="text/javascript" charset="UTF-8" src="cal.js"></script> -->
     </div>
   </div>
 </div>
@@ -265,12 +228,28 @@ td {
     var memo_lines = memo_text.split('\n');
     $.ajax({
       type: 'GET',
-      url: make_url() + "&memo=" + memo_lines,
+      url: make_url("memo") + "&memo=" + memo_lines,
       dataType: 'json',
     });
   }
-  //データベースのメモを表示
-  function memo_get() {
+  //閾値をデータベースに転送
+  function threshold_write() {
+    var threshold_text = document.threshold_form.threshold.value;
+    console.log(threshold_text);
+    console.log(isNaN(threshold_text));
+    if(isNaN(threshold_text)){
+      console.log("miss");
+      window.alert("半角数字で入力してください");
+    } else{
+      $.ajax({
+        type: 'GET',
+        url: make_url("threshold") + "?threshold=" + threshold_text,
+        dataType: 'json',
+      });
+    }
+  }
+  //データベースのメモ・閾値を表示
+  function db_get() {
     var memo_text = "";
     var cnt = 0;
     {% for i in memo_data %}
@@ -283,104 +262,23 @@ td {
     cnt++
     {% endfor %}
     document.memo_form.memo.value = memo_text;
+    document.threshold_form.threshold.value = "{{threshold}}";
   }
 
   //url作成用関数
-function make_url() {
+function make_url(str) {
   var year = "{{datetime.year}}";
   var month = ("0"+"{{datetime.month}}").slice(-2);
   var day = ("0"+"{{datetime.day}}").slice(-2);
-  var url = "{% url 'AIoT:detail_json' %}" + "?datetime=" + year + month + day;
+  if (str == "memo"){
+    var url = "{% url 'AIoT:memo_json' %}" + "?datetime=" + year + month + day;
+  } else if (str == "threshold") {
+    var url = "{% url 'AIoT:threshold_json' %}";
+  }
   return url;
 }
 
 memo_get();
-  // var ave_tmp = 0;
-  // var ave_moi = 0;
-  // var cnt = 0;
-  // var recently_cnt = 0;
-  // var rec_ave_tmp = 0;
-  // var rec_ave_moi = 0;
-  // var max_tmp = 0;
-  // var max_moi = 0;
-  // var min_tmp = 9999;
-  // var min_moi = 9999;
-  // recently_cnt = {{data_len}} - 10;
-  // {% for i in dataset %}
-  // ave_tmp = ave_tmp + {{ i.temperature }};
-  // ave_moi = ave_moi + {{ i.moisture }};
-  // if ({{i.temperature}} > max_tmp){
-  //   max_tmp = {{i.temperature}}
-  // }
-  // if ({{i.moisture}} > max_moi){
-  //   max_moi = {{i.moisture}}
-  // }
-  // if ({{i.temperature}} < min_tmp){
-  //   min_tmp = {{i.temperature}}
-  // }
-  // if ({{i.temperature}} < min_moi){
-  //   min_moi = {{i.moisture}}
-  // }
-  // if (cnt >= recently_cnt){
-  //   rec_ave_tmp = rec_ave_tmp + {{ i.temperature }};
-  //   rec_ave_moi = rec_ave_moi + {{ i.moisture }};
-  // }
-  // cnt = cnt + 1;
-  // {% endfor %}
-  // ave_tmp = ave_tmp/cnt;
-  // ave_moi = ave_moi/cnt;
-  // rec_ave_tmp = rec_ave_tmp/10;
-  // rec_ave_moi = rec_ave_moi/10;
 </script>
-<!-- <div id="table_area">
-    <table class="ave_table">
-      <thead>
-        <th>平均気温(全体)</th>
-        <th>平均水分量(全体)</th>
-      </thead>
-      <tbody>
-        <tr>
-          <td align="center"><script>document.write(ave_tmp);</script></td>
-          <td align="center"><script>document.write(ave_moi);</script></td>
-        </tr>
-      </tbody>
-    </table>
-    <table class="rec_ave_table">
-      <thead>
-        <th>平均気温(直近10件)</th>
-        <th>平均水分量(直近10件)</th>
-      </thead>
-      <tbody>
-        <tr>
-          <td align="center"><script>document.write(rec_ave_tmp);</script></td>
-          <td align="center"><script>document.write(rec_ave_moi);</script></td>
-        </tr>
-      </tbody>
-    </table>
-    <table class="max_table">
-      <thead>
-        <th>最大気温</th>
-        <th>最大水分量</th>
-      </thead>
-      <tbody>
-        <tr>
-          <td align="center"><script>document.write(max_tmp);</script></td>
-          <td align="center"><script>document.write(max_moi);</script></td>
-        </tr>
-      </tbody>
-    </table>
-    <table class="min_table">
-      <thead>
-        <th>最小気温</th>
-        <th>最小水分量</th>
-      </thead>
-      <tbody>
-        <tr>
-          <td align="center"><script>document.write(min_tmp);</script></td>
-          <td align="center"><script>document.write(min_moi);</script></td>
-        </tr>
-      </tbody>
-    </table>
-</div> -->
 
 {% endblock content %}
