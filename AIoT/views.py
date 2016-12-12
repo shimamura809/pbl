@@ -7,6 +7,7 @@ from mongoengine import *
 from pymongo import *
 import requests
 import os.path
+import os
 
 import json
 import math
@@ -56,6 +57,18 @@ def detail(request):
     dataset = []
     dataset += db.collect_data.find({"datetime":{"$gte":gt, "$lte":lt}}).sort("datetime", ASCENDING)
     return render_to_response('AIoT/detail.html', {"dataset":dataset,"data_len":len(dataset),"datetime":gt, "memo_data":memo, "picture":picture,"pic_dt":dt})
+
+# 画像一覧用の関数
+def pict_list(request):
+  # pict_list = []
+  pict_list = os.listdir(os.path.dirname(os.path.abspath(__file__)) + '/../media/')
+  pict_list.remove('no_data.jpg')
+  pict_list.remove('zu1.jpg')
+  print(pict_list)
+  for i in range(len(pict_list)):
+    pict_list[i] = (pict_list[i].split(".jpg"))[0]
+  print(pict_list)
+  return render_to_response('AIoT/pict_list.html', {"pict_list":pict_list})
 
 def memo_json(request):
   #urlから各値を取得

@@ -1,0 +1,86 @@
+
+{% extends "base.html" %}
+
+{% block title %}メインページ{% endblock title %}
+
+{% block extrahead %}
+<style>
+h3 {
+  font-family: sans-serif;
+  font-size: 30px;
+  font-weight: bold;
+}
+.container {
+  width: 1280px;
+  height: 5000px;
+  }
+table {
+  margin-top: 8px;
+}
+body {
+  background-color: mintcream;
+}
+
+/*.zu1 {
+  height: 590px;
+  width: 430px;
+  border: 4px solid mistyrose;
+  margin-left: 1px;
+  margin-right: 1px;
+  background-color: white;
+}*/
+</style>
+{% endblock %}
+{% block content %}
+<svg class="zu1" id="svg1" width="100%" height="100%">
+</svg>
+<script type="text/javascript">
+
+var pict_list = []
+{% for i in pict_list %}
+pict_list.push({{i}})
+{% endfor %}
+
+var svgArea = d3.select('#svg1');
+                  // .append('svg')
+                  // .attr({
+                  //   'width': "100%",
+                  //   'height': "100%",
+                  // });
+
+var svgImgs = svgArea.selectAll().data(pict_list).enter().append("svg");
+svgImgs.append("image").attr({
+      "xlink:href":function (d){
+        return "/site_media/"+d+".jpg";
+      },
+      "opacity":"1",
+      "id": function(d){return d;},
+      'width' : "300px",
+      'height' : "200px",
+      "float" : "left",
+      "margin" : "auto",
+      "display": "block",
+      'x' : function (d, i) { return i%4 * 310;},
+      "y" : function (d, i) { return Math.floor(i/4) * 250 + 20 },
+    });
+
+svgImgs.append("text").text(function(d){return d})
+.attr({
+  'x' : function (d, i) { return i%4 * 310 + 75;},
+  "y" : function (d, i) { return Math.floor(i/4) * 250 + 250 },
+  "font-size":"30px",
+});
+
+// if (pict_list.length != 0){
+//   for (var i = 0; i < pict_list.length; i++){
+//     d3.select("#svg1").append("image").attr({
+//       "xlink:href":"/site_media/"+pict_list[i]+".jpg",
+//       "opacity":"1",
+//       "id": pict_list[i],
+//     });
+  // }
+// }
+
+</script>
+
+{% endblock content %}
