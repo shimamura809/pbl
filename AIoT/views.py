@@ -6,6 +6,7 @@ from AIoT.models import test, collect_data
 from mongoengine import *
 from pymongo import *
 import requests
+import os.path
 
 import json
 import math
@@ -27,9 +28,13 @@ def datalist(request):
       memo.append("" + memo_data[0]["memo"][i])
   threshold = []
   threshold += db.threshold.find()
+  if db.threshold.count() == 0:
+    threshold = ""
+  else:
+    threshold = threshold[0]["threshold"]
   dataset = []
   dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING).limit(1)
-  return render_to_response('AIoT/datalist.html', {"dataset":dataset,"data_len":len(dataset),"datetime":dt,"memo_data":memo,"threshold":threshold[0]["threshold"]})
+  return render_to_response('AIoT/datalist.html', {"dataset":dataset,"data_len":len(dataset),"datetime":dt,"memo_data":memo,"threshold":threshold})
 
 # 詳細画面 http://127.0.0.1:8000/AIoT/detail/20161031
 def detail(request):
@@ -42,13 +47,15 @@ def detail(request):
         memo.append("" + memo_data[0]["memo"][i])
     if dt == 'now':
       dt = datetime.now()
-      gt = dt_from_14digits_to_iso(str(dt.year) + ("0"+str(dt.month))[-2:] + ("0"+str(dt.day))[-2:] + "000000")
+      dt = str(dt.year) + ("0"+str(dt.month))[-2:] + ("0"+str(dt.day))[-2:]
+      gt = dt_from_14digits_to_iso(dt + "000000")
     else:
         gt = dt_from_14digits_to_iso(dt+"000000")
     lt = gt + timedelta(hours = 23, minutes = 50)
+    picture = os.path.exists(os.path.dirname(os.path.abspath(__file__)) + '/../media/'+dt+".jpg")
     dataset = []
     dataset += db.collect_data.find({"datetime":{"$gte":gt, "$lte":lt}}).sort("datetime", ASCENDING)
-    return render_to_response('AIoT/detail.html', {"dataset":dataset,"data_len":len(dataset),"datetime":gt, "memo_data":memo})
+    return render_to_response('AIoT/detail.html', {"dataset":dataset,"data_len":len(dataset),"datetime":gt, "memo_data":memo, "picture":picture,"pic_dt":dt})
 
 def memo_json(request):
   #urlから各値を取得

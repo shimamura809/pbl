@@ -15,8 +15,8 @@
   font-weight: bold;
   margin-top: 10px;
   margin-bottom: 10px;
-  margin-left: 30%;
-  margin-right: 30%;
+  margin-left: 25%;
+  margin-right: 25%;
   display: inline;
 }
 .left {
@@ -39,6 +39,8 @@
   }
 #content_area {
   display: block;
+  height: 100%;
+  overflow: hidden;
 }
 table {
   margin-top: 8px;
@@ -97,7 +99,7 @@ border: 1px solid #b9b9b9;
   float: left;
   /*display: block;*/
   border: 3px solid green;
-  background-color: white;
+  background-color: green;
   /*position: absolute;*/
   /*clear: left;*/
 }
@@ -113,9 +115,12 @@ body{
   float: right;
   /*display: inline;*/
 }
-/*#footer_area {
+#footer_area {
   display: block;
-}*/
+  margin-bottom: 5px;
+  margin-top: 10px;
+  /*position: fixed;*/
+}
 p.tabs
   {
     margin: 0px;
@@ -196,12 +201,16 @@ p.tabs
       <p><font size="6px" color="blue">データまとめ</font></p>
     </div>
     </div>
-    <!-- <div id="footer_area"></div> -->
+    <div id="footer_area"></div>
     <script type="text/javascript">
-    d3.select("#zu1").attr("xlink:href","/site_media/"+"zu1.jpg");
     d3.select("#header").text("{{datetime.year}}年 {{datetime.month}}月 {{datetime.day}}日");
 
 //日付に応じた画像を表示
+if ("{{picture}}" == "True"){
+  d3.select("#zu1").attr("xlink:href","/site_media/"+"{{pic_dt}}.jpg");
+} else {
+  d3.select("#zu1").attr("xlink:href","/site_media/"+"no_data.jpg");
+}
 
 //memoをデータベースに転送
 function memo_write() {
@@ -275,12 +284,12 @@ function make_linegraph(target) {
         var line = d3.svg.line().x(function(d) { return xScale(d.datetime)}).y(function(d) { return yScale(d.temperature)});
         var line_color = "red";
       } else if (target == "moisture") {
-        var yScale = d3.scale.linear().domain([0,100]).range([height, 0]);
-        var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(10).innerTickSize(-width).outerTickSize(2).tickPadding(8);
+        var yScale = d3.scale.linear().domain([0,moi_axis]).range([height, 0]);
+        var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(20).innerTickSize(-width).outerTickSize(2).tickPadding(8);
         var line = d3.svg.line().x(function(d) { return xScale(d.datetime)}).y(function(d) { return yScale(d.moisture)});
         var line_color = "blue";
       } else if (target == "illuminance") {
-        var yScale = d3.scale.linear().domain([0,1000]).range([height, 0]);
+        var yScale = d3.scale.linear().domain([0,ill_axis]).range([height, 0]);
         var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(20).innerTickSize(-width).outerTickSize(2).tickPadding(8);
         var line = d3.svg.line().x(function(d) { return xScale(d.datetime)}).y(function(d) { return yScale(d.illuminance)});
         var line_color = "yellow";
@@ -415,6 +424,16 @@ function set_data() {
     var t_body_list = [floatnum(max_tmp),floatnum(min_tmp),floatnum(ave_tmp)];
     var m_body_list = [floatnum(max_moi),floatnum(min_moi),floatnum(ave_moi)];
     var i_body_list = [floatnum(max_ill),floatnum(min_ill),floatnum(ave_ill)];
+    if (max_moi >= 1) {
+      moi_axis = Math.pow(10, String(max_moi).length);
+    } else {
+      moi_axis = 10;
+    }
+    if (max_ill >= 1) {
+      ill_axis = Math.pow(10, String(max_ill).length);
+    } else {
+      ill_axis = 10;
+    }
   }
   make_table(t_body_list,m_body_list,i_body_list);
 }
@@ -452,25 +471,39 @@ function make_link() {
   var dt = new Date({{datetime.year}},{{datetime.month}}-1,{{datetime.day}});
   var prev_dt = moment(dt).subtract(1,"days").format("YYYYMMDD");
   var next_dt = moment(dt).add(1,"days").format("YYYYMMDD");
+  var prev_we = moment(dt).subtract(1,"week").format("YYYYMMDD");
+  var next_we = moment(dt).add(1,"week").format("YYYYMMDD");
   d3.select(".left").append("a").attr({
     "id": "prev_day",
     "class": "btn btn-info btn-sm",
     "href": "{% url 'AIoT:detail' %}" + "?datetime=" + prev_dt,
   }).text("< 前日");
+  d3.select(".left").append("a").attr({
+    "id": "prev_week",
+    "class": "btn btn-success btn-sm",
+    "href": "{% url 'AIoT:detail' %}" + "?datetime=" + prev_we,
+  }).text("< 前週");
+  d3.select(".right").append("a").attr({
+    "id": "next_week",
+    "class": "btn btn-success btn-sm",
+    "href": "{% url 'AIoT:detail' %}" + "?datetime=" + next_we,
+  }).text("翌週 >");
   d3.select(".right").append("a").attr({
     "id": "next_day",
     "class": "btn btn-info btn-sm",
     "href": "{% url 'AIoT:detail' %}" + "?datetime=" + next_dt,
   }).text("翌日 >");
-  // d3.select("#footer_area").append("a").attr({
-  //   "id": "back_main",
-  //   "class": "btn btn-primary btn-block",
-  //   "href": "{% url 'AIoT:datalist' %}",
-  // }).text("メインページに戻る");
+  d3.select("#footer_area").append("a").attr({
+    "id": "back_main",
+    "class": "btn btn-primary btn-block",
+    "href": "{% url 'AIoT:datalist' %}",
+  }).text("メインページに戻る");
 }
 
 // データ
 var parameter_data = [];
+var moi_axis = 1000;
+var ill_axis = 1000;
 data_len = {{data_len}};
 set_data();
 make_linegraph("temperature");
