@@ -21,18 +21,18 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(topic)
 
 def on_message(client, userdata, msg):
-    print(msg.topic+" "+str(msg.payload))
+#    print(msg.topic+" "+str(msg.payload))
     action = msg.payload
     if action == "wateron":
 	watering.mode = WATERON_MODE
 	watering.switch()
-	print("received wateron order")
+	print("received watering order")
 	t=threading.Timer(watering.waterlimit, over)
 	t.start()
     if action == "wateroff":
 	watering.mode = WATEROFF_MODE
 	watering.switch()
-	print("received wateroff order")
+	print("received stop_watering order")
 
 watering = watering.Pomp()
 
