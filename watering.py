@@ -1,7 +1,7 @@
 import grovepi
 import time
 
-pinnumber = 8
+waterpomp = 8
 
 WATERON_MODE = 1
 WATEROFF_MODE = 0
@@ -12,6 +12,7 @@ class Pomp:
 		self.waterlimit = 10
 
 	def switch(self):
-		grovepi.pinMode(pinnumber,"OUTPUT")
-		grovepi.digitalWrite(pinnumber,self.mode)
+		grovepi.pinMode(waterpomp,"OUTPUT")
+		grovepi.digitalWrite(waterpomp,self.mode)
+		grovepi.pinMode(waterpomp, "INPUT")
 		print("mode:"+str(self.mode))
