@@ -47,10 +47,7 @@ body {
   width: 340px;
   margin: auto;
 }
-#TABLE_1 tbody{
-  /*border: 4px solid #ccc;*/
-}
-#area0 {
+#area1 {
   /* boxレイアウトの指定 */
   display: box;
   display: -webkit-box;
@@ -62,15 +59,12 @@ body {
   /*border: 1px solid #ccc;*/
   border-radius: 5px;
   margin-top: 50px;
-  /*margin: auto;*/
 }
-
 #area2 {
   border: 4px solid #ccc;
   background-color: white;
   height: 590px;
 }
-
 th {
   width: 25%;
   padding: 6px;
@@ -86,7 +80,6 @@ td {
   background-color: #fff;
   border: 1px solid #b9b9b9;
 }
-
 #table_area {
   /* boxレイアウトの指定 */
   display: box;
@@ -127,7 +120,7 @@ td {
   min-height: 50px;
   border-radius: 10px;
   background-color: #fff;
-  margin: 0 auto 0 70px;
+  margin: 10px auto 0 10px;
   padding: 1em;
 }
 .chat-talk .talk-icon img {
@@ -164,14 +157,15 @@ td {
 }
 #memo_write_button {
     font-size: 1.4em;
+    /*padding: 2px 150px;*/
     }
 </style>
 {% endblock %}
 
 {% block content %}
 
-<div id="area0">
 <div id="area1">
+  <div id="area3">
   <div class="data_table_scr">
     <div id="chat-frame">
       <p class="chat-talk mytalk">
@@ -183,12 +177,21 @@ td {
             照度：{{ i.illuminance }}</br>
           {% endfor %}
         </span>
-        <span class="talk-content">
+        <span class="talk-content" id="text">
           わたぬき、水やる？
         </span>
+        <span class="talk-content" id="content"></span>
+      </p>
+      <p class="chat-talk">
+        <span class="talk-content" id="content1"></span>
       </p>
     </div>
   </div>
+  <form name="js">
+  <input type="text" name="txtb" value="">
+  <input type="button" value="送信" onclick="tbox1()">
+  </form>
+  <button id="btn">マイク</button>
   <div id="threshold_select">
     <p><font size="5px" color="blue">水分量閾値</font></p>
     <form name="threshold_form" action="Sample.html">
@@ -196,26 +199,27 @@ td {
       <a id="threshold_write_button" onclick="threshold_write()" class="btn btn-info btn-block">更新</a>
     </form>
   </div>
-</div>
+  </div>
   <svg class="zu1" id="svg1" width="400" height="450">
     <image id="zu1" x="0" y="0" width="100%" height="100%" opacity="1"></image>
   </svg>
   <div id="area2">
-    <div id="memo_area">
+    <div id="memo_area" width="600" height="560">
       <p><font size="6px" color="blue">Memo</font></p>
     <form name="memo_form" action="Sample.html">
       <textarea id="memo" name="memo" rows="10" cols="56" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}"></textarea><br>
       <a id="memo_write_button" onclick="memo_write()" class="btn btn-info btn-block">送信</a>
     </form>
     </div>
+
     <div class="Calendar">
-      <!-- 0番目のカレンダーを入れる箱ね -->
       <div id="cal0" class="cal_wrapper">
         Calendar Loading
       </div>
     </div>
   </div>
 </div>
+
 {% load staticfiles %}
 <script type="text/javascript" charset="UTF-8" src="{% static 'js/cal.js' %}"></script>
 
@@ -279,6 +283,153 @@ function make_url(str) {
 }
 
 db_get();
+</script>
+
+<script type="text/javascript">
+//ここから雑談対話
+var apiUrl = 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY=';
+var apiKey = '4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338';
+var api = apiUrl + apiKey;
+
+var text = document.getElementById('text').textContent;
+
+var apiJson = {
+
+    'utt' : 'asdfg' // ←ここに雑話キーワードを入れる。テキスト入力ができるといいかも
+
+}
+
+// API送受信関数
+function callBot(){
+    $.ajax({
+        type : 'post',
+        url : api,
+        data : JSON.stringify(apiJson),
+        contentType: 'application/JSON',
+        dataType : 'JSON',
+        scriptCharset: 'utf-8'
+    })
+    .done(function(data){
+        console.log(data.yomi); // ←いろんな雑話が返ってくる
+        content.textContent = data.yomi;
+
+        //ここから音声合成
+        jQuery(function($) {
+          xhr = new XMLHttpRequest();
+          xhr.open('POST', 'https://api.apigw.smt.docomo.ne.jp/voiceText/v1/textToSpeech?APIKEY=4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338', true);
+          xhr.responseType = 'arraybuffer'
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+          var datax = "text="+text+data.yomi+"&speaker=hikari&emotion=happiness&emotion_level=2&format=ogg";
+          xhr.onload = function (e) {
+            if( this.status == 200){
+              view = new Uint8Array(this.response);
+              blob = new Blob([view], { "type" : "audio/wav" });
+              URL = window.URL || window.webkitURL;
+
+              audio = new Audio(URL.createObjectURL(blob));
+              audio.play();
+            }
+          };
+          data1 = datax;
+          xhr.send(data1);
+        });
+      })
+    .fail(function(data){
+    console.log(data.responseText); // ←エラー時の処理
+  })
+  }
+
+// あとは色んなタイミングで実行
+callBot();
+// 例：やっほー => やっほっほー
+// ※毎回同じとは限らない。結構いろんな回答が返ってきます
+
+setInterval(callBot, 50000);
+
+</script>
+
+<script type="text/javascript">
+
+//ここから雑談対話
+var apiUrl = 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY=';
+var apiKey = '4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338';
+var api = apiUrl + apiKey;
+
+//テキストボックスの文字を取得する
+function tbox1(){
+  var str1 = document.js.txtb.value;
+  content1.textContent = str1;
+
+var apiJson = {
+
+    'utt' : String(str1) // ←ここに雑話キーワードを入れる。テキスト入力ができるといいかも
+
+}
+
+// API送受信関数
+function callBot(){
+    $.ajax({
+        type : 'post',
+        url : api,
+        data : JSON.stringify(apiJson),
+        contentType: 'application/JSON',
+        dataType : 'JSON',
+        scriptCharset: 'utf-8'
+    })
+    .done(function(data){
+        console.log(data.yomi); // ←いろんな雑話が返ってくる
+        content.textContent = data.yomi;
+
+        //ここから音声合成
+        jQuery(function($) {
+    xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://api.apigw.smt.docomo.ne.jp/voiceText/v1/textToSpeech?APIKEY=4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338', true);
+
+    xhr.responseType = 'arraybuffer'
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+    var datax = "text="+data.yomi+"&speaker=hikari&emotion=happiness&emotion_level=2&format=ogg";
+
+    xhr.onload = function (e) {
+        if( this.status == 200){
+            view = new Uint8Array(this.response);
+            blob = new Blob([view], { "type" : "audio/wav" });
+            URL = window.URL || window.webkitURL;
+
+            audio = new Audio(URL.createObjectURL(blob));
+            audio.play();
+        }
+    };
+    data1 = datax;
+    xhr.send(data1);
+});
+
+    })
+    .fail(function(data){
+        console.log(data.responseText); // ←エラー時の処理
+    })
+}
+
+// あとは色んなタイミングで実行
+callBot();
+// 例：やっほー => やっほっほー
+// ※毎回同じとは限らない。結構いろんな回答が返ってきます
+}
+
+//ここから音声認識
+var btn = document.getElementById('btn');
+var content1 = document.getElementById('content1');
+var speech = new webkitSpeechRecognition(); //音声認識APIの使用
+speech.lang = "ja"; //言語を日本語に設定
+btn.addEventListener( 'click' , function() {
+    // ➀ボタンをクリックした時の処理
+    speech.start(); // 音声認識をスタート
+} );
+speech.addEventListener( 'result' , function( e ) {
+    // ➁音声認識した結果を得る処理
+    var text1 = e.results[0][0].transcript; // 認識された「言葉」を、変数「text」に格納
+    content1.textContent = text1; // 認識された「言葉(text)」を、表示用のdivタグに代入する
+} );
+
 </script>
 
 {% endblock content %}
