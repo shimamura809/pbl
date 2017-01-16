@@ -423,16 +423,60 @@ callBot();
 var btn = document.getElementById('btn');
 var content1 = document.getElementById('content1');
 var speech = new webkitSpeechRecognition(); //音声認識APIの使用
+speech.continuous = true
+var i = 0
+speech.start();
 speech.lang = "ja"; //言語を日本語に設定
 btn.addEventListener( 'click' , function() {
     // ➀ボタンをクリックした時の処理
     speech.start(); // 音声認識をスタート
 } );
+
+speech.onresult = function(e){
+    var text1 = e.results[0][0].transcript;
+    console.log(e)
+    console.log(text1)
+    switch(text1) {
+      case "聞いてくれ":
+        i = 1;
+        console.log(i)
+        break;
+      case "さよなら":
+        i = 0;
+        console.log(i)
+        break;
+      default:
+        getTextContents(text1);
+
+      }
+};
+/*
 speech.addEventListener( 'result' , function( e ) {
     // ➁音声認識した結果を得る処理
     var text1 = e.results[0][0].transcript; // 認識された「言葉」を、変数「text」に格納
-    content1.textContent = text1; // 認識された「言葉(text)」を、表示用のdivタグに代入する
+    console.log(text1)
+    switch(text1) {
+      case "聞いてくれ":
+        i = 1;
+        console.log(i)
+        break;
+      case "さよなら":
+        i = 0;
+        console.log(i)
+        break;
+      default:
+        getTextContents(text1);
+        speech.stop();
+        speech.start();
+  } 
 } );
+*/
+
+function getTextContents(text1) {
+  if(i == 1) {
+    content1.textContent = text1;
+  }
+}
 
 </script>
 
