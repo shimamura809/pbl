@@ -8,6 +8,7 @@ from pymongo import *
 import requests
 import os.path
 import os
+from waterorder import *
 
 import json
 import math
@@ -96,6 +97,17 @@ def threshold_json(request):
   print("test")
 
   dataset = {"threshold":threshold}
+  return render_json_response(request,dataset)
+
+def water_json(request):
+  #urlから値を取得
+  water = request.GET.get('water', '')
+  print(water)
+  order(water)
+  #閾値をDBに保存
+  # db.threshold.insert({"threshold":threshold})
+
+  dataset = {"water":water}
   return render_json_response(request,dataset)
 
 def dt_from_14digits_to_iso(dt):
