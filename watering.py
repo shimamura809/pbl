@@ -5,14 +5,10 @@ pinnumber = 8
 
 WATERON_MODE = 1
 WATEROFF_MODE = 0
-STANDBY_OK = 1
-STANDBY_NG = 0
 
 class Pomp:
 	def __init__(self):
 		self.mode = WATEROFF_MODE
-		self.waterlimit = 10
-		self.standby = STANDBY_OK
 
 	def switch(self):
 		grovepi.pinMode(pinnumber,"OUTPUT")
