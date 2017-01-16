@@ -67,6 +67,7 @@ def pict_list(request):
   print(pict_list)
   for i in range(len(pict_list)):
     pict_list[i] = (pict_list[i].split(".jpg"))[0]
+  pict_list.sort()
   print(pict_list)
   return render_to_response('AIoT/pict_list.html', {"pict_list":pict_list})
 

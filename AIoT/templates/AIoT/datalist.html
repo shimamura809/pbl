@@ -211,12 +211,12 @@ td {
       <a id="memo_write_button" onclick="memo_write()" class="btn btn-info btn-block">送信</a>
     </form>
     </div>
-
     <div class="Calendar">
       <div id="cal0" class="cal_wrapper">
         Calendar Loading
       </div>
     </div>
+    <a id="pict_list"></a>
   </div>
 </div>
 
@@ -225,6 +225,10 @@ td {
 
 <script type="text/javascript">
   d3.select("#zu1").attr("xlink:href","/site_media/"+"zu1.jpg");
+  d3.select("#pict_list").attr({
+    "class": "btn btn-info btn-sm btn-block",
+    "href": "{% url 'AIoT:pict_list' %}",
+  }).text("画像一覧");
   //memoをデータベースに転送
   function memo_write() {
     var memo_text = document.memo_form.memo.value;
