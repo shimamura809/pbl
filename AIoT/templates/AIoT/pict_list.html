@@ -83,21 +83,24 @@ function make_pict(){
   });
   var row = document.row_form.row_select.value;
   var column = Math.floor(pict_list.length/row+1);
-  // console.log(column);
+  d3.select("#svg1").attr("width",window_width + "px");
+  if (window_width > window.innerHeight) {
+    d3.select("#svg1").attr("height",String((column + 1) * window_height / row)+"px");
+  } else {
+    d3.select("#svg1").attr("height",String((column + 2) * window_height / row)+"px");
+  }
   svgImgs.append("image").attr({
-        "xlink:href":function (d){return "/site_media/"+d+".jpg";},
-        "opacity":"1",
-        "id": function(d){return d;},
-        'width' : String(window_width / row * 0.9)+"px",
-        'height' : String(window_height / row * 0.9)+"px",
-        "float" : "left",
-        "margin" : "auto",
-        "display": "block",
-        'x' : function (d, i) {
-          d3.select("#svg1").attr("width",window_width + "px");
-          return i%row * window_width / row + 10;},
+      "xlink:href":function (d){return "/site_media/"+d+".jpg";},
+      "opacity":"1",
+      "id": function(d){return d;},
+      'width' : String(window_width / row * 0.9)+"px",
+      'height' : String(window_height / row * 0.9)+"px",
+      "float" : "left",
+      "margin" : "auto",
+      "display": "block",
+      'x' : function (d, i) {
+        return i%row * window_width / row + 10;},
       "y" : function (d, i) {
-        d3.select("#svg1").attr("height",String((Math.floor(i/row)+1) * window_height / row + window_height / row)+"px");
         return Math.floor(i/row) * (window_height / row * 1.1) + 50 ;},
     });
 
@@ -105,7 +108,7 @@ function make_pict(){
   .attr({
     'x' : function (d, i) { return i%row * window_width / row + window_width / row / 3;},
     "y" : function (d, i) { return Math.floor(i/row) * window_height / row * 1.1 + 50 + window_height / row; },
-    "font-size":function(d){return String(100/row)+"px"},
+    "font-size":function(d){return String(window_width/15/row)+"px"},
   });
 }
 
@@ -237,7 +240,6 @@ d3.select("body").append("svg").attr({
   "id":"svg1",
 })
 
-console.log(pict_list.length);
 if (pict_list.length == 0){
   d3.select("#svg1").attr("width",window_width + "px");
   d3.select("#svg1").attr("height",window_height/2 + "px");
