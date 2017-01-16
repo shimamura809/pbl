@@ -1,17 +1,20 @@
 import grovepi
 import time
 
-portnumber = 8
+pinnumber = 8
 
 WATERON_MODE = 1
 WATEROFF_MODE = 0
+STANDBY_OK = 1
+STANDBY_NG = 0
 
 class Pomp:
 	def __init__(self):
 		self.mode = WATEROFF_MODE
 		self.waterlimit = 10
+		self.standby = STANDBY_OK
 
 	def switch(self):
-		grovepi.pinMode(portnumber,"OUTPUT")
-		grovepi.digitalWrite(portnumber,self.mode)
+		grovepi.pinMode(pinnumber,"OUTPUT")
+		grovepi.digitalWrite(pinnumber,self.mode)
 		print("mode:"+str(self.mode))
