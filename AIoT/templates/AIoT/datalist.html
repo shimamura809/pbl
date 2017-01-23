@@ -446,63 +446,96 @@ callBot();
 }
 
 //ここから音声認識
-var btn = document.getElementById('btn');
-var content1 = document.getElementById('content1');
-var speech = new webkitSpeechRecognition(); //音声認識APIの使用
-speech.continuous = true
-var i = 0
-speech.start();
-speech.lang = "ja"; //言語を日本語に設定
-btn.addEventListener( 'click' , function() {
-    // ➀ボタンをクリックした時の処理
-    speech.start(); // 音声認識をスタート
-} );
+var i = 0;
+function Speech_Rec(){
+  //ここから音声認識
+  var btn = document.getElementById('btn');
+  var content1 = document.getElementById('content1');
+  var speech = new webkitSpeechRecognition(); //音声認識APIの使用
 
-speech.onresult = function(e){
-    var text1 = e.results[0][0].transcript;
-    console.log(e)
-    console.log(text1)
-    switch(text1) {
-      case "聞いてくれ":
-        i = 1;
-        console.log(i)
-        break;
-      case "さよなら":
-        i = 0;
-        console.log(i)
-        break;
-      default:
-        getTextContents(text1);
+  var j = 0;
+  var speech_status = 0;
+  speech.start();
+  speech.continuous = true;
+  speech.lang = "ja"; //言語を日本語に設定
+  btn.addEventListener( 'click' , function() {
+      // ➀ボタンをクリックした時の処理
+      speech.start(); // 音声認識をスタート
+  } );
+  speech.onerror = function(){
+    if(speech_status == 0)
+      Speech_Rec();
+  }
+  speech.onsoundend = function(){
+    Speech_Rec();
+  }
+  speech.onresult = function(e){
+      // ➁音声認識した結果を得る処理
+      var results = e.results;
+      var text1;
+      for (var j = e.resultIndex; j <results.length; j++){
+        if(results[j].isFinal){
+          text1 = results[j][0].transcript;
+          Speech_Rec();
+        }
+        else{
+          text1 = "[認識中…]" + results[j][0].transcript;
+          speech_status = 1;
+        }
+      }
+      //var text1 = e.results[0][0].transcript; // 認識された「言葉」を、変数「text」に格納
+      console.log(text1)
+      switch(text1) {
+        case "聞いてくれ":
+          i = 1;
+          console.log(i)
+          break;
+        case "さよなら":
+          i = 0;
+          console.log(i)
+          break;
+        default:
+          getTextContents(text1);
+    }
+  }
+
+  /*
+  speech.addEventListener( 'result' , function( e ) {
+      // ➁音声認識した結果を得る処理
+      var results = e.results;
+      var text1;
+      for (var i = e.resultIndex; i <results.length; i++){
+        if(results[i].isFinal)
+          text1 = results[i][0].transcript;
+        else
+          text1 = "[認識中…]" + results[i][0].transcript;
 
       }
-};
-/*
-speech.addEventListener( 'result' , function( e ) {
-    // ➁音声認識した結果を得る処理
-    var text1 = e.results[0][0].transcript; // 認識された「言葉」を、変数「text」に格納
-    console.log(text1)
-    switch(text1) {
-      case "聞いてくれ":
-        i = 1;
-        console.log(i)
-        break;
-      case "さよなら":
-        i = 0;
-        console.log(i)
-        break;
-      default:
-        getTextContents(text1);
-        speech.stop();
-        speech.start();
-  } 
-} );
-*/
+      //var text1 = e.results[0][0].transcript; // 認識された「言葉」を、変数「text」に格納
+      console.log(text1)
+      speech.stop();
+      switch(text1) {
+        case "聞いてくれ":
+          i = 1;
+          console.log(i)
+          break;
+        case "さよなら":
+          i = 0;
+          console.log(i)
+          break;
+        default:
+          getTextContents(text1);
+    } 
+  } );
+  */
 
-function getTextContents(text1) {
-  if(i == 1) {
-    content1.textContent = text1;
+  function getTextContents(text1) {
+    if(i == 1) {
+      content1.textContent = text1;
+    }
   }
 }
+Speech_Rec();
 
 </script>
 
