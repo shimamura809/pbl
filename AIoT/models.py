@@ -35,3 +35,9 @@ class threshold(Document):
     threshold   = StringField(max_length=255)
 
     meta = DB_ALIAS
+
+class watertime(Document):
+    _id         = StringField(max_length=255)
+    datetime   = DateTimeField()
+
+    meta = DB_ALIAS

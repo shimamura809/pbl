@@ -22,6 +22,7 @@ db = client.pbl
 def datalist(request):
   dt = datetime.now()
   memo_dt = str(dt.year) + ("0"+str(dt.month))[-2:] + ("0"+str(dt.day))[-2:]
+  water_gt = dt_from_14digits_to_iso(memo_dt + "000000")
   memo_data = []
   memo_data += db.collect_memo.find({"datetime":memo_dt}).sort("datetime", ASCENDING)
   memo = []
@@ -36,7 +37,14 @@ def datalist(request):
     threshold = threshold[0]["threshold"]
   dataset = []
   dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING).limit(1)
-  return render_to_response('AIoT/datalist.html', {"dataset":dataset,"data_len":len(dataset),"datetime":dt,"memo_data":memo,"threshold":threshold})
+  raw_watertime = []
+  raw_watertime += db.watertime.find({"datetime":{"$gte":water_gt, "$lte":dt}}).sort("datetime", ASCENDING)
+  watertime = []
+  # print(raw_watertime[0]["datetime"].minute)
+  if len(raw_watertime) != 0:
+    for time in raw_watertime:
+      watertime.append(str(time["datetime"].hour) + "時" + str(time["datetime"].minute) + "分" + str(time["datetime"].second) + "秒")
+  return render_to_response('AIoT/datalist.html', {"dataset":dataset,"data_len":len(dataset),"datetime":dt,"memo_data":memo,"threshold":threshold,"watertime":watertime})
 
 # 詳細画面 http://127.0.0.1:8000/AIoT/detail/20161031
 def detail(request):
@@ -57,7 +65,11 @@ def detail(request):
     picture = os.path.exists(os.path.dirname(os.path.abspath(__file__)) + '/../media/'+dt+".jpg")
     dataset = []
     dataset += db.collect_data.find({"datetime":{"$gte":gt, "$lte":lt}}).sort("datetime", ASCENDING)
-    return render_to_response('AIoT/detail.html', {"dataset":dataset,"data_len":len(dataset),"datetime":gt, "memo_data":memo, "picture":picture,"pic_dt":dt})
+    raw_watertime = []
+    raw_watertime += db.watertime.find({"datetime":{"$gte":gt, "$lte":lt}}).sort("datetime", ASCENDING)
+    print(dataset)
+    print(raw_watertime)
+    return render_to_response('AIoT/detail.html', {"dataset":dataset,"data_len":len(dataset),"datetime":gt, "memo_data":memo, "picture":picture,"pic_dt":dt,"watertime":raw_watertime})
 
 # 画像一覧用の関数
 def pict_list(request):
@@ -102,10 +114,12 @@ def threshold_json(request):
 def water_json(request):
   #urlから値を取得
   water = request.GET.get('water', '')
-  print(water)
   order(water)
-  #閾値をDBに保存
-  # db.threshold.insert({"threshold":threshold})
+  # 水遣り時刻をDBに保存
+  if water == "ON":
+    dtstr = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+    dt = datetime.strptime(dtstr, '%Y-%m-%d %H:%M:%S')
+    db.watertime.insert({"datetime":dt})
 
   dataset = {"water":water}
   return render_json_response(request,dataset)
