@@ -32,7 +32,7 @@ body {
   background-color: white;
 }
 .zu1 {
-  height: 590px;
+  height: 670px;
   width: 430px;
   border: 4px solid mistyrose;
   margin-left: 1px;
@@ -44,7 +44,7 @@ body {
   width:400px;
 }
 .Calendar {
-  width: 340px;
+  width: 367px;
   margin: auto;
 }
 #area1 {
@@ -63,7 +63,7 @@ body {
 #area2 {
   border: 4px solid #ccc;
   background-color: white;
-  height: 590px;
+  height: 670px;
 }
 th {
   width: 25%;
@@ -157,8 +157,10 @@ td {
 }
 #memo_write_button {
     font-size: 1.4em;
-    /*padding: 2px 150px;*/
-    }
+}
+#link_list {
+  /*border: 4px solid #ccc;*/
+}
 </style>
 {% endblock %}
 
@@ -217,7 +219,12 @@ td {
         Calendar Loading
       </div>
     </div>
-    <a id="pict_list"></a>
+    <br>
+    <div id="link_list">
+      <p><font size="6px" color="blue">リンク</font></p>
+      <a id="pict_list"></a>
+      <a id="getdata"></a>
+  </div>
   </div>
 </div>
 
@@ -230,6 +237,10 @@ td {
     "class": "btn btn-info btn-sm btn-block",
     "href": "{% url 'AIoT:pict_list' %}",
   }).text("画像一覧");
+  d3.select("#getdata").attr({
+    "class": "btn btn-info btn-sm btn-block",
+    "href": "{% url 'AIoT:getdata' %}",
+  }).text("取得データ一覧");
   //memoをデータベースに転送
   function memo_write() {
     var memo_text = document.memo_form.memo.value;
@@ -525,7 +536,7 @@ function Speech_Rec(){
           break;
         default:
           getTextContents(text1);
-    } 
+    }
   } );
   */
 

@@ -84,6 +84,14 @@ def pict_list(request):
   print(pict_list)
   return render_to_response('AIoT/pict_list.html', {"pict_list":pict_list})
 
+#取得データ一覧用
+def getdata(request):
+  dt = datetime.now()
+  dataset = []
+  dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING)
+  return render_to_response('AIoT/getdata.html', {"dataset":dataset})
+
+#メモ保存用
 def memo_json(request):
   #urlから各値を取得
   memo = request.GET.get('memo', '').split(",")
@@ -98,6 +106,7 @@ def memo_json(request):
   dataset = {"memo":memo}
   return render_json_response(request,dataset)
 
+#閾値更新用関数
 def threshold_json(request):
   #urlから値を取得
   threshold = request.GET.get('threshold', '10')
@@ -111,6 +120,7 @@ def threshold_json(request):
   dataset = {"threshold":threshold}
   return render_json_response(request,dataset)
 
+#水遣り命令用関数
 def water_json(request):
   #urlから値を取得
   water = request.GET.get('water', '')
@@ -124,6 +134,7 @@ def water_json(request):
   dataset = {"water":water}
   return render_json_response(request,dataset)
 
+#時刻の形式変換関数（14文字の文字列→ISO形式）
 def dt_from_14digits_to_iso(dt):
   from datetime import datetime
   dt = str(dt[0:4])+"-"+str("0"+dt[4:6])[-2:]+"-"+str("0"+dt[6:8])[-2:]+" "+str("00"+dt[8:10])[-2:]+":"+str("00"+dt[10:12])[-2:]+":"+str("00"+dt[12:14])[-2:]
