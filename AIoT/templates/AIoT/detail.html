@@ -30,8 +30,8 @@ div.tooltip {
   font-weight: bold;
   margin-top: 10px;
   margin-bottom: 10px;
-  margin-left: 25%;
-  margin-right: 25%;
+  /*margin-left: 25%;*/
+  /*margin-right: 25%;*/
   display: inline;
 }
 .left {
@@ -45,9 +45,9 @@ div.tooltip {
   margin-top: 20px;
 }
 .container{
-  width: 1160px;
+  /*width: 1600px;*/
   background-color: white;
-  border-width: 0px 4px;
+  border-width: 4px;
   border-style: ridge;
   border-color: black;
   /*display: inline-block;*/
@@ -61,25 +61,20 @@ table {
   margin-top: 8px;
 }
 th{
-width: 25%;
-padding: 6px;
+/*width: 25%;*/
+/*height: 30%;*/
+/*padding: 6px;*/
 text-align: center;
-vertical-align: top;
+/*vertical-align: top;*/
 color: black;
-background-color: darkgray;
-border: 1px solid black;
-font-size: 18px;
-}
-td{
-width: 100%;
-padding: 6px;
-background-color: #fff;
-border: 1px solid #b9b9b9;
+/*background-color: darkgray;*/
+/*border: 1px solid black;*/
+/*font-size: 18px;*/
 }
 .tmp_table, .moi_table, .ill_table {
   /*width: 100%;*/
-  width: 700px;
-  border-collapse: separate;
+  /*width: 700px;*/
+  /*border-collapse: separate;*/
   /*float: right;*/
   /*display: inline;*/
 }
@@ -150,7 +145,7 @@ p.tabs
   p.tabs a
   {
     display: block;
-    width: 13em;
+    width: 5em;
     float: left;
     margin: 0px 3px 0px 0px;
     padding: 8px;
@@ -193,7 +188,28 @@ p.tabs
     float: right;
     display: inline-block;
   }
+/*#memo_area form{
+  width: 50%;
+}*/
 </style>
+<script type="text/javascript">
+var window_width = window.innerWidth-300;
+$(function() {
+        $(".container").css("width", window_width+"px");
+      });
+$(function() {
+        $("#content_area").css("width", window_width-40+"px");
+      });
+$(function() {
+        $(".tmp_table").css("width", (window_width-40)*0.6+"px");
+      });
+$(function() {
+        $(".moi_table").css("width", (window_width-40)*0.6+"px");
+      });
+$(function() {
+        $(".ill_table").css("width", (window_width-40)*0.6+"px");
+      });
+</script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
 {% endblock %}
 
@@ -203,21 +219,21 @@ p.tabs
     <p class="page-header" id="header" align="center"></p>
     <div class="right" y="30"></div></div><br>
     <div id="content_area">
-    <svg id="picture" width="400" height="440">
+    <svg id="picture">
     <image id="zu1" x="0" y="0" width="100%" height="100%" opacity="1"></image>
     </svg>
-    <div id="graph_erea" width="400" height="440">
+    <div id="graph_erea">
     <div class="tabbox" id="tabbox"></div>
     <svg id="line_graph" x="1024" y="560">
     </svg></div>
-    <div id="memo_area" width="600" height="560">
+    <div id="memo_area">
       <p><font size="6px" color="blue">Memo</font></p>
-      <form name="memo_form" action="Sample.html">
-        <textarea id="memo" class="control-form" name="memo" rows="10" cols="58" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}"></textarea><br>
+      <form id="memo_form" name="memo_form" action="Sample.html">
+        <textarea id="memo" class="control-form" name="memo" rows="5" cols="58" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}"></textarea><br>
         <a id="memo_write_button" onclick="memo_write()" class="btn btn-info btn-block">送信</a>
       </form>
     </div>
-    <div id="table_area" width=700 height=560>
+    <div id="table_area">
       <p><font size="6px" color="blue">データまとめ</font></p>
     </div>
     </div>
@@ -275,9 +291,9 @@ function make_url(str) {
 //折れ線グラフ作成用関数
 function make_linegraph(target) {
     //共通部分
-    var margin = {top: 20, right: 20, bottom: 30, left: 40},
-        width = 700 - (margin.left + margin.right),
-        height = 400 - (margin.top + margin.bottom);
+    var margin = {top: 20, right: 20, bottom: 30, left: 45},
+        width = (window_width-40)*0.65 - (margin.left + margin.right),
+        height = (window_width-40)*0.5*2/3-30 - (margin.top + margin.bottom);
     var svg = d3.select("#line_graph")
             .attr({
               width : width + (margin.left + margin.right),
@@ -306,12 +322,12 @@ function make_linegraph(target) {
         var line_color = "red";
       } else if (target == "moisture") {
         var yScale = d3.scale.linear().domain([0,moi_axis]).range([height, 0]);
-        var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(20).innerTickSize(-width).outerTickSize(2).tickPadding(8);
+        var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(10).innerTickSize(-width).outerTickSize(2).tickPadding(8);
         var line = d3.svg.line().x(function(d) { return xScale(d.datetime)}).y(function(d) { return yScale(d.moisture)});
         var line_color = "blue";
       } else if (target == "illuminance") {
         var yScale = d3.scale.linear().domain([0,ill_axis]).range([height, 0]);
-        var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(20).innerTickSize(-width).outerTickSize(2).tickPadding(8);
+        var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(10).innerTickSize(-width).outerTickSize(2).tickPadding(8);
         var line = d3.svg.line().x(function(d) { return xScale(d.datetime)}).y(function(d) { return yScale(d.illuminance)});
         var line_color = "yellow";
       }
@@ -330,7 +346,6 @@ function make_linegraph(target) {
         .attr("class", "w axis")
         .attr("id","water_axis")
         .attr("transform", "translate(0," + height + ")");
-        console.log(watertime[0]);
         for (var i = 0; i < watertime.length; i++){
           watertime[i].scale = xScale(watertime[i].datetime);
         }
@@ -338,10 +353,16 @@ function make_linegraph(target) {
         .attr({
           "class":"tick",
           "transform":function(d){return "translate(" + d.scale + ",0)"},
-        }).style("opacity",1);
+        }).style("opacity" ,function(d){
+          if(d.scale >= 0){
+            return 1;
+          } else {
+            return 0;
+          }
+        });
 
         tmp_water.append("line").attr({
-          "y2":"-350",
+          "y2":"-"+height,
           "x2":"0",
           "stroke":"black"
         })
@@ -531,16 +552,21 @@ function make_link() {
   var next_dt = moment(dt).add(1,"days").format("YYYYMMDD");
   var prev_we = moment(dt).subtract(1,"week").format("YYYYMMDD");
   var next_we = moment(dt).add(1,"week").format("YYYYMMDD");
-  d3.select(".left").append("a").attr({
+  d3.select(".right").append("a").attr({
     "id": "prev_day",
     "class": "btn btn-info btn-sm",
     "href": "{% url 'AIoT:detail' %}" + "?datetime=" + prev_dt,
   }).text("< 前日");
-  d3.select(".left").append("a").attr({
+  d3.select(".right").append("a").attr({
     "id": "prev_week",
     "class": "btn btn-success btn-sm",
     "href": "{% url 'AIoT:detail' %}" + "?datetime=" + prev_we,
   }).text("< 前週");
+  d3.select(".right").append("a").attr({
+    "id": "back_main",
+    "class": "btn btn-default btn-sm",
+    "href": "{% url 'AIoT:datalist' %}",
+  }).text("メインページ");
   d3.select(".right").append("a").attr({
     "id": "next_week",
     "class": "btn btn-success btn-sm",
@@ -551,12 +577,28 @@ function make_link() {
     "class": "btn btn-info btn-sm",
     "href": "{% url 'AIoT:detail' %}" + "?datetime=" + next_dt,
   }).text("翌日 >");
-  d3.select("#footer_area").append("a").attr({
-    "id": "back_main",
-    "class": "btn btn-info btn-block",
-    "href": "{% url 'AIoT:datalist' %}",
-  }).text("メインページに戻る");
 }
+
+//画面に応じた描画に変更
+function resize(){
+  d3.select("#picture").attr({
+    "width": (window_width-40)*0.3+"px",
+    "height": (window_width-40)*0.5*2/3+"px",
+  });
+  d3.select("#memo").style("width",(window_width-40)*0.35+"px");
+}
+
+//サイズ取得
+var pc_width = window.parent.screen.width;
+var pc_height = window.parent.screen.height;
+console.log("pc幅"+pc_width);
+console.log("pc長"+pc_height);
+//画面の表示サイズを確認
+var window_width = window.innerWidth-300;
+var window_height = window.innerHeight-50;
+console.log("画面幅"+window_width);
+console.log("画面長"+window_height);
+resize();
 
 // データ
 var parameter_data = [];
