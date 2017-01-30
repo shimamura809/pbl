@@ -6,15 +6,10 @@ import threading
 WATERON_MODE = 1
 WATEROFF_MODE = 0
 
-host ="localhost"
+#host ="210.152.14.37"
+host = "localhost"
 port = 1883
 topic = "#"
-
-def over():
-    if watering.mode == WATERON_MODE:
-	watering.mode = WATEROFF_MODE
-	watering.switch()
-	print("watering is over")
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -27,15 +22,12 @@ def on_message(client, userdata, msg):
 	watering.mode = WATERON_MODE
 	watering.switch()
 	print("received watering order")
-	t=threading.Timer(watering.waterlimit, over)
-	t.start()
     if action == "wateroff":
 	watering.mode = WATEROFF_MODE
 	watering.switch()
 	print("received stop_watering order")
 
 watering = watering.Pomp()
-
 watering.mode = WATEROFF_MODE
 
 if __name__ == '__main__':

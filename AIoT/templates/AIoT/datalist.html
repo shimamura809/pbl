@@ -32,7 +32,7 @@ body {
   background-color: white;
 }
 .zu1 {
-  height: 590px;
+  height: 670px;
   width: 430px;
   border: 4px solid mistyrose;
   margin-left: 1px;
@@ -44,7 +44,7 @@ body {
   width:400px;
 }
 .Calendar {
-  width: 340px;
+  width: 367px;
   margin: auto;
 }
 #area1 {
@@ -63,7 +63,7 @@ body {
 #area2 {
   border: 4px solid #ccc;
   background-color: white;
-  height: 590px;
+  height: 670px;
 }
 th {
   width: 25%;
@@ -157,8 +157,10 @@ td {
 }
 #memo_write_button {
     font-size: 1.4em;
-    /*padding: 2px 150px;*/
-    }
+}
+#link_list {
+  /*border: 4px solid #ccc;*/
+}
 </style>
 {% endblock %}
 
@@ -198,6 +200,7 @@ td {
     <form name="threshold_form" action="Sample.html">
       <textarea id="threshold" name="threshold"></textarea><br>
       <a id="threshold_write_button" onclick="threshold_write()" class="btn btn-info btn-block">更新</a>
+      <a id="water_control_button" onclick="water_control()" class="btn btn-info btn-block">水遣りスタート</a>
     </form>
   </div>
   </div>
@@ -217,7 +220,12 @@ td {
         Calendar Loading
       </div>
     </div>
-    <a id="pict_list"></a>
+    <br>
+    <div id="link_list">
+      <p><font size="6px" color="blue">リンク</font></p>
+      <a id="pict_list"></a>
+      <a id="getdata"></a>
+  </div>
   </div>
 </div>
 
@@ -230,6 +238,10 @@ td {
     "class": "btn btn-info btn-sm btn-block",
     "href": "{% url 'AIoT:pict_list' %}",
   }).text("画像一覧");
+  d3.select("#getdata").attr({
+    "class": "btn btn-info btn-sm btn-block",
+    "href": "{% url 'AIoT:getdata' %}",
+  }).text("取得データ一覧");
   //memoをデータベースに転送
   function memo_write() {
     var memo_text = document.memo_form.memo.value;
@@ -255,6 +267,27 @@ td {
         url: make_url("threshold") + "?threshold=" + threshold_text,
         dataType: 'json',
       });
+    }
+  }
+  //水やりの命令を管理する関数
+  function water_control() {
+    flag_water = !flag_water;
+    if (flag_water) {
+      $.ajax({
+        type: 'GET',
+        url: make_url("water") + "?water=ON",
+        dataType: 'json',
+      });
+      d3.select("#water_control_button").text("水遣りストップ");
+      water = setTimeout(water_control, 11000);
+    } else{
+      $.ajax({
+        type: 'GET',
+        url: make_url("water") + "?water=OFF",
+        dataType: 'json',
+      });
+      d3.select("#water_control_button").text("水遣りスタート");
+      clearTimeout(water);
     }
   }
   //データベースのメモ・閾値を表示
@@ -283,11 +316,15 @@ function make_url(str) {
     var url = "{% url 'AIoT:memo_json' %}" + "?datetime=" + year + month + day;
   } else if (str == "threshold") {
     var url = "{% url 'AIoT:threshold_json' %}";
+  } else if (str == "water") {
+    var url = "{% url 'AIoT:water_json' %}";
   }
   return url;
 }
 
 db_get();
+var water;
+var flag_water = false;
 </script>
 
 <script type="text/javascript">
@@ -354,7 +391,7 @@ function callBot(){
     .fail(function(data){
     console.log(data.responseText); // ←エラー時の処理
   })
-  }
+}
 
 // あとは色んなタイミングで実行
 callBot();
@@ -387,14 +424,14 @@ function tbox1(){
   eval("content"+j+".textContent = str1");
   j = j + 1;
 
-var apiJson = {
+  var apiJson = {
 
     'utt' : String(str1) // ←ここに雑話キーワードを入れる。テキスト入力ができるといいかも
 
-}
+  }
 
 // API送受信関数
-function callBot(){
+  function callBot(){
     $.ajax({
         type : 'post',
         url : api,
@@ -451,20 +488,190 @@ callBot();
 // ※毎回同じとは限らない。結構いろんな回答が返ってきます
 }
 
-//ここから音声認識
-var btn = document.getElementById('btn');
-var contenta = document.getElementById('contenta');
-var speech = new webkitSpeechRecognition(); //音声認識APIの使用
-speech.lang = "ja"; //言語を日本語に設定
-btn.addEventListener( 'click' , function() {
-    // ➀ボタンをクリックした時の処理
-    speech.start(); // 音声認識をスタート
-} );
-speech.addEventListener( 'result' , function( e ) {
-    // ➁音声認識した結果を得る処理
-    var text1 = e.results[0][0].transcript; // 認識された「言葉」を、変数「text」に格納
-    contenta.textContent = text1; // 認識された「言葉(text)」を、表示用のdivタグに代入する
-} );
+</script>
+
+<script type="text/javascript">
+var apiUrl = 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY=';
+var apiKey = '4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338';
+var api = apiUrl + apiKey;
+
+var m = 0;
+var n = 0;
+
+//音声認識用の対話機能
+function tbox2(value){
+  var str1 = value;
+  //content1.textContent = str1;
+
+  var target = document.getElementById("chat-frame");
+  var newTag = document.createElement("span");
+  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="content'+m+'"></span></p>';
+  target.appendChild(newTag);
+  eval("content"+m+".textContent = str1");
+  m = m + 1;
+
+  var apiJson = {
+
+    'utt' : String(str1) // ←ここに雑話キーワードを入れる。テキスト入力ができるといいかも
+
+  }
+  console.log("テキストボックス：");
+  console.log(str1);
+
+  // API送受信関数
+  function callBot(){
+    $.ajax({
+        type : 'post',
+        url : api,
+        data : JSON.stringify(apiJson),
+        contentType: 'application/JSON',
+        dataType : 'JSON',
+        scriptCharset: 'utf-8'
+    })
+    .done(function(data){
+        console.log(data.yomi); // ←いろんな雑話が返ってくる
+        //content.textContent = data.yomi;
+
+        var target = document.getElementById("chat-frame");
+        var newTag = document.createElement("span");
+        newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="contenta'+n+'"></span></p>';
+        target.appendChild(newTag);
+        eval("contenta"+n+".textContent = data.yomi");
+        n = n + 1;
+        $(function(){
+          $(".data_table_scr").scrollTop($("#list")[0].scrollHeight);
+        });
+
+        //ここから音声合成
+        jQuery(function($) {
+          xhr = new XMLHttpRequest();
+          xhr.open('POST', 'https://api.apigw.smt.docomo.ne.jp/voiceText/v1/textToSpeech?APIKEY=4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338', true);
+          xhr.responseType = 'arraybuffer'
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+          var datax = "text="+data.yomi+"&speaker=hikari&emotion=happiness&emotion_level=2&format=ogg";
+          xhr.onload = function (e) {
+            if( this.status == 200){
+              view = new Uint8Array(this.response);
+              blob = new Blob([view], { "type" : "audio/wav" });
+              URL = window.URL || window.webkitURL;
+              audio = new Audio(URL.createObjectURL(blob));
+              audio.play();
+            }
+          };
+          data1 = datax;
+          xhr.send(data1);
+        });
+      })
+    .fail(function(data){
+        console.log(data.responseText); // ←エラー時の処理
+    })
+  }
+
+  // あとは色んなタイミングで実行
+  callBot();
+  // 例：やっほー => やっほっほー
+  // ※毎回同じとは限らない。結構いろんな回答が返ってきます
+}
+
+var i = 0;
+var k = 0;
+function Speech_Rec(){
+  //ここから音声認識
+  var btn = document.getElementById('btn');
+  //var content1 = document.getElementById('content');
+  var speech = new webkitSpeechRecognition(); //音声認識APIの使用
+
+  var j = 0;
+  var speech_status = 0;
+  speech.start();
+  speech.continuous = true;
+  speech.interimResults = true;
+  speech.lang = "ja"; //言語を日本語に設定
+  btn.addEventListener( 'click' , function() {
+      // ➀ボタンをクリックした時の処理
+      speech.start(); // 音声認識をスタート
+  } );
+  speech.onerror = function(){
+    if(speech_status == 0)
+      Speech_Rec();
+  }
+  speech.onsoundend = function(){
+    Speech_Rec();
+  }
+  speech.onresult = function(e){
+      // ➁音声認識した結果を得る処理
+      var results = e.results;
+      var text1;
+      for (var j = e.resultIndex; j <results.length; j++){
+        if(results[j].isFinal){
+          text1 = results[j][0].transcript;
+        }
+        else{
+          text1 = "[認識中…]" + results[j][0].transcript;
+          speech_status = 1;
+        }
+      }
+      //var text1 = e.results[0][0].transcript; // 認識された「言葉」を、変数「text」に格納
+      console.log(text1)
+      switch(text1) {
+        case "聞いて":
+          i = 1;
+          console.log(i)
+          break;
+        case "さよなら":
+          i = 0;
+          console.log(i)
+          break;
+        default:
+          getTextContents(text1);
+          Speech_Rec();
+    }
+  }
+
+  /*
+  speech.addEventListener( 'result' , function( e ) {
+      // ➁音声認識した結果を得る処理
+      var results = e.results;
+      var text1;
+      for (var i = e.resultIndex; i <results.length; i++){
+        if(results[i].isFinal)
+          text1 = results[i][0].transcript;
+        else
+          text1 = "[認識中…]" + results[i][0].transcript;
+
+      }
+      //var text1 = e.results[0][0].transcript; // 認識された「言葉」を、変数「text」に格納
+      console.log(text1)
+      speech.stop();
+      switch(text1) {
+        case "聞いてくれ":
+          i = 1;
+          console.log(i)
+          break;
+        case "さよなら":
+          i = 0;
+          console.log(i)
+          break;
+        default:
+          getTextContents(text1);
+    } 
+  } );
+  */
+
+  function getTextContents(text1) {
+    if(i == 1) {
+      //content1.textContent = text1;
+      //var target = document.getElementById("chat-frame");
+      //var newTag = document.createElement("span");
+      //newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="content'+k+'"></span></p>';
+      //target.appendChild(newTag);
+      //eval("content"+k+".textContent = text1");
+      //k = k + 1;
+      tbox2(text1);
+    }
+  }
+}
+Speech_Rec();
 
 </script>
 

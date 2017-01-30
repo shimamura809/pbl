@@ -1,0 +1,52 @@
+
+{% extends "base.html" %}
+
+{% block title %}取得データ一覧{% endblock title %}
+
+{% block extrahead %}
+<style>
+table {
+  margin-top: 8px;
+}
+td {
+ vertical-align: middle;
+}
+h3 {
+  font-weight: bold;
+}
+#back_main{
+  float: right;
+  display: inline-flex;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <h3 class="page-header">取得データ一覧</h3>
+    <div  id="back_main" float="right" display="inline">
+    <a class="btn btn-info btn-sm" href="{% url 'AIoT:datalist' %}">メインページ</a></div><br><br>
+    <table class="table table-striped table-bordered sortable-theme-bootstrap" data-sortable>
+      <thead>
+        <tr class="info">
+          <th>　　年</th>
+          <th>　　日付</th>
+          <th>　　時刻</th>
+          <th>　　温度</th>
+          <th>　　水分量</th>
+          <th>　　照度</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in dataset %}
+        <tr>
+          <td align="center">{{ i.datetime.year }}</td>
+          <td align="center">{{ i.datetime.month }}月{{ i.datetime.day }}日</td>
+          <td align="center">{{ i.datetime.hour }}時{{ i.datetime.minute }}分</td>
+          <td align="center">{{ i.temperature }}</td>
+          <td align="center">{{ i.moisture }}</td>
+          <td align="center">{{ i.illuminance }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock content %}

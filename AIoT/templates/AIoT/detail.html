@@ -5,6 +5,21 @@
 
 {% block extrahead %}
 <style>
+/* 説明窓(div要素)の設定 */
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 30px;
+  height: 12px;
+  padding: 8px;
+  font: 15px sans-serif;
+  font-weight: bold; /*太字*/
+  color: black; /*文字の色*/
+  background: red;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
 #header_area {
   height: 60px;
   display: block;
@@ -34,7 +49,7 @@
   background-color: white;
   border-width: 0px 4px;
   border-style: ridge;
-  border-color: purple;
+  border-color: black;
   /*display: inline-block;*/
   }
 #content_area {
@@ -84,6 +99,11 @@ border: 1px solid #b9b9b9;
     opacity: 0.3;
     stroke: black;
   }
+#water_axis .tick line{
+    opacity: 1;
+    stroke: skyblue;
+    stroke-width:5;
+  }
 #graph_erea {
   float:right;
   /*display: inline-block;*/
@@ -98,8 +118,8 @@ border: 1px solid #b9b9b9;
 #picture {
   float: left;
   /*display: block;*/
-  border: 3px solid green;
-  background-color: green;
+  border: 3px solid black;
+  /*background-color: black;*/
   /*position: absolute;*/
   /*clear: left;*/
 }
@@ -202,6 +222,7 @@ p.tabs
     </div>
     </div>
     <div id="footer_area"></div>
+    <div id="tooltip_div"></div>
     <script type="text/javascript">
     d3.select("#header").text("{{datetime.year}}年 {{datetime.month}}月 {{datetime.day}}日");
 
@@ -304,12 +325,49 @@ function make_linegraph(target) {
       .attr("class", "y axis")
       .call(yAxis);
 
+      if (watertime.length != 0) {
+        var water_axis =svg.append("g")
+        .attr("class", "w axis")
+        .attr("id","water_axis")
+        .attr("transform", "translate(0," + height + ")");
+        console.log(watertime[0]);
+        for (var i = 0; i < watertime.length; i++){
+          watertime[i].scale = xScale(watertime[i].datetime);
+        }
+        var tmp_water = water_axis.selectAll("g.waxis").data(watertime).enter().append("g")
+        .attr({
+          "class":"tick",
+          "transform":function(d){return "translate(" + d.scale + ",0)"},
+        }).style("opacity",1);
+
+        tmp_water.append("line").attr({
+          "y2":"-350",
+          "x2":"0",
+          "stroke":"black"
+        })
+        .on( "mouseover", function(d){
+          div.transition().duration(300)
+          .style("opacity",1)
+          .style("background","skyblue")
+          .style("height", "35px")
+          .style("width", "100px")
+          .style("left", (d3.event.pageX + 20) + "px")
+          .style("top", (d3.event.pageY + 20) + "px")
+          div.text(d.str).attr("stroke","black");
+        })
+        // マウスがバーから離れたら説明文をけす
+        .on( "mouseout", function(d){
+          div.transition().duration(300)
+          .style("opacity",0)
+        });
+      }
+
       svg.append("path")
       .datum(parameter_data)
       .attr("class", "line")
       .attr("d", line)
       .attr("stroke", line_color)
-      .attr("stroke-width", "2px")
+      .attr("stroke-width", "4px")
       .attr("fill", "none");
     }
     //データがない場合の挙動
@@ -495,7 +553,7 @@ function make_link() {
   }).text("翌日 >");
   d3.select("#footer_area").append("a").attr({
     "id": "back_main",
-    "class": "btn btn-primary btn-block",
+    "class": "btn btn-info btn-block",
     "href": "{% url 'AIoT:datalist' %}",
   }).text("メインページに戻る");
 }
@@ -504,6 +562,18 @@ function make_link() {
 var parameter_data = [];
 var moi_axis = 1000;
 var ill_axis = 1000;
+// マウスオーバーすると出てくる説明文(div要素)
+var div = d3.select("#tooltip_div")
+.attr("class","tooltip")
+.style("width", "40px" )
+.style("height", "35px")
+.style("opacity",0);
+//水遣り時刻
+var watertime = [];
+{% for i in watertime %}
+var month = {{ i.datetime.month }} - 1;
+watertime.push({datetime:new Date("{{i.datetime.year}}",month,"{{i.datetime.day}}","{{i.datetime.hour}}","{{i.datetime.minute}}"),str:"{{i.datetime.hour}}:{{i.datetime.minute}}"})
+{% endfor %}
 data_len = {{data_len}};
 set_data();
 make_linegraph("temperature");
