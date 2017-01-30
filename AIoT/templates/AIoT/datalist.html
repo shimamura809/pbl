@@ -505,9 +505,9 @@ function tbox2(value){
 
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
-  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="content'+m+'"></span></p>';
+  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="contentc'+m+'"></span></p>';
   target.appendChild(newTag);
-  eval("content"+m+".textContent = str1");
+  eval("contentc"+m+".textContent = str1");
   m = m + 1;
 
   var apiJson = {
@@ -534,9 +534,9 @@ function tbox2(value){
 
         var target = document.getElementById("chat-frame");
         var newTag = document.createElement("span");
-        newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="contenta'+n+'"></span></p>';
+        newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="contentd'+n+'"></span></p>';
         target.appendChild(newTag);
-        eval("contenta"+n+".textContent = data.yomi");
+        eval("contentd"+n+".textContent = data.yomi");
         n = n + 1;
         $(function(){
           $(".data_table_scr").scrollTop($("#list")[0].scrollHeight);
