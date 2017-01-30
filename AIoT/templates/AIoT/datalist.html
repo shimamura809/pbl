@@ -378,7 +378,7 @@ function callBot(){
     .fail(function(data){
     console.log(data.responseText); // ←エラー時の処理
   })
-  }
+}
 
 // あとは色んなタイミングで実行
 callBot();
@@ -401,14 +401,14 @@ function tbox1(){
   var str1 = document.js.txtb.value;
   content1.textContent = str1;
 
-var apiJson = {
+  var apiJson = {
 
     'utt' : String(str1) // ←ここに雑話キーワードを入れる。テキスト入力ができるといいかも
 
-}
+  }
 
 // API送受信関数
-function callBot(){
+  function callBot(){
     $.ajax({
         type : 'post',
         url : api,
@@ -456,6 +456,64 @@ callBot();
 // ※毎回同じとは限らない。結構いろんな回答が返ってきます
 }
 
+//音声認識用の対話機能
+function tbox2(value){
+  var str1 = value;
+  content1.textContent = str1;
+
+  var apiJson = {
+
+    'utt' : String(str1) // ←ここに雑話キーワードを入れる。テキスト入力ができるといいかも
+
+  }
+  console.log("テキストボックス：");
+  console.log(str1);
+
+  // API送受信関数
+  function callBot(){
+    $.ajax({
+        type : 'post',
+        url : api,
+        data : JSON.stringify(apiJson),
+        contentType: 'application/JSON',
+        dataType : 'JSON',
+        scriptCharset: 'utf-8'
+    })
+    .done(function(data){
+        console.log(data.yomi); // ←いろんな雑話が返ってくる
+        content.textContent = data.yomi;
+
+        //ここから音声合成
+        jQuery(function($) {
+          xhr = new XMLHttpRequest();
+          xhr.open('POST', 'https://api.apigw.smt.docomo.ne.jp/voiceText/v1/textToSpeech?APIKEY=4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338', true);
+          xhr.responseType = 'arraybuffer'
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+          var datax = "text="+data.yomi+"&speaker=hikari&emotion=happiness&emotion_level=2&format=ogg";
+          xhr.onload = function (e) {
+            if( this.status == 200){
+              view = new Uint8Array(this.response);
+              blob = new Blob([view], { "type" : "audio/wav" });
+              URL = window.URL || window.webkitURL;
+              audio = new Audio(URL.createObjectURL(blob));
+              audio.play();
+            }
+          };
+          data1 = datax;
+          xhr.send(data1);
+        });
+      })
+    .fail(function(data){
+        console.log(data.responseText); // ←エラー時の処理
+    })
+  }
+
+  // あとは色んなタイミングで実行
+  callBot();
+  // 例：やっほー => やっほっほー
+  // ※毎回同じとは限らない。結構いろんな回答が返ってきます
+}
+
 //ここから音声認識
 var i = 0;
 function Speech_Rec(){
@@ -468,6 +526,7 @@ function Speech_Rec(){
   var speech_status = 0;
   speech.start();
   speech.continuous = true;
+  speech.interimResults = true;
   speech.lang = "ja"; //言語を日本語に設定
   btn.addEventListener( 'click' , function() {
       // ➀ボタンをクリックした時の処理
@@ -487,7 +546,6 @@ function Speech_Rec(){
       for (var j = e.resultIndex; j <results.length; j++){
         if(results[j].isFinal){
           text1 = results[j][0].transcript;
-          Speech_Rec();
         }
         else{
           text1 = "[認識中…]" + results[j][0].transcript;
@@ -497,7 +555,7 @@ function Speech_Rec(){
       //var text1 = e.results[0][0].transcript; // 認識された「言葉」を、変数「text」に格納
       console.log(text1)
       switch(text1) {
-        case "聞いてくれ":
+        case "聞いて":
           i = 1;
           console.log(i)
           break;
@@ -507,6 +565,7 @@ function Speech_Rec(){
           break;
         default:
           getTextContents(text1);
+          Speech_Rec();
     }
   }
 
@@ -536,13 +595,14 @@ function Speech_Rec(){
           break;
         default:
           getTextContents(text1);
-    }
+    } 
   } );
   */
 
   function getTextContents(text1) {
     if(i == 1) {
       content1.textContent = text1;
+      tbox2(text1);
     }
   }
 }
