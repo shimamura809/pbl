@@ -43,7 +43,7 @@ def datalist(request):
   # print(raw_watertime[0]["datetime"].minute)
   if len(raw_watertime) != 0:
     for time in raw_watertime:
-      watertime.append(str(time["datetime"].hour) + "時" + str(time["datetime"].minute) + "分" + str(time["datetime"].second) + "秒")
+      watertime.append(str(time["datetime"].hour) + "時" + str(time["datetime"].minute) + "分")
   return render_to_response('AIoT/datalist.html', {"dataset":dataset,"data_len":len(dataset),"datetime":dt,"memo_data":memo,"threshold":threshold,"watertime":watertime})
 
 # 詳細画面 http://127.0.0.1:8000/AIoT/detail/20161031
