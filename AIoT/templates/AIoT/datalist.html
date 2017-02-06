@@ -192,7 +192,7 @@ td {
   </div>
   <form name="js">
   <input type="text" name="txtb" value="">
-  <input type="button" value="送信" onclick="tbox1()">
+  <input id="input" type="button" value="送信" onclick="tbox1()">
   </form>
   <button id="btn">マイク</button>
   <div id="threshold_select">
@@ -335,7 +335,7 @@ var api = apiUrl + apiKey;
 
 //var text = document.getElementById('text').textContent;
 
-var i = 0;
+var h = 0;
 
 var apiJson = {
 
@@ -358,10 +358,10 @@ function callBot(){
 
         var target = document.getElementById("chat-frame");
         var newTag = document.createElement("span");
-        newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="contenta'+i+'"></span></p>';
+        newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="contenta'+h+'"></span></p>';
         target.appendChild(newTag);
-        eval("contenta"+i+".textContent = data.yomi");
-        i = i + 1;
+        eval("contenta"+h+".textContent = data.yomi");
+        h = h + 1;
         $(function(){
           $(".data_table_scr").scrollTop($("#list")[0].scrollHeight);
         });
@@ -394,11 +394,20 @@ function callBot(){
 }
 
 // あとは色んなタイミングで実行
-callBot();
+//callBot();
 // 例：やっほー => やっほっほー
 // ※毎回同じとは限らない。結構いろんな回答が返ってきます
 
-setInterval(callBot, 70000);
+repetition = setTimeout(callBot, 70000);
+function interval1(){
+  repetition = setTimeout(callBot, 70000);
+}
+function interval2(){
+    clearTimeout(repetition);
+}
+var input = document.getElementById("input");
+input.addEventListener("click", interval2, false);
+input.addEventListener("click", interval1, false);
 
 </script>
 
@@ -409,8 +418,8 @@ var apiUrl = 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY=';
 var apiKey = '4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338';
 var api = apiUrl + apiKey;
 
-var i = 0;
-var j = 0;
+var k = 0;
+var l = 0;
 
 //テキストボックスの文字を取得する
 function tbox1(){
@@ -419,10 +428,10 @@ function tbox1(){
 
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
-  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="content'+j+'"></span></p>';
+  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="content'+l+'"></span></p>';
   target.appendChild(newTag);
-  eval("content"+j+".textContent = str1");
-  j = j + 1;
+  eval("content"+l+".textContent = str1");
+  l = l + 1;
 
   var apiJson = {
 
@@ -445,10 +454,10 @@ function tbox1(){
         
         var target = document.getElementById("chat-frame");
         var newTag = document.createElement("span");
-        newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="contentb'+i+'"></span></p>';
+        newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="contentb'+k+'"></span></p>';
         target.appendChild(newTag);
-        eval("contentb"+i+".textContent = data.yomi");
-        i = i + 1;
+        eval("contentb"+k+".textContent = data.yomi");
+        k = k + 1;
         $(function(){
           $(".data_table_scr").scrollTop($("#list")[0].scrollHeight);
         });
@@ -574,7 +583,6 @@ function tbox2(value){
 }
 
 var i = 0;
-var k = 0;
 function Speech_Rec(){
   //ここから音声認識
   var btn = document.getElementById('btn');
@@ -660,13 +668,6 @@ function Speech_Rec(){
 
   function getTextContents(text1) {
     if(i == 1) {
-      //content1.textContent = text1;
-      //var target = document.getElementById("chat-frame");
-      //var newTag = document.createElement("span");
-      //newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="content'+k+'"></span></p>';
-      //target.appendChild(newTag);
-      //eval("content"+k+".textContent = text1");
-      //k = k + 1;
       tbox2(text1);
     }
   }
