@@ -173,7 +173,7 @@ td {
       <p class="chat-talk mytalk">
         <span class="talk-content">
           {% for i in dataset %}
-            {{ i.datetime }}<br>
+            {{ i.datetime.year }}年{{ i.datetime.month }}月{{ i.datetime.day }}日{{ i.datetime.hour }}時{{ i.datetime.minute }}分<br>
             気温：{{ i.temperature }}</br>
             水分量：{{ i.moisture }}</br>
             照度：{{ i.illuminance }}</br>
@@ -181,10 +181,10 @@ td {
         </span>
         <span class="talk-content">
         <!--<span class="talk-content" id="text">-->
-          わたぬき、<br>
           本日の水やり時刻は<br>
-          11:30<br>
-          17:00<br>
+          {% for i in watertime %}
+          {{i}}<br>
+          {% endfor %}
           です。
         </span>
       </p>
