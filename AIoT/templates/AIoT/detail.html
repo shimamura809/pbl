@@ -26,7 +26,7 @@ div.tooltip {
 }
 #header {
   font-family: sans-serif;
-  font-size: 40px;
+  font-size: 30px;
   font-weight: bold;
   margin-top: 10px;
   margin-bottom: 10px;
@@ -46,6 +46,7 @@ div.tooltip {
 }
 .container{
   /*width: 1600px;*/
+  margin-top: 20px;
   background-color: white;
   border-width: 4px;
   border-style: ridge;
@@ -99,7 +100,7 @@ color: black;
     stroke: skyblue;
     stroke-width:5;
   }
-#graph_erea {
+#graph_area {
   float:right;
   /*display: inline-block;*/
   /*position: relative;*/
@@ -193,7 +194,11 @@ p.tabs
 }*/
 </style>
 <script type="text/javascript">
-var window_width = window.innerWidth-300;
+if (window.innerWidth - window.innerHeight > 200){
+  var window_width = window.innerWidth-150;
+} else {
+  var window_width = 1000;
+}
 $(function() {
         $(".container").css("width", window_width+"px");
       });
@@ -201,13 +206,13 @@ $(function() {
         $("#content_area").css("width", window_width-40+"px");
       });
 $(function() {
-        $(".tmp_table").css("width", (window_width-40)*0.6+"px");
+        $(".tmp_table").css("width", (window_width-50)*0.6+"px");
       });
 $(function() {
-        $(".moi_table").css("width", (window_width-40)*0.6+"px");
+        $(".moi_table").css("width", (window_width-50)*0.6+"px");
       });
 $(function() {
-        $(".ill_table").css("width", (window_width-40)*0.6+"px");
+        $(".ill_table").css("width", (window_width-50)*0.6+"px");
       });
 </script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
@@ -222,7 +227,7 @@ $(function() {
     <svg id="picture">
     <image id="zu1" x="0" y="0" width="100%" height="100%" opacity="1"></image>
     </svg>
-    <div id="graph_erea">
+    <div id="graph_area">
     <div class="tabbox" id="tabbox"></div>
     <svg id="line_graph" x="1024" y="560">
     </svg></div>
@@ -354,7 +359,7 @@ function make_linegraph(target) {
           "class":"tick",
           "transform":function(d){return "translate(" + d.scale + ",0)"},
         }).style("opacity" ,function(d){
-          if(d.scale >= 0){
+          if(d.scale >= 0 && d.scale <= width){
             return 1;
           } else {
             return 0;
@@ -588,18 +593,6 @@ function resize(){
   d3.select("#memo").style("width",(window_width-40)*0.35+"px");
 }
 
-//サイズ取得
-var pc_width = window.parent.screen.width;
-var pc_height = window.parent.screen.height;
-console.log("pc幅"+pc_width);
-console.log("pc長"+pc_height);
-//画面の表示サイズを確認
-var window_width = window.innerWidth-300;
-var window_height = window.innerHeight-50;
-console.log("画面幅"+window_width);
-console.log("画面長"+window_height);
-resize();
-
 // データ
 var parameter_data = [];
 var moi_axis = 1000;
@@ -616,8 +609,16 @@ var watertime = [];
 var month = {{ i.datetime.month }} - 1;
 watertime.push({datetime:new Date("{{i.datetime.year}}",month,"{{i.datetime.day}}","{{i.datetime.hour}}","{{i.datetime.minute}}"),str:"{{i.datetime.hour}}:{{i.datetime.minute}}"})
 {% endfor %}
+//画面の表示サイズを確認
 data_len = {{data_len}};
 set_data();
+console.log(window.innerWidth +":"+ window.innerHeight);
+if(window.innerWidth - window.innerHeight > 200){
+  var window_width = window.innerWidth-150;
+} else{
+  var window_width = 1000;
+}
+resize();
 make_linegraph("temperature");
 memo_get();
 make_link();
