@@ -256,9 +256,7 @@ td {
   //閾値をデータベースに転送
   function threshold_write() {
     var threshold_text = document.threshold_form.threshold.value;
-    console.log(threshold_text);
-    console.log(isNaN(threshold_text));
-    if(isNaN(threshold_text)){
+    if(threshold_text.match(/[^0-9]/g)||(parseInt(threshold_text, 10) + "" != threshold_text)){
       console.log("miss");
       window.alert("半角数字で入力してください");
     } else{
@@ -365,7 +363,7 @@ function callBot(){
         $(function(){
           $(".data_table_scr").scrollTop($("#list")[0].scrollHeight);
         });
-        
+
         //ここから音声合成
         jQuery(function($) {
           xhr = new XMLHttpRequest();
@@ -451,7 +449,7 @@ function tbox1(){
     })
     .done(function(data){
         console.log(data.yomi); // ←いろんな雑話が返ってくる
-        
+
         var target = document.getElementById("chat-frame");
         var newTag = document.createElement("span");
         newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="contentb'+k+'"></span></p>';
@@ -662,7 +660,7 @@ function Speech_Rec(){
           break;
         default:
           getTextContents(text1);
-    } 
+    }
   } );
   */
 
