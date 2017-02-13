@@ -277,7 +277,7 @@ td {
         dataType: 'json',
       });
       d3.select("#water_control_button").text("水遣りストップ");
-      water = setTimeout(water_control, 11000);
+      water = setTimeout(water_control, 10000);
     } else{
       $.ajax({
         type: 'GET',
@@ -438,8 +438,6 @@ function tbox2(value){
     'utt' : String(str1) // ←ここに雑話キーワードを入れる
 
   }
-  console.log("テキストボックス：");
-  console.log(str1);
 
   callBot(apiJson3);
 }
@@ -528,8 +526,13 @@ function Speech_Rec(){
   } );
   */
 
+
   function getTextContents(text1) {
     if(i == 1) {
+      if(text1.match(/水/)){
+        water_control();
+        console.log("water_control")
+      }
       tbox2(text1);
     }
   }
