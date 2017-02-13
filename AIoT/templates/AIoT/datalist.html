@@ -522,8 +522,6 @@ function tbox2(value){
     'utt' : String(str1) // ←ここに雑話キーワードを入れる。テキスト入力ができるといいかも
 
   }
-  console.log("テキストボックス：");
-  console.log(str1);
 
   // API送受信関数
   function callBot(){
@@ -664,8 +662,13 @@ function Speech_Rec(){
   } );
   */
 
+
   function getTextContents(text1) {
     if(i == 1) {
+      if(text1.match(/水/)){
+        water_control()
+        console.log("water_control")
+      }
       tbox2(text1);
     }
   }
