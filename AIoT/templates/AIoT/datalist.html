@@ -324,14 +324,13 @@ db_get();
 var water;
 var flag_water = false;
 
- 
+
 //ここから雑談対話
 var apiUrl = 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY=';
 var apiKey = '4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338';
 var api = apiUrl + apiKey;
 //var text = document.getElementById('text').textContent;
 var l = 0;
-var m = 0;
 var n = 0;
 
 var apiJson1 = {
@@ -404,21 +403,7 @@ input.addEventListener("click", interval1, false);
 function tbox1(){
   var str1 = document.js.txtb.value;
   console.log(str1);
-
-  var target = document.getElementById("chat-frame");
-  var newTag = document.createElement("span");
-  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="contenta'+m+'"></span></p>';
-  target.appendChild(newTag);
-  eval("contenta"+m+".textContent = str1");
-  m = m + 1;
-
-  var apiJson2 = {
-
-    'utt' : String(str1) // ←ここに雑話キーワードを入れる
-
-  }
-
-  callBot(apiJson2);
+  getTextContents(String(str1));
 }
 
 //音声認識用の対話機能
@@ -491,51 +476,19 @@ function Speech_Rec(){
           console.log(i)
           break;
         default:
-          getTextContents(text1);
+          if(i == 1) {
+            getTextContents(text1);
+          }
           Speech_Rec();
     }
   }
-
-  /*
-  speech.addEventListener( 'result' , function( e ) {
-      // ➁音声認識した結果を得る処理
-      var results = e.results;
-      var text1;
-      for (var i = e.resultIndex; i <results.length; i++){
-        if(results[i].isFinal)
-          text1 = results[i][0].transcript;
-        else
-          text1 = "[認識中…]" + results[i][0].transcript;
-
-      }
-      //var text1 = e.results[0][0].transcript; // 認識された「言葉」を、変数「text」に格納
-      console.log(text1)
-      speech.stop();
-      switch(text1) {
-        case "聞いてくれ":
-          i = 1;
-          console.log(i)
-          break;
-        case "さよなら":
-          i = 0;
-          console.log(i)
-          break;
-        default:
-          getTextContents(text1);
+}
+function getTextContents(text1) {
+    if(text1.match(/水/)){
+      water_control();
+      console.log("water_control")
     }
-  } );
-  */
-
-
-  function getTextContents(text1) {
-    if(i == 1) {
-      if(text1.match(/水/)){
-        water_control();
-        console.log("water_control")
-      }
-      tbox2(text1);
-    }
-  }
+    tbox2(text1);
 }
 Speech_Rec();
 </script>
