@@ -20,7 +20,7 @@ body {
   background-color: mintcream;
 }
 .data_table_scr {
-  height:450px;
+  height:480px;
   width:350px;
   overflow-y:scroll;
   background-color: #D8F3F0;
@@ -194,7 +194,7 @@ td {
   <input type="text" name="txtb" value="">
   <input id="input" type="button" value="送信" onclick="tbox1()">
   </form>
-  <button id="btn">マイク</button>
+  <!-- <button id="btn">マイク</button> -->
   <div id="threshold_select">
     <p><font size="5px" color="blue">水分量閾値</font></p>
     <form name="threshold_form" action="Sample.html">
@@ -323,26 +323,25 @@ function make_url(str) {
 db_get();
 var water;
 var flag_water = false;
-</script>
 
-<script type="text/javascript">
+ 
 //ここから雑談対話
 var apiUrl = 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY=';
 var apiKey = '4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338';
 var api = apiUrl + apiKey;
-
 //var text = document.getElementById('text').textContent;
+var l = 0;
+var m = 0;
+var n = 0;
 
-var h = 0;
+var apiJson1 = {
 
-var apiJson = {
-
-    'utt' : 'asdfg' // ←ここに雑話キーワードを入れる。テキスト入力ができるといいかも
+    'utt' : 'asdfg' // ←ここに雑話キーワードを入れる
 
 }
 
 // API送受信関数
-function callBot(){
+function callBot(apiJson){
     $.ajax({
         type : 'post',
         url : api,
@@ -356,10 +355,10 @@ function callBot(){
 
         var target = document.getElementById("chat-frame");
         var newTag = document.createElement("span");
-        newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="contenta'+h+'"></span></p>';
+        newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="content'+l+'"></span></p>';
         target.appendChild(newTag);
-        eval("contenta"+h+".textContent = data.yomi");
-        h = h + 1;
+        eval("content"+l+".textContent = data.yomi");
+        l = l + 1;
         $(function(){
           $(".data_table_scr").scrollTop($("#list")[0].scrollHeight);
         });
@@ -377,7 +376,6 @@ function callBot(){
               view = new Uint8Array(this.response);
               blob = new Blob([view], { "type" : "audio/wav" });
               URL = window.URL || window.webkitURL;
-
               audio = new Audio(URL.createObjectURL(blob));
               audio.play();
             }
@@ -391,14 +389,9 @@ function callBot(){
   })
 }
 
-// あとは色んなタイミングで実行
-//callBot();
-// 例：やっほー => やっほっほー
-// ※毎回同じとは限らない。結構いろんな回答が返ってきます
-
-repetition = setTimeout(callBot, 70000);
+repetition = setTimeout("callBot(apiJson1)", 70000);
 function interval1(){
-  repetition = setTimeout(callBot, 70000);
+  repetition = setTimeout("callBot(apiJson1)", 70000);
 }
 function interval2(){
     clearTimeout(repetition);
@@ -407,18 +400,6 @@ var input = document.getElementById("input");
 input.addEventListener("click", interval2, false);
 input.addEventListener("click", interval1, false);
 
-</script>
-
-<script type="text/javascript">
-
-//ここから雑談対話
-var apiUrl = 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY=';
-var apiKey = '4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338';
-var api = apiUrl + apiKey;
-
-var k = 0;
-var l = 0;
-
 //テキストボックスの文字を取得する
 function tbox1(){
   var str1 = document.js.txtb.value;
@@ -426,84 +407,19 @@ function tbox1(){
 
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
-  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="content'+l+'"></span></p>';
+  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="contenta'+m+'"></span></p>';
   target.appendChild(newTag);
-  eval("content"+l+".textContent = str1");
-  l = l + 1;
+  eval("contenta"+m+".textContent = str1");
+  m = m + 1;
 
-  var apiJson = {
+  var apiJson2 = {
 
-    'utt' : String(str1) // ←ここに雑話キーワードを入れる。テキスト入力ができるといいかも
+    'utt' : String(str1) // ←ここに雑話キーワードを入れる
 
   }
 
-// API送受信関数
-  function callBot(){
-    $.ajax({
-        type : 'post',
-        url : api,
-        data : JSON.stringify(apiJson),
-        contentType: 'application/JSON',
-        dataType : 'JSON',
-        scriptCharset: 'utf-8'
-    })
-    .done(function(data){
-        console.log(data.yomi); // ←いろんな雑話が返ってくる
-
-        var target = document.getElementById("chat-frame");
-        var newTag = document.createElement("span");
-        newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="contentb'+k+'"></span></p>';
-        target.appendChild(newTag);
-        eval("contentb"+k+".textContent = data.yomi");
-        k = k + 1;
-        $(function(){
-          $(".data_table_scr").scrollTop($("#list")[0].scrollHeight);
-        });
-
-        //ここから音声合成
-        jQuery(function($) {
-    xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://api.apigw.smt.docomo.ne.jp/voiceText/v1/textToSpeech?APIKEY=4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338', true);
-
-    xhr.responseType = 'arraybuffer'
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
-    var datax = "text="+data.yomi+"&speaker=hikari&emotion=happiness&emotion_level=2&format=ogg";
-
-    xhr.onload = function (e) {
-        if( this.status == 200){
-            view = new Uint8Array(this.response);
-            blob = new Blob([view], { "type" : "audio/wav" });
-            URL = window.URL || window.webkitURL;
-
-            audio = new Audio(URL.createObjectURL(blob));
-            audio.play();
-        }
-    };
-    data1 = datax;
-    xhr.send(data1);
-});
-
-    })
-    .fail(function(data){
-        console.log(data.responseText); // ←エラー時の処理
-    })
+  callBot(apiJson2);
 }
-
-// あとは色んなタイミングで実行
-callBot();
-// 例：やっほー => やっほっほー
-// ※毎回同じとは限らない。結構いろんな回答が返ってきます
-}
-
-</script>
-
-<script type="text/javascript">
-var apiUrl = 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY=';
-var apiKey = '4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338';
-var api = apiUrl + apiKey;
-
-var m = 0;
-var n = 0;
 
 //音声認識用の対話機能
 function tbox2(value){
@@ -512,78 +428,26 @@ function tbox2(value){
 
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
-  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="contentc'+m+'"></span></p>';
+  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="contentb'+n+'"></span></p>';
   target.appendChild(newTag);
-  eval("contentc"+m+".textContent = str1");
-  m = m + 1;
+  eval("contentb"+n+".textContent = str1");
+  n = n + 1;
 
-  var apiJson = {
+  var apiJson3 = {
 
-    'utt' : String(str1) // ←ここに雑話キーワードを入れる。テキスト入力ができるといいかも
+    'utt' : String(str1) // ←ここに雑話キーワードを入れる
 
   }
   console.log("テキストボックス：");
   console.log(str1);
 
-  // API送受信関数
-  function callBot(){
-    $.ajax({
-        type : 'post',
-        url : api,
-        data : JSON.stringify(apiJson),
-        contentType: 'application/JSON',
-        dataType : 'JSON',
-        scriptCharset: 'utf-8'
-    })
-    .done(function(data){
-        console.log(data.yomi); // ←いろんな雑話が返ってくる
-        //content.textContent = data.yomi;
-
-        var target = document.getElementById("chat-frame");
-        var newTag = document.createElement("span");
-        newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="contentd'+n+'"></span></p>';
-        target.appendChild(newTag);
-        eval("contentd"+n+".textContent = data.yomi");
-        n = n + 1;
-        $(function(){
-          $(".data_table_scr").scrollTop($("#list")[0].scrollHeight);
-        });
-
-        //ここから音声合成
-        jQuery(function($) {
-          xhr = new XMLHttpRequest();
-          xhr.open('POST', 'https://api.apigw.smt.docomo.ne.jp/voiceText/v1/textToSpeech?APIKEY=4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338', true);
-          xhr.responseType = 'arraybuffer'
-          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
-          var datax = "text="+data.yomi+"&speaker=hikari&emotion=happiness&emotion_level=2&format=ogg";
-          xhr.onload = function (e) {
-            if( this.status == 200){
-              view = new Uint8Array(this.response);
-              blob = new Blob([view], { "type" : "audio/wav" });
-              URL = window.URL || window.webkitURL;
-              audio = new Audio(URL.createObjectURL(blob));
-              audio.play();
-            }
-          };
-          data1 = datax;
-          xhr.send(data1);
-        });
-      })
-    .fail(function(data){
-        console.log(data.responseText); // ←エラー時の処理
-    })
-  }
-
-  // あとは色んなタイミングで実行
-  callBot();
-  // 例：やっほー => やっほっほー
-  // ※毎回同じとは限らない。結構いろんな回答が返ってきます
+  callBot(apiJson3);
 }
 
 var i = 0;
 function Speech_Rec(){
   //ここから音声認識
-  var btn = document.getElementById('btn');
+  //var btn = document.getElementById('btn');
   //var content1 = document.getElementById('content');
   var speech = new webkitSpeechRecognition(); //音声認識APIの使用
 
@@ -593,10 +457,10 @@ function Speech_Rec(){
   speech.continuous = true;
   speech.interimResults = true;
   speech.lang = "ja"; //言語を日本語に設定
-  btn.addEventListener( 'click' , function() {
+  /*btn.addEventListener( 'click' , function() {
       // ➀ボタンをクリックした時の処理
       speech.start(); // 音声認識をスタート
-  } );
+  } );*/
   speech.onerror = function(){
     if(speech_status == 0)
       Speech_Rec();
@@ -671,7 +535,6 @@ function Speech_Rec(){
   }
 }
 Speech_Rec();
-
 </script>
 
 {% endblock content %}
