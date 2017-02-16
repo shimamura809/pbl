@@ -331,6 +331,7 @@ var apiKey = '4243356f65594f4435517944436f43345a42515767785831573876323459627a59
 var api = apiUrl + apiKey;
 //var text = document.getElementById('text').textContent;
 var l = 0;
+var m = 0;
 var n = 0;
 
 var apiJson1 = {
@@ -338,6 +339,35 @@ var apiJson1 = {
     'utt' : 'asdfg' // ←ここに雑話キーワードを入れる
 
 }
+
+//ここから音声合成
+function OnseiGousei(onsei) {
+  var target = document.getElementById("chat-frame");
+  var newTag = document.createElement("span");
+  newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="content'+l+'"></span></p>';
+  target.appendChild(newTag);
+  eval("content"+l+".textContent = onsei");
+  l = l + 1;
+  $(function(){
+    $(".data_table_scr").scrollTop($("#list")[0].scrollHeight);
+  });
+  xhr = new XMLHttpRequest();
+  xhr.open('POST', 'https://api.apigw.smt.docomo.ne.jp/voiceText/v1/textToSpeech?APIKEY=4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338', true);
+  xhr.responseType = 'arraybuffer'
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+  var datax = "text="+onsei+"&speaker=hikari&emotion=happiness&emotion_level=2&format=ogg";
+  xhr.onload = function (e) {
+    if( this.status == 200){
+      view = new Uint8Array(this.response);
+      blob = new Blob([view], { "type" : "audio/wav" });
+      URL = window.URL || window.webkitURL;
+      audio = new Audio(URL.createObjectURL(blob));
+      audio.play();
+    }
+  };
+  data1 = datax;
+  xhr.send(data1);
+};
 
 // API送受信関数
 function callBot(apiJson){
@@ -351,37 +381,7 @@ function callBot(apiJson){
     })
     .done(function(data){
         console.log(data.yomi); // ←いろんな雑話が返ってくる
-
-        var target = document.getElementById("chat-frame");
-        var newTag = document.createElement("span");
-        newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="content'+l+'"></span></p>';
-        target.appendChild(newTag);
-        eval("content"+l+".textContent = data.yomi");
-        l = l + 1;
-        $(function(){
-          $(".data_table_scr").scrollTop($("#list")[0].scrollHeight);
-        });
-
-        //ここから音声合成
-        jQuery(function($) {
-          xhr = new XMLHttpRequest();
-          xhr.open('POST', 'https://api.apigw.smt.docomo.ne.jp/voiceText/v1/textToSpeech?APIKEY=4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338', true);
-          xhr.responseType = 'arraybuffer'
-          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
-          var datax = "text="+data.yomi+"&speaker=hikari&emotion=happiness&emotion_level=2&format=ogg";
-          //var datax = "text="+text+data.yomi+"&speaker=hikari&emotion=happiness&emotion_level=2&format=ogg";
-          xhr.onload = function (e) {
-            if( this.status == 200){
-              view = new Uint8Array(this.response);
-              blob = new Blob([view], { "type" : "audio/wav" });
-              URL = window.URL || window.webkitURL;
-              audio = new Audio(URL.createObjectURL(blob));
-              audio.play();
-            }
-          };
-          data1 = datax;
-          xhr.send(data1);
-        });
+        OnseiGousei(data.yomi);
       })
     .fail(function(data){
     console.log(data.responseText); // ←エラー時の処理
@@ -399,6 +399,16 @@ var input = document.getElementById("input");
 input.addEventListener("click", interval2, false);
 input.addEventListener("click", interval1, false);
 
+function OnseiHyouji(value){
+  var str1 = value;
+  var target = document.getElementById("chat-frame");
+  var newTag = document.createElement("span");
+  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="contenta'+m+'"></span></p>';
+  target.appendChild(newTag);
+  eval("contenta"+m+".textContent = str1");
+  m = m + 1;
+}
+
 //テキストボックスの文字を取得する
 function tbox1(){
   var str1 = document.js.txtb.value;
@@ -409,8 +419,6 @@ function tbox1(){
 //音声認識用の対話機能
 function tbox2(value){
   var str1 = value;
-  //content1.textContent = str1;
-
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
   newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="contentb'+n+'"></span></p>';
@@ -486,9 +494,13 @@ function Speech_Rec(){
 function getTextContents(text1) {
     if(text1.match(/水/)){
       water_control();
-      console.log("water_control")
+      console.log("water_control");
+      OnseiHyouji(text1);
+      OnseiGousei("ごくごく．．．ちょうど水がほしかったんだ！ありがとう！！");
     }
-    tbox2(text1);
+    else{
+      tbox2(text1);
+    }
 }
 Speech_Rec();
 </script>
