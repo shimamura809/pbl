@@ -382,6 +382,7 @@ function callBot(apiJson){
     .done(function(data){
         console.log(data.yomi); // ←いろんな雑話が返ってくる
         OnseiGousei(data.yomi);
+        tmp_text = data.context;
       })
     .fail(function(data){
     console.log(data.responseText); // ←エラー時の処理
@@ -419,6 +420,8 @@ function tbox1(){
 //音声認識用の対話機能
 function tbox2(value){
   var str1 = value;
+  var str2 = tmp_text;
+  
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
   newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="contentb'+n+'"></span></p>';
@@ -428,13 +431,15 @@ function tbox2(value){
 
   var apiJson3 = {
 
-    'utt' : String(str1) // ←ここに雑話キーワードを入れる
-
+    'utt' : String(str1), // ←ここに雑話キーワードを入れる
+    'context' : String(str2),
+    "mode": "dialog"
   }
 
   callBot(apiJson3);
 }
-
+//履歴を保存する変数
+var tmp_text = "";
 var i = 0;
 function Speech_Rec(){
   //ここから音声認識
