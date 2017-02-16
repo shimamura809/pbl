@@ -65,11 +65,13 @@ def detail(request):
     picture = os.path.exists(os.path.dirname(os.path.abspath(__file__)) + '/../media/'+dt+".jpg")
     dataset = []
     dataset += db.collect_data.find({"datetime":{"$gte":gt, "$lte":lt}}).sort("datetime", ASCENDING)
+    datetime_diff = 0
+    if len(dataset) > 0:
+      datetime_diff = (dataset[-1]["datetime"] - dataset[0]["datetime"]).total_seconds()
+    print(datetime_diff)
     raw_watertime = []
     raw_watertime += db.watertime.find({"datetime":{"$gte":gt, "$lte":lt}}).sort("datetime", ASCENDING)
-    print(dataset)
-    print(raw_watertime)
-    return render_to_response('AIoT/detail.html', {"dataset":dataset,"data_len":len(dataset),"datetime":gt, "memo_data":memo, "picture":picture,"pic_dt":dt,"watertime":raw_watertime})
+    return render_to_response('AIoT/detail.html', {"dataset":dataset,"data_len":len(dataset),"datetime":gt, "memo_data":memo, "picture":picture,"pic_dt":dt,"watertime":raw_watertime,"datetime_diff":datetime_diff})
 
 # 画像一覧用の関数
 def pict_list(request):

@@ -351,7 +351,7 @@ function callBot(apiJson){
     })
     .done(function(data){
         console.log(data.yomi); // ←いろんな雑話が返ってくる
-
+        tmp_text = data.context;
         var target = document.getElementById("chat-frame");
         var newTag = document.createElement("span");
         newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="content'+l+'"></span></p>';
@@ -409,7 +409,7 @@ function tbox1(){
 //音声認識用の対話機能
 function tbox2(value){
   var str1 = value;
-  //content1.textContent = str1;
+  var str2 = tmp_text;
 
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
@@ -420,13 +420,15 @@ function tbox2(value){
 
   var apiJson3 = {
 
-    'utt' : String(str1) // ←ここに雑話キーワードを入れる
-
+    'utt' : String(str1), // ←ここに雑話キーワードを入れる
+    'context' : String(str2),
+    "mode": "dialog"
   }
 
   callBot(apiJson3);
 }
-
+//履歴を保存する変数
+var tmp_text = "";
 var i = 0;
 function Speech_Rec(){
   //ここから音声認識

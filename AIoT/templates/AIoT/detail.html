@@ -310,7 +310,17 @@ function make_linegraph(target) {
       var xScale = d3.time.scale()
               .domain([parameter_data[0]["datetime"], parameter_data[data_len-1]["datetime"]])
               .range([0, width]);
-      var xAxis = d3.svg.axis()
+      if ({{datetime_diff}} <= 7200){
+        var xAxis = d3.svg.axis()
+              .scale(xScale)
+              .orient("bottom")
+              .ticks(d3.time.minute, 10)
+              .tickFormat(d3.time.format('%_H:%M'))
+              .innerTickSize(-height)  // 目盛線の長さ（内側）
+              .outerTickSize(2)
+              .tickPadding(8); // 目盛線の長さ（外側）
+      } else if ({{datetime_diff}} > 7200 && {{datetime_diff}} <= 36000) {
+        var xAxis = d3.svg.axis()
               .scale(xScale)
               .orient("bottom")
               .ticks(d3.time.minute, 30)
@@ -318,6 +328,25 @@ function make_linegraph(target) {
               .innerTickSize(-height)  // 目盛線の長さ（内側）
               .outerTickSize(2)
               .tickPadding(8); // 目盛線の長さ（外側）
+      } else if ({{datetime_diff}} > 36000 && {{datetime_diff}} <= 72000) {
+        var xAxis = d3.svg.axis()
+              .scale(xScale)
+              .orient("bottom")
+              .ticks(d3.time.minute, 60)
+              .tickFormat(d3.time.format('%_H:%M'))
+              .innerTickSize(-height)  // 目盛線の長さ（内側）
+              .outerTickSize(2)
+              .tickPadding(8); // 目盛線の長さ（外側）
+      } else {
+        var xAxis = d3.svg.axis()
+              .scale(xScale)
+              .orient("bottom")
+              .ticks(d3.time.minute, 120)
+              .tickFormat(d3.time.format('%_H:%M'))
+              .innerTickSize(-height)  // 目盛線の長さ（内側）
+              .outerTickSize(2)
+              .tickPadding(8); // 目盛線の長さ（外側）
+      }
 
       //選択パラメータにより変化
       if (target == "temperature") {
