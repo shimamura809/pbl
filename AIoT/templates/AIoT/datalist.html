@@ -162,6 +162,7 @@ td {
   /*border: 4px solid #ccc;*/
 }
 </style>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -305,6 +306,25 @@ td {
     document.threshold_form.threshold.value = "{{threshold}}";
   }
 
+  //音声によるページ推移用関数
+  function move_page(str) {
+    if (str == "画像") {
+      location.href = "{% url 'AIoT:pict_list' %}";
+    } else if (str == "取得データ") {
+      location.href = "{% url 'AIoT:getdata' %}";
+    } else if (str == "昨日") {
+      var dt = new Date({{datetime.year}},{{datetime.month}}-1,{{datetime.day}});
+      var prev_dt = moment(dt).subtract(1,"days").format("YYYYMMDD");
+      location.href = "{% url 'AIoT:detail' %}" + "?datetime=" + prev_dt;
+    } else if (str == "先週") {
+      var dt = new Date({{datetime.year}},{{datetime.month}}-1,{{datetime.day}});
+      var prev_we = moment(dt).subtract(1,"week").format("YYYYMMDD");
+      location.href = "{% url 'AIoT:detail' %}" + "?datetime=" + prev_we;
+    } else if (str == "今日") {
+      location.href = "{% url 'AIoT:detail' %}";
+    }
+  }
+
   //url作成用関数
 function make_url(str) {
   var year = "{{datetime.year}}";
@@ -319,6 +339,8 @@ function make_url(str) {
   }
   return url;
 }
+
+
 
 db_get();
 var water;
@@ -340,7 +362,6 @@ var apiJson1 = {
 
 }
 
-//ここから音声合成
 function OnseiGousei(onsei) {
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
@@ -381,8 +402,8 @@ function callBot(apiJson){
     })
     .done(function(data){
         console.log(data.yomi); // ←いろんな雑話が返ってくる
-        OnseiGousei(data.yomi);
         tmp_text = data.context;
+        OnseiGousei(data.yomi);
       })
     .fail(function(data){
     console.log(data.responseText); // ←エラー時の処理
@@ -421,7 +442,7 @@ function tbox1(){
 function tbox2(value){
   var str1 = value;
   var str2 = tmp_text;
-  
+
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
   newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="contentb'+n+'"></span></p>';
@@ -483,10 +504,11 @@ function Speech_Rec(){
         case "聞いて":
           i = 1;
           console.log(i)
+          OnseiGousei("何でも聞きますよ");
           break;
         case "さよなら":
           i = 0;
-          console.log(i)
+          OnseiGousei("またお話しましょう");
           break;
         default:
           if(i == 1) {
@@ -499,11 +521,21 @@ function Speech_Rec(){
 function getTextContents(text1) {
     if(text1.match(/水/)){
       water_control();
-      console.log("water_control");
       OnseiHyouji(text1);
       OnseiGousei("ごくごく．．．ちょうど水がほしかったんだ！ありがとう！！");
-    }
-    else{
+    } else if(text1.match(/画像/)){
+      move_page("画像");
+    }　else if(text1.match(/取得データ/)){
+      move_page("取得データ");
+    }　else if(text1.match(/情報/)||text1.match(/詳細/)){
+      if(text1.match(/昨日/)){
+        move_page("昨日");
+      } else if(text1.match(/先週/)){
+        move_page("先週");
+      } else {
+        move_page("今日");
+      }
+    } else {
       tbox2(text1);
     }
 }

@@ -310,42 +310,21 @@ function make_linegraph(target) {
       var xScale = d3.time.scale()
               .domain([parameter_data[0]["datetime"], parameter_data[data_len-1]["datetime"]])
               .range([0, width]);
-      if ({{datetime_diff}} <= 7200){
-        var xAxis = d3.svg.axis()
+      var xAxis = d3.svg.axis()
               .scale(xScale)
               .orient("bottom")
-              .ticks(d3.time.minute, 10)
               .tickFormat(d3.time.format('%_H:%M'))
               .innerTickSize(-height)  // 目盛線の長さ（内側）
               .outerTickSize(2)
               .tickPadding(8); // 目盛線の長さ（外側）
-      } else if ({{datetime_diff}} > 7200 && {{datetime_diff}} <= 36000) {
-        var xAxis = d3.svg.axis()
-              .scale(xScale)
-              .orient("bottom")
-              .ticks(d3.time.minute, 30)
-              .tickFormat(d3.time.format('%_H:%M'))
-              .innerTickSize(-height)  // 目盛線の長さ（内側）
-              .outerTickSize(2)
-              .tickPadding(8); // 目盛線の長さ（外側）
+      if ({{datetime_diff}} <= 10800){
+        xAxis.ticks(d3.time.minute, 10)
+      } else if ({{datetime_diff}} > 10800 && {{datetime_diff}} <= 36000) {
+        xAxis.ticks(d3.time.minute, 30)
       } else if ({{datetime_diff}} > 36000 && {{datetime_diff}} <= 72000) {
-        var xAxis = d3.svg.axis()
-              .scale(xScale)
-              .orient("bottom")
-              .ticks(d3.time.minute, 60)
-              .tickFormat(d3.time.format('%_H:%M'))
-              .innerTickSize(-height)  // 目盛線の長さ（内側）
-              .outerTickSize(2)
-              .tickPadding(8); // 目盛線の長さ（外側）
+        xAxis.ticks(d3.time.minute, 60)
       } else {
-        var xAxis = d3.svg.axis()
-              .scale(xScale)
-              .orient("bottom")
-              .ticks(d3.time.minute, 120)
-              .tickFormat(d3.time.format('%_H:%M'))
-              .innerTickSize(-height)  // 目盛線の長さ（内側）
-              .outerTickSize(2)
-              .tickPadding(8); // 目盛線の長さ（外側）
+        xAxis.ticks(d3.time.hour, 2)
       }
 
       //選択パラメータにより変化
@@ -482,23 +461,22 @@ tab.selectAll("p.tab")
 function set_data() {
   //変数の初期化
   var cnt = 0;
-  var ave_tmp = 0;
-  var ave_moi = 0;
-  var ave_ill = 0;
-  var max_tmp = 0;
-  var max_moi = 0;
-  var max_ill = 0;
-  var min_tmp = 9999;
-  var min_moi = 9999;
-  var min_ill = 9999;
+  var ave_tmp = 0,ave_moi = 0,ave_ill = 0;            //平均値用
+  var max_tmp = 0,max_moi = 0,max_ill = 0;            //最大値用
+  var min_tmp = 9999,min_moi = 9999,min_ill = 9999;   //最小値用
   {% for i in dataset %}
   var month = {{ i.datetime.month }} - 1;
-  parameter_data.push({temperature:{{i.temperature}},moisture:{{i.moisture}},illuminance:{{i.illuminance}},datetime:new Date("{{i.datetime.year}}",month,"{{i.datetime.day}}","{{i.datetime.hour}}","{{i.datetime.minute}}")});
-  ave_tmp = ave_tmp + {{ i.temperature }};
+  if(isNaN("{{i.temperature}}")){
+    var temperature = 0;
+  } else {
+    var temperature = {{i.temperature}};
+  }
+  parameter_data.push({temperature:temperature,moisture:{{i.moisture}},illuminance:{{i.illuminance}},datetime:new Date("{{i.datetime.year}}",month,"{{i.datetime.day}}","{{i.datetime.hour}}","{{i.datetime.minute}}")});
+  ave_tmp = ave_tmp + temperature;
   ave_moi = ave_moi + {{ i.moisture }};
   ave_ill = ave_ill + {{ i.illuminance }};
-  if ({{i.temperature}} > max_tmp){
-    max_tmp = {{i.temperature}}
+  if (temperature > max_tmp){
+    max_tmp = temperature
   }
   if ({{i.moisture}} > max_moi){
     max_moi = {{i.moisture}}
@@ -506,8 +484,8 @@ function set_data() {
   if ({{i.illuminance}} > max_ill){
     max_ill = {{i.illuminance}}
   }
-  if ({{i.temperature}} < min_tmp){
-    min_tmp = {{i.temperature}}
+  if (temperature < min_tmp){
+    min_tmp = temperature
   }
   if ({{i.moisture}} < min_moi){
     min_moi = {{i.moisture}}
@@ -521,15 +499,7 @@ function set_data() {
   ave_moi = ave_moi/cnt;
   ave_ill = ave_ill/cnt;
   if (data_len == 0){
-    ave_tmp = "null";
-    ave_moi = "null";
-    ave_ill = "null";
-    max_tmp = "null";
-    max_moi = "null";
-    max_ill = "null";
-    min_tmp = "null";
-    min_moi = "null";
-    min_ill = "null";
+    ave_tmp = ave_moi = ave_ill = max_tmp = max_moi = max_ill = min_tmp = min_moi = min_ill = "null";
     var t_body_list = [max_tmp,min_tmp,ave_tmp];
     var m_body_list = [max_moi,min_moi,ave_moi];
     var i_body_list = [max_ill,min_ill,ave_ill];
@@ -641,7 +611,6 @@ watertime.push({datetime:new Date("{{i.datetime.year}}",month,"{{i.datetime.day}
 //画面の表示サイズを確認
 data_len = {{data_len}};
 set_data();
-console.log(window.innerWidth +":"+ window.innerHeight);
 if(window.innerWidth - window.innerHeight > 200){
   var window_width = window.innerWidth-150;
 } else{
