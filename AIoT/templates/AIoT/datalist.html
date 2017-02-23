@@ -27,7 +27,7 @@ body {
   border: 4px solid #ccc;
 }
 #threshold_select{
-  margin-top: 10px;
+  /*margin-top: 10px;*/
   border: 4px solid #ccc;
   background-color: white;
 }
@@ -524,16 +524,21 @@ function getTextContents(text1) {
       OnseiHyouji(text1);
       OnseiGousei("ごくごく．．．ちょうど水がほしかったんだ！ありがとう！！");
     } else if(text1.match(/画像/)){
-      move_page("画像");
+      OnseiGousei("了解しました");
+      setTimeout(move_page, 2500, "画像")
     }　else if(text1.match(/取得データ/)){
-      move_page("取得データ");
+      OnseiGousei("了解しました");
+      setTimeout(move_page, 2500, "取得データ")
     }　else if(text1.match(/情報/)||text1.match(/詳細/)){
       if(text1.match(/昨日/)){
-        move_page("昨日");
+        OnseiGousei("了解しました");
+        setTimeout(move_page, 2500, "昨日")
       } else if(text1.match(/先週/)){
-        move_page("先週");
+        OnseiGousei("了解しました");
+        setTimeout(move_page, 2500, "先週")
       } else {
-        move_page("今日");
+        OnseiGousei("了解しました");
+        setTimeout(move_page, 2500, "今日")
       }
     } else {
       tbox2(text1);
