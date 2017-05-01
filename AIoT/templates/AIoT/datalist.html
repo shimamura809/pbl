@@ -351,6 +351,7 @@ var flag_water = false;
 var apiUrl = 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY=';
 var apiKey = '4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338';
 var api = apiUrl + apiKey;
+
 //var text = document.getElementById('text').textContent;
 var l = 0;
 var m = 0;
@@ -410,6 +411,54 @@ function callBot(apiJson){
   })
 }
 
+//API発話起点
+var request = new XMLHttpRequest();
+request.open('POST', 'https://api.repl-ai.jp/v1/dialogue', true);
+request.setRequestHeader("Content-Type", "application/json");
+request.setRequestHeader("x-api-key", "utzD4E0CtN3Vw6lauIXS04JpvyGxoBrk9xUoOHiQ");
+request.onload = function (e) {
+  if( request.status == 200){
+    //console.log(request.responseText);
+    var res = JSON.parse(request.responseText);
+    var res1 = res["systemText"];
+    console.log(res1["expression"]);
+    OnseiGousei(res1["utterance"]);
+  }
+};
+var body = {
+  appUserId:'o8gkTuc0E9gnjSYPVifLgeQ7ajD6eVqA',
+  botId:'plantalk',
+  voiceText:'init',
+  initTalkingFlag:true,
+  initTopicId:'talk1'
+};
+request.send(JSON.stringify(body));
+
+//API発話
+function callAPI(hatsuwa){
+  var request = new XMLHttpRequest();
+  request.open('POST', 'https://api.repl-ai.jp/v1/dialogue', true);
+  request.setRequestHeader("Content-Type", "application/json");
+  request.setRequestHeader("x-api-key", "utzD4E0CtN3Vw6lauIXS04JpvyGxoBrk9xUoOHiQ");
+  request.onload = function (e) {
+    if( request.status == 200){
+      //console.log(request.responseText);
+      var res = JSON.parse(request.responseText);
+      var res1 = res["systemText"];
+      console.log(res1["expression"]);
+      OnseiGousei(res1["utterance"]);
+    }
+  };
+  var body1 = {
+    appUserId:'o8gkTuc0E9gnjSYPVifLgeQ7ajD6eVqA',
+    botId:'plantalk',
+    voiceText:hatsuwa,
+    initTalkingFlag:false,
+    initTopicId:'talk1'
+  };
+  request.send(JSON.stringify(body1));
+}
+/*
 repetition = setTimeout("callBot(apiJson1)", 70000);
 function interval1(){
   repetition = setTimeout("callBot(apiJson1)", 70000);
@@ -420,7 +469,7 @@ function interval2(){
 var input = document.getElementById("input");
 input.addEventListener("click", interval2, false);
 input.addEventListener("click", interval1, false);
-
+*/
 function OnseiHyouji(value){
   var str1 = value;
   var target = document.getElementById("chat-frame");
@@ -457,7 +506,9 @@ function tbox2(value){
     "mode": "dialog"
   }
 
-  callBot(apiJson3);
+  //callBot(apiJson3);
+
+  callAPI(str1);
 }
 //履歴を保存する変数
 var tmp_text = "";
