@@ -2,30 +2,38 @@ import paho.mqtt.client as mqtt
 import watering
 import time
 import threading
+import datetime
 
 WATERON_MODE = 1
 WATEROFF_MODE = 0
+START_SEC  =    datetime.datetime.today()
 
-#host ="210.152.14.37"
-host = "localhost"
+water_limit = 10  #1<water_limit<60
+
+host ="210.152.14.37"
+#host = "localhost"
 port = 1883
 topic = "#"
+
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     client.subscribe(topic)
 
 def on_message(client, userdata, msg):
-#    print(msg.topic+" "+str(msg.payload))
+    print(msg.topic+" "+str(msg.payload))
     action = msg.payload
     if action == "wateron":
-	watering.mode = WATERON_MODE
-	watering.switch()
-	print("received watering order")
+    	global START_SEC
+    	START_SEC  =    datetime.datetime.today()
+#    	print(START_SEC)
+    	watering.mode = WATERON_MODE
+    	watering.switch()
+    	print("received watering order")
     if action == "wateroff":
-	watering.mode = WATEROFF_MODE
-	watering.switch()
-	print("received stop_watering order")
+    	watering.mode = WATEROFF_MODE
+    	watering.switch()
+    	print("received stop_watering order")
 
 watering = watering.Pomp()
 watering.mode = WATEROFF_MODE
@@ -36,4 +44,15 @@ if __name__ == '__main__':
     client.on_message = on_message
     client.connect(host, port=port, keepalive=60)
 
-    client.loop_forever()
+    client.loop_start()
+#   print(START_SEC)
+
+    while True:
+        if watering.mode == WATERON_MODE:
+            DELTA_SEC = datetime.datetime.today() - START_SEC
+#           print(DELTA_SEC)
+            if DELTA_SEC.total_seconds() > water_limit:
+                watering.mode = WATEROFF_MODE
+                watering.switch()
+                print("time is over")
+        time.sleep(0.5)
