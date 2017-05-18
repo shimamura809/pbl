@@ -192,7 +192,8 @@ td {
     </div>
   </div>
   <form name="js">
-  <input type="text" name="txtb" value="">
+  <input type="text" name="txtb" value="" onkeypress="enter(event.keyCode);">
+  <input type="text" style="display: none;"/>
   <input id="input" type="button" value="送信" onclick="tbox1()">
   </form>
   <!-- <button id="btn">マイク</button> -->
@@ -487,6 +488,15 @@ function tbox1(){
   getTextContents(String(str1));
 }
 
+function enter(code)
+{
+  //エンターキー押下なら
+  if(13 === code)
+  {
+    tbox1();
+  }
+}
+
 //音声認識用の対話機能
 function tbox2(value){
   var str1 = value;
@@ -575,19 +585,24 @@ function getTextContents(text1) {
       OnseiHyouji(text1);
       OnseiGousei("ごくごく．．．ちょうど水がほしかったんだ！ありがとう！！");
     } else if(text1.match(/画像/)){
+      OnseiHyouji(text1);
       OnseiGousei("了解しました");
       setTimeout(move_page, 2500, "画像")
     }　else if(text1.match(/取得データ/)){
+      OnseiHyouji(text1);
       OnseiGousei("了解しました");
       setTimeout(move_page, 2500, "取得データ")
     }　else if(text1.match(/情報/)||text1.match(/詳細/)){
       if(text1.match(/昨日/)){
+        OnseiHyouji(text1);
         OnseiGousei("了解しました");
         setTimeout(move_page, 2500, "昨日")
       } else if(text1.match(/先週/)){
+        OnseiHyouji(text1);
         OnseiGousei("了解しました");
         setTimeout(move_page, 2500, "先週")
       } else {
+        OnseiHyouji(text1);
         OnseiGousei("了解しました");
         setTimeout(move_page, 2500, "今日")
       }
