@@ -235,7 +235,6 @@ td {
 <script type="text/javascript" charset="UTF-8" src="{% static 'js/cal.js' %}"></script>
 
 <script type="text/javascript">
-  d3.select("#zu1").attr("xlink:href","/site_media/"+"zu1.jpg");
   d3.select("#pict_list").attr({
     "class": "btn btn-info btn-sm btn-block",
     "href": "{% url 'AIoT:pict_list' %}",
@@ -244,6 +243,12 @@ td {
     "class": "btn btn-info btn-sm btn-block",
     "href": "{% url 'AIoT:getdata' %}",
   }).text("取得データ一覧");
+
+  //画像切り替え用の関数(引数paraは文字列)
+  function pict_change(para) {
+    d3.select("#zu1").attr("xlink:href","/site_media/"+para+".jpg");
+  }
+
   //memoをデータベースに転送
   function memo_write() {
     var memo_text = document.memo_form.memo.value;
@@ -342,8 +347,9 @@ function make_url(str) {
 }
 
 
-
+//実行部
 db_get();
+pict_change("zu1");
 var water;
 var flag_water = false;
 
@@ -481,6 +487,26 @@ function OnseiHyouji(value){
   m = m + 1;
 }
 
+function GazouHyouji(value){
+  var date = value;
+  console.log("test");
+  var target = document.getElementById("chat-frame");
+  var newTag = document.createElement("span");
+  newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="contentb'+l+'"><svg id="pict'+l+'"></svg></span></p>';
+  target.appendChild(newTag);
+  // eval("contenta"+m+".textContent = str1");
+  d3.select("#pict"+l).append("image").attr({
+      "xlink:href": "/site_media/"+"20170508"+".jpg",
+      "opacity":"1",
+      'width' : "240px",
+      'height' : "150px",
+      "float" : "left",
+      "margin" : "auto",
+      "display": "block",
+    });
+  l = l + 1;
+}
+
 //テキストボックスの文字を取得する
 function tbox1(){
   var str1 = document.js.txtb.value;
@@ -606,6 +632,11 @@ function getTextContents(text1) {
         OnseiGousei("了解しました");
         setTimeout(move_page, 2500, "今日")
       }
+    }　else if(text1.match(/現在の状態は？/)){
+      OnseiHyouji(text1);
+      OnseiGousei("ご確認ください");
+      GazouHyouji("zu1");
+      OnseiGousei("水やりはどうですか？");
     } else {
       tbox2(text1);
     }
