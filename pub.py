@@ -52,7 +52,7 @@ def illuminance():
             sleep(tryspan)
         else:
             return tmp3
-    return "No data"
+    return "nodata"
 
 client = mqtt.Client(protocol=mqtt.MQTTv311)
 
