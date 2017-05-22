@@ -354,7 +354,7 @@ var water;
 var flag_water = false;
 
 
-//ここから雑談対話
+//ここから音声対話
 var apiUrl = 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY=';
 var apiKey = '4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338';
 var api = apiUrl + apiKey;
@@ -364,12 +364,12 @@ var l = 0;
 var m = 0;
 var n = 0;
 
+//雑談対話への適当なリクエストを用意
 var apiJson1 = {
-
     'utt' : 'asdfg' // ←ここに雑話キーワードを入れる
-
 }
 
+//システム発話を表示・音声再生する
 function OnseiGousei(onsei) {
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
@@ -398,7 +398,7 @@ function OnseiGousei(onsei) {
   xhr.send(data1);
 };
 
-// API送受信関数
+//雑談対話Bot
 function callBot(apiJson){
     $.ajax({
         type : 'post',
@@ -418,7 +418,7 @@ function callBot(apiJson){
   })
 }
 
-//API発話起点
+//Repl-AIシステム初期発話
 var request = new XMLHttpRequest();
 request.open('POST', 'https://api.repl-ai.jp/v1/dialogue', true);
 request.setRequestHeader("Content-Type", "application/json");
@@ -441,7 +441,7 @@ var body = {
 };
 request.send(JSON.stringify(body));
 
-//API発話
+//Repl-AIシステム発話
 function callAPI(hatsuwa,RequestZatsudan){
   var request = new XMLHttpRequest();
   request.open('POST', 'https://api.repl-ai.jp/v1/dialogue', true);
@@ -452,7 +452,7 @@ function callAPI(hatsuwa,RequestZatsudan){
       //console.log(request.responseText);
       var res = JSON.parse(request.responseText);
       var res1 = res["systemText"];
-      if(res1["expression"] == "NOMATCH"){
+      if(res1["expression"] == "NOMATCH"){//返答がNOMATCHならcallBotにリクエスト
         callBot(RequestZatsudan);
       }else{
       console.log(res1["expression"]);
@@ -469,7 +469,9 @@ function callAPI(hatsuwa,RequestZatsudan){
   };
   request.send(JSON.stringify(body1));
 }
+
 /*
+//定期的な雑談対話システム発話
 repetition = setTimeout("callBot(apiJson1)", 70000);
 function interval1(){
   repetition = setTimeout("callBot(apiJson1)", 70000);
@@ -481,6 +483,8 @@ var input = document.getElementById("input");
 input.addEventListener("click", interval2, false);
 input.addEventListener("click", interval1, false);
 */
+
+//ユーザ発話の表示(getTextContentsでmatchしたとき用)
 function OnseiHyouji(value){
   var str1 = value;
   var target = document.getElementById("chat-frame");
@@ -518,17 +522,17 @@ function tbox1(){
   getTextContents(String(str1));
 }
 
-function enter(code)
-{
+//入力フォームでエンター押下時も送信
+function enter(code){
   //エンターキー押下なら
-  if(13 === code)
-  {
+  if(13 === code){
     tbox1();
   }
 }
 
-//音声認識用の対話機能
-function tbox2(value){
+//ユーザ発話の表示(getTextContentsでmatchしなかったとき用)
+//callAPIにユーザ発話を渡す
+function OnseiHyouji2(value){
   var str1 = value;
   var str2 = tmp_text;
 
@@ -539,17 +543,17 @@ function tbox2(value){
   eval("contentb"+n+".textContent = str1");
   n = n + 1;
 
+  //雑談対話へのリクエストの用意
   var apiJson3 = {
-
     'utt' : String(str1), // ←ここに雑話キーワードを入れる
     'context' : String(str2),
     "mode": "dialog"
   }
 
   //callBot(apiJson3);
-
   callAPI(str1,apiJson3);
 }
+
 //履歴を保存する変数
 var tmp_text = "";
 var i = 0;
@@ -609,6 +613,8 @@ function Speech_Rec(){
     }
   }
 }
+
+//ユーザ発話のマッチング
 function getTextContents(text1) {
     if(text1.match(/水/)){
       water_control();
@@ -642,7 +648,7 @@ function getTextContents(text1) {
       GazouHyouji("zu1");
       OnseiGousei("水やりはどうですか？");
     } else {
-      tbox2(text1);
+      OnseiHyouji2(text1);
     }
 }
 Speech_Rec();
