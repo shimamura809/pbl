@@ -362,9 +362,7 @@ var apiKey = '4243356f65594f4435517944436f43345a42515767785831573876323459627a59
 var api = apiUrl + apiKey;
 
 //var text = document.getElementById('text').textContent;
-var l = 0;
-var m = 0;
-var n = 0;
+var num = 0;
 
 //雑談対話への適当なリクエストを用意
 var apiJson1 = {
@@ -375,10 +373,10 @@ var apiJson1 = {
 function OnseiGousei(onsei) {
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
-  newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="content'+l+'"></span></p>';
+  newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="content'+num+'"></span></p>';
   target.appendChild(newTag);
-  eval("content"+l+".textContent = onsei");
-  l = l + 1;
+  eval("content"+num+".textContent = onsei");
+  num = num + 1;
   $(function(){
     $(".data_table_scr").scrollTop($("#list")[0].scrollHeight);
   });
@@ -491,10 +489,10 @@ function OnseiHyouji_User(value){
   var str1 = value;
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
-  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="contenta'+m+'"></span></p>';
+  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="content'+num+'"></span></p>';
   target.appendChild(newTag);
-  eval("contenta"+m+".textContent = str1");
-  m = m + 1;
+  eval("content"+num+".textContent = str1");
+  num = num + 1;
 }
 
 //データ・画像取得用関数
@@ -520,10 +518,10 @@ function GazouHyouji(){
   // var date = value;
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
-  newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="contentb'+l+'"><svg id="pict'+l+'"></svg></span></p>';
+  newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="content'+num+'"><svg id="pict'+num+'"></svg></span></p>';
   target.appendChild(newTag);
-  // eval("contenta"+m+".textContent = str1");
-  d3.select("#pict"+l).append("image").attr({
+  // eval("content"+num+".textContent = str1");
+  d3.select("#pict"+num).append("image").attr({
       "xlink:href": "/site_media/zu1.jpg",
       "opacity":"1",
       'width' : "240px",
@@ -532,7 +530,7 @@ function GazouHyouji(){
       "margin" : "auto",
       "display": "block",
     });
-  l = l + 1;
+  num = num + 1;
 }
 
 //テキストボックスの文字を取得する
@@ -558,10 +556,10 @@ function OnseiHyouji_User_API(value){
 
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
-  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="contentb'+n+'"></span></p>';
+  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="content'+num+'"></span></p>';
   target.appendChild(newTag);
-  eval("contentb"+n+".textContent = str1");
-  n = n + 1;
+  eval("content"+num+".textContent = str1");
+  num = num + 1;
 
   //雑談対話へのリクエストの用意
   var apiJson3 = {
