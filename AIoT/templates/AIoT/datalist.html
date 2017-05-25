@@ -487,7 +487,7 @@ input.addEventListener("click", interval1, false);
 */
 
 //ユーザ発話の表示(getTextContentsでmatchしたとき用)
-function OnseiHyouji(value){
+function OnseiHyouji_User(value){
   var str1 = value;
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
@@ -552,7 +552,7 @@ function enter(code){
 
 //ユーザ発話の表示(getTextContentsでmatchしなかったとき用)
 //callAPIにユーザ発話を渡す
-function OnseiHyouji2(value){
+function OnseiHyouji_User_API(value){
   var str1 = value;
   var str2 = tmp_text;
 
@@ -638,36 +638,36 @@ function Speech_Rec(){
 function getTextContents(text1) {
     if(text1.match(/水/)){
       water_control();
-      OnseiHyouji(text1);
+      OnseiHyouji_User(text1);
       OnseiGousei("ごくごく．．．ちょうど水がほしかったんだ！ありがとう！！");
     } else if(text1.match(/画像/)){
-      OnseiHyouji(text1);
+      OnseiHyouji_User(text1);
       OnseiGousei("了解しました");
       setTimeout(move_page, 2500, "画像")
     }　else if(text1.match(/取得データ/)){
-      OnseiHyouji(text1);
+      OnseiHyouji_User(text1);
       OnseiGousei("了解しました");
       setTimeout(move_page, 2500, "取得データ")
     }　else if(text1.match(/情報/)||text1.match(/詳細/)){
       if(text1.match(/昨日/)){
-        OnseiHyouji(text1);
+        OnseiHyouji_User(text1);
         OnseiGousei("了解しました");
         setTimeout(move_page, 2500, "昨日")
       } else if(text1.match(/先週/)){
-        OnseiHyouji(text1);
+        OnseiHyouji_User(text1);
         OnseiGousei("了解しました");
         setTimeout(move_page, 2500, "先週")
       } else {
-        OnseiHyouji(text1);
+        OnseiHyouji_User(text1);
         OnseiGousei("了解しました");
         setTimeout(move_page, 2500, "今日")
       }
     }　else if(text1.match(/あ/)){
-      OnseiHyouji(text1);
+      OnseiHyouji_User(text1);
       // OnseiGousei("少々お待ちください。");
       DataGet("test");
     } else {
-      OnseiHyouji2(text1);
+      OnseiHyouji_User_API(text1);
     }
 }
 Speech_Rec();
