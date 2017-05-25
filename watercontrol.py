@@ -3,6 +3,8 @@ import watering
 import time
 import threading
 import datetime
+import subprocess
+from pub import temperature, illuminance, moisture
 
 WATERON_MODE = 1
 WATEROFF_MODE = 0
@@ -11,7 +13,7 @@ START_SEC  =    datetime.datetime.today()
 water_limit = 10  #1<water_limit<60
 
 host ="210.152.14.37"
-#host = "localhost"
+# host = "localhost"
 port = 1883
 topic = "#"
 
@@ -29,11 +31,19 @@ def on_message(client, userdata, msg):
 #    	print(START_SEC)
     	watering.mode = WATERON_MODE
     	watering.switch()
-    	print("received watering order")
-    if action == "wateroff":
+    elif action == "wateroff":
     	watering.mode = WATEROFF_MODE
     	watering.switch()
-    	print("received stop_watering order")
+    elif msg.topic == "get":
+        d = datetime.datetime.today()
+        dstr = d.strftime('%Y-%m-%d %H:%M:%S')
+        client.publish("AIoT/data/", "datetime:"+dstr+"/temperature:"+str(temperature())+"/moisture:"+str(moisture())+"/illuminance:"+str(illuminance()))
+        # 画像送信用
+        # subprocess.getoutput(on)
+        # or
+        # pythonを実行？
+        client.publish("send", action)
+
 
 watering = watering.Pomp()
 watering.mode = WATEROFF_MODE
@@ -45,7 +55,7 @@ if __name__ == '__main__':
     client.connect(host, port=port, keepalive=60)
 
     client.loop_start()
-#   print(START_SEC)
+  # print(START_SEC)
 
     while True:
         if watering.mode == WATERON_MODE:

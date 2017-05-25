@@ -196,37 +196,49 @@ td {
   <input id="input" type="button" value="送信" onclick="tbox1()">
   </form>
   <!-- <button id="btn">マイク</button> -->
-  <div id="threshold_select">
-    <p><font size="5px" color="blue">水分量閾値</font></p>
-    <form name="threshold_form" action="Sample.html">
-      <textarea id="threshold" name="threshold"></textarea><br>
-      <a id="threshold_write_button" onclick="threshold_write()" class="btn btn-info btn-block">更新</a>
-      <a id="water_control_button" onclick="water_control()" class="btn btn-info btn-block">水遣りスタート</a>
-    </form>
   </div>
-  </div>
+  <div id="center">
   <svg class="zu1" id="svg1" width="400" height="450">
     <image id="zu1" x="0" y="0" width="100%" height="100%" opacity="1"></image>
-  </svg>
+    <div id="watertime_select">
+    <form name="water_form" action="Sample.html">
+    <p>水やり時間：
+      <script type="text/javascript">
+      //セレクトボックスの作成
+      document.write('<select name="water_time">');
+      for (var i = 1; i < 11; i++) {
+        document.write('<option value="'+i+'"/>'+i+"秒"+'</option>');};
+      document.write('</select>');
+      </script>
+      <a id="water_control_button" onclick="water_control()" class="btn btn-info">水遣りスタート</a></p>
+    </form>
+    </div>
+  </svg></div>
   <div id="area2">
-    <div id="memo_area" width="600" height="560">
+    <!-- <div id="memo_area" width="600" height="560">
       <p><font size="6px" color="blue">Memo</font></p>
     <form name="memo_form" action="Sample.html">
       <textarea id="memo" name="memo" rows="10" cols="56" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}"></textarea><br>
       <a id="memo_write_button" onclick="memo_write()" class="btn btn-info btn-block">送信</a>
     </form>
-    </div>
+    </div> -->
     <div class="Calendar">
       <div id="cal0" class="cal_wrapper">
         Calendar Loading
       </div>
     </div>
     <br>
+    <div id="threshold_select">
+    <p><font size="5px" color="blue">水分量閾値</font></p>
+    <form name="threshold_form" action="Sample.html">
+      <textarea id="threshold" name="threshold"></textarea><br>
+      <a id="threshold_write_button" onclick="threshold_write()" class="btn btn-info btn-block">更新</a>
+    </form></div>
     <div id="link_list">
       <p><font size="6px" color="blue">リンク</font></p>
       <a id="pict_list"></a>
       <a id="getdata"></a>
-  </div>
+    </div>
   </div>
 </div>
 
@@ -275,6 +287,8 @@ td {
   }
   //水やりの命令を管理する関数
   function water_control() {
+    var time = water_form.water_time.value * 1000;
+    console.log(time);
     flag_water = !flag_water;
     if (flag_water) {
       $.ajax({
@@ -283,7 +297,7 @@ td {
         dataType: 'json',
       });
       d3.select("#water_control_button").text("水遣りストップ");
-      water = setTimeout(water_control, 10000);
+      water = setTimeout(water_control, time);
     } else{
       $.ajax({
         type: 'GET',
@@ -294,20 +308,8 @@ td {
       clearTimeout(water);
     }
   }
-  //データベースのメモ・閾値を表示
+  //データベース閾値を表示
   function db_get() {
-    var memo_text = "";
-    var cnt = 0;
-    {% for i in memo_data %}
-    if (cnt == 0) {
-      memo_text = memo_text + "{{i}}";
-    }
-    else {
-       memo_text = memo_text + "\n" + "{{i}}";
-    }
-    cnt++
-    {% endfor %}
-    document.memo_form.memo.value = memo_text;
     document.threshold_form.threshold.value = "{{threshold}}";
   }
 
@@ -335,18 +337,18 @@ function make_url(str) {
   var year = "{{datetime.year}}";
   var month = ("0"+"{{datetime.month}}").slice(-2);
   var day = ("0"+"{{datetime.day}}").slice(-2);
-  if (str == "memo"){
-    var url = "{% url 'AIoT:memo_json' %}" + "?datetime=" + year + month + day;
-  } else if (str == "threshold") {
+  if (str == "threshold") {
     var url = "{% url 'AIoT:threshold_json' %}";
   } else if (str == "water") {
     var url = "{% url 'AIoT:water_json' %}";
+  } else if (str == "get") {
+    var url = "{% url 'AIoT:get_json' %}";
   }
   return url;
 }
 
 
-//実行部
+///////////////////////////////////////////////////////実行部//////////////////////////////////////////////
 db_get();
 pict_change("zu1");
 var water;
@@ -486,16 +488,34 @@ function OnseiHyouji(value){
   m = m + 1;
 }
 
-function GazouHyouji(value){
-  var date = value;
-  console.log("test");
+//データ・画像取得用関数
+function DataGet(value) {
+  $.ajax({
+      type: 'GET',
+      url: make_url("get") + "?name=" + value,
+      dataType: 'json',
+      success: function(json){
+        OnseiGousei(json["datetime"]);
+        OnseiGousei("気温 ： "+json["temperature"]);
+        OnseiGousei("水分量 ： "+json["moisture"]);
+        OnseiGousei("照度 ： "+json["illuminance"]);
+        // GazouHyosaji("zu1");
+        OnseiGousei("(例)水やりはどうですか？");
+      }
+  });
+  // GazouHyouji();
+}
+
+//画像表示用の関数
+function GazouHyouji(){
+  // var date = value;
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
   newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="contentb'+l+'"><svg id="pict'+l+'"></svg></span></p>';
   target.appendChild(newTag);
   // eval("contenta"+m+".textContent = str1");
   d3.select("#pict"+l).append("image").attr({
-      "xlink:href": "/site_media/"+"20170508"+".jpg",
+      "xlink:href": "/site_media/zu1.jpg",
       "opacity":"1",
       'width' : "240px",
       'height' : "150px",
@@ -617,11 +637,10 @@ function getTextContents(text1) {
         OnseiGousei("了解しました");
         setTimeout(move_page, 2500, "今日")
       }
-    }　else if(text1.match(/現在の状態は？/)){
+    }　else if(text1.match(/あ/)){
       OnseiHyouji(text1);
-      OnseiGousei("ご確認ください");
-      GazouHyouji("zu1");
-      OnseiGousei("水やりはどうですか？");
+      // OnseiGousei("少々お待ちください。");
+      DataGet("test");
     } else {
       tbox2(text1);
     }

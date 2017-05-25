@@ -10,5 +10,6 @@ urlpatterns = patterns('',
     url(r'^threshold_json/$', views.threshold_json, name='threshold_json'), #閾値用json
     url(r'^water_json/$', views.water_json, name='water_json'), #水遣り管理用
     url(r'^getdata/$', views.getdata, name='getdata'), #取得データ一覧用
+    url(r'^get_json/$', views.get_json, name='get_json'), #現在のデータ取得用
     # url(r'^datalist_json/$', views.datalist_json, name='datalist_json'), #datalist用JSON
 )
