@@ -20,21 +20,21 @@ body {
   background-color: mintcream;
 }
 .data_table_scr {
-  height:480px;
+  height:519px;
   width:350px;
   overflow-y:scroll;
   background-color: #D8F3F0;
-  border: 4px solid #ccc;
+  /*border: 4px solid #ccc;*/
 }
 #threshold_select{
   /*margin-top: 10px;*/
-  border: 4px solid #ccc;
+  /*border: 4px solid #ccc;*/
   background-color: white;
 }
 .zu1 {
-  height: 670px;
-  width: 430px;
-  border: 4px solid mistyrose;
+  height: 508px;
+  width: 432px;
+  border: 4px solid hotpink;
   margin-left: 1px;
   margin-right: 1px;
   background-color: white;
@@ -45,7 +45,7 @@ body {
 }
 .Calendar {
   width: 367px;
-  margin: auto;
+  /*margin: auto;*/
 }
 #area1 {
   /* boxレイアウトの指定 */
@@ -58,12 +58,23 @@ body {
   -moz-box-pack: center;
   /*border: 1px solid #ccc;*/
   border-radius: 5px;
-  margin-top: 50px;
+  margin-top: 20px;
 }
-#area2 {
-  border: 4px solid #ccc;
+#left {
+  border: 4px solid dimgray;
   background-color: white;
-  height: 670px;
+  height: 550px;
+}
+#center {
+  border-top: 4px solid dimgray;
+  border-bottom: 4px solid dimgray;
+  background-color: white;
+  height: 550px;
+}
+#right {
+  border: 4px solid dimgray;
+  background-color: white;
+  height: 550px;
 }
 th {
   width: 25%;
@@ -161,6 +172,22 @@ td {
 #link_list {
   /*border: 4px solid #ccc;*/
 }
+.tbox {
+  width: 266px;
+}
+#input {
+  width: 80px;
+  background-color: #248;
+  border: none;
+  color: #fff;
+}
+#input:hover{
+  background-color: #24d;
+  color: #fff;
+}
+#threshold{
+  width: 50px
+}
 </style>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
 {% endblock %}
@@ -168,7 +195,7 @@ td {
 {% block content %}
 
 <div id="area1">
-  <div id="area3">
+  <div id="left">
   <div class="data_table_scr" id="list">
     <div id="chat-frame">
       <p class="chat-talk mytalk">
@@ -192,7 +219,7 @@ td {
     </div>
   </div>
   <form name="js">
-  <input type="text" name="txtb" value="" onkeypress="enter(event.keyCode);">
+  <input class="tbox" type="text" name="txtb" value="" onkeypress="enter(event.keyCode);">
   <input type="text" style="display: none;"/>
   <input id="input" type="button" value="送信" onclick="tbox1()">
   </form>
@@ -201,9 +228,9 @@ td {
   <div id="center">
   <svg class="zu1" id="svg1" width="400" height="450">
     <image id="zu1" x="0" y="0" width="100%" height="100%" opacity="1"></image>
-    <div id="watertime_select">
+    <div id="watertime_select" align="center">
     <form name="water_form" action="Sample.html">
-    <p>水やり時間：
+    <p><font size="4px" style="font-weight: bold;">水やり時間</font>
       <script type="text/javascript">
       //セレクトボックスの作成
       document.write('<select name="water_time">');
@@ -215,7 +242,7 @@ td {
     </form>
     </div>
   </svg></div>
-  <div id="area2">
+  <div id="right">
     <!-- <div id="memo_area" width="600" height="560">
       <p><font size="6px" color="blue">Memo</font></p>
     <form name="memo_form" action="Sample.html">
@@ -223,20 +250,21 @@ td {
       <a id="memo_write_button" onclick="memo_write()" class="btn btn-info btn-block">送信</a>
     </form>
     </div> -->
-    <div class="Calendar">
+    <div class="Calendar" align="center">
+      <font size="6px" color="blue" style="font-weight: bold;">アーカイブ</font>
       <div id="cal0" class="cal_wrapper">
         Calendar Loading
       </div>
     </div>
     <br>
-    <div id="threshold_select">
-    <p><font size="5px" color="blue">水分量閾値</font></p>
+    <div id="threshold_select" align="center">
     <form name="threshold_form" action="Sample.html">
-      <textarea id="threshold" name="threshold"></textarea><br>
-      <a id="threshold_write_button" onclick="threshold_write()" class="btn btn-info btn-block">更新</a>
+    <font size="4px" style="font-weight: bold;">水分量閾値</font>
+      <input id="threshold" name="threshold" maxlength="4" cols="4" rows="1"></input>
+      <a id="threshold_write_button" onclick="threshold_write()" class="btn btn-info">更新</a>
     </form></div>
-    <div id="link_list">
-      <p><font size="6px" color="blue">リンク</font></p>
+    <div id="link_list" align="center">
+      <font size="6px" color="blue" style="font-weight: bold;">リンク</font>
       <a id="pict_list"></a>
       <a id="getdata"></a>
     </div>
@@ -250,10 +278,12 @@ td {
   d3.select("#pict_list").attr({
     "class": "btn btn-info btn-sm btn-block",
     "href": "{% url 'AIoT:pict_list' %}",
+    "style": "font-size: 1.4em;font-weight: bold;"
   }).text("画像一覧");
   d3.select("#getdata").attr({
     "class": "btn btn-info btn-sm btn-block",
     "href": "{% url 'AIoT:getdata' %}",
+    "style": "font-size: 1.4em;font-weight: bold;"
   }).text("取得データ一覧");
 
   //画像切り替え用の関数(引数paraは文字列)
