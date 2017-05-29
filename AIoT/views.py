@@ -52,6 +52,7 @@ def datalist(request):
 # 詳細画面 http://127.0.0.1:8000/AIoT/detail/20161031
 def detail(request):
     dt = request.GET.get('datetime', 'now')
+    tab = request.GET.get('tab', 'temperature')
     memo_data = []
     memo_data += db.collect_memo.find({"datetime":dt}).sort("datetime", ASCENDING)
     memo = []
@@ -74,7 +75,7 @@ def detail(request):
     print(datetime_diff)
     raw_watertime = []
     raw_watertime += db.watertime.find({"datetime":{"$gte":gt, "$lte":lt}}).sort("datetime", ASCENDING)
-    return render_to_response('AIoT/detail.html', {"dataset":dataset,"data_len":len(dataset),"datetime":gt, "memo_data":memo, "picture":picture,"pic_dt":dt,"watertime":raw_watertime,"datetime_diff":datetime_diff})
+    return render_to_response('AIoT/detail.html', {"dataset":dataset,"data_len":len(dataset),"datetime":gt, "memo_data":memo, "picture":picture,"pic_dt":dt,"watertime":raw_watertime,"datetime_diff":datetime_diff,"tab":tab})
 
 # 画像一覧用の関数
 def pict_list(request):
