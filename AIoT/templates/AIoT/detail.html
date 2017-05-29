@@ -436,8 +436,11 @@ function select_para(select_para){
   after_parameter.className = 'select_tab';
   document.getElementById("line_graph").children[0].remove();
   make_linegraph(parameter);
+  //選択タブ用にリンクのクエリを変更
+  d3.select("#prev_day").attr("href","{% url 'AIoT:detail' %}" + "?datetime=" + prev_dt + "&tab=" + parameter);
+  d3.select("#next_day").attr("href","{% url 'AIoT:detail' %}" + "?datetime=" + next_dt + "&tab=" + parameter);
 }
-var parameter = "temperature";
+var parameter = "{{tab}}";
 var parameter_list= ["temperature","moisture","illuminance"];
 var tab = d3.select("#tabbox").append("p").attr("class", "tabs");
 tab.selectAll("p.tab")
@@ -557,11 +560,6 @@ function floatnum(number) {
 
 //ページ左右に日付変更用のリンクを作成
 function make_link() {
-  var dt = new Date({{datetime.year}},{{datetime.month}}-1,{{datetime.day}});
-  var prev_dt = moment(dt).subtract(1,"days").format("YYYYMMDD");
-  var next_dt = moment(dt).add(1,"days").format("YYYYMMDD");
-  var prev_we = moment(dt).subtract(1,"week").format("YYYYMMDD");
-  var next_we = moment(dt).add(1,"week").format("YYYYMMDD");
   d3.select(".right").append("a").attr({
     "id": "back_main",
     "class": "btn btn-default btn-sm",
@@ -570,12 +568,12 @@ function make_link() {
   d3.select(".right").append("a").attr({
     "id": "prev_day",
     "class": "btn btn-info btn-sm",
-    "href": "{% url 'AIoT:detail' %}" + "?datetime=" + prev_dt,
+    "href": "{% url 'AIoT:detail' %}" + "?datetime=" + prev_dt + "&tab=" + parameter,
   }).text("< 前日");
   d3.select(".right").append("a").attr({
     "id": "next_day",
     "class": "btn btn-info btn-sm",
-    "href": "{% url 'AIoT:detail' %}" + "?datetime=" + next_dt,
+    "href": "{% url 'AIoT:detail' %}" + "?datetime=" + next_dt + "&tab=" + parameter,
   }).text("翌日 >");
 }
 
@@ -615,6 +613,11 @@ if(window.innerWidth - window.innerHeight > 200){
 resize();
 make_linegraph("temperature");
 memo_get();
+//昨日・今日・明日の日付を決定
+var dt = new Date({{datetime.year}},{{datetime.month}}-1,{{datetime.day}});
+var prev_dt = moment(dt).subtract(1,"days").format("YYYYMMDD");
+var next_dt = moment(dt).add(1,"days").format("YYYYMMDD");
+//リンクを作成
 make_link();
 </script>
 {% endblock content %}

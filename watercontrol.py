@@ -42,7 +42,6 @@ def on_message(client, userdata, msg):
         # subprocess.getoutput(on)
         # or
         # pythonを実行？
-        client.publish("send", action)
 
 
 watering = watering.Pomp()

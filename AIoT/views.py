@@ -5,6 +5,7 @@ from django.template import RequestContext
 from AIoT.models import test, collect_data
 from mongoengine import *
 from pymongo import *
+from time import sleep
 import requests
 import os.path
 import os
@@ -51,6 +52,7 @@ def datalist(request):
 # 詳細画面 http://127.0.0.1:8000/AIoT/detail/20161031
 def detail(request):
     dt = request.GET.get('datetime', 'now')
+    tab = request.GET.get('tab', 'temperature')
     memo_data = []
     memo_data += db.collect_memo.find({"datetime":dt}).sort("datetime", ASCENDING)
     memo = []
@@ -73,7 +75,7 @@ def detail(request):
     print(datetime_diff)
     raw_watertime = []
     raw_watertime += db.watertime.find({"datetime":{"$gte":gt, "$lte":lt}}).sort("datetime", ASCENDING)
-    return render_to_response('AIoT/detail.html', {"dataset":dataset,"data_len":len(dataset),"datetime":gt, "memo_data":memo, "picture":picture,"pic_dt":dt,"watertime":raw_watertime,"datetime_diff":datetime_diff})
+    return render_to_response('AIoT/detail.html', {"dataset":dataset,"data_len":len(dataset),"datetime":gt, "memo_data":memo, "picture":picture,"pic_dt":dt,"watertime":raw_watertime,"datetime_diff":datetime_diff,"tab":tab})
 
 # 画像一覧用の関数
 def pict_list(request):
@@ -142,16 +144,34 @@ def water_json(request):
 def get_json(request):
   #urlから値を取得
   name = request.GET.get('name', '')
+  # 現在の時刻をセット
+  dt = datetime.now()
+  #DB内のデータの数をカウント
+  data_num = db.collect_data.count()
+  #画像の数をカウント
+  pict_list = os.listdir(os.path.dirname(os.path.abspath(__file__)) + '/../media/')
+  pict_num = len(pict_list)
   # ラズパイに指示出し
   subprocess.getoutput("mosquitto_pub -h localhost -t get -m " + name)
-  print("test1")
-  dt = datetime.now()
   # mqtt()
+  for i in range(20):
+    if data_num < db.collect_data.count():
+      if pict_num < len(pict_list):
+        get = []
+        get += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING).limit(1)
+        lt = get[0]["datetime"]
+        dataset = {"datetime":str(lt.year)+"年"+str(lt.month)+"月"+str(lt.day)+"日"+str(lt.hour)+"時"+str(lt.minute)+"分","temperature":get[0]["temperature"],"moisture":get[0]["moisture"],"illuminance":get[0]["illuminance"],"get":"success"}
+        return render_json_response(request,dataset)
+      else:
+        sleep(0.5)
+    else:
+      sleep(0.5)
+  dataset = {"get":"failure"}
+  return render_json_response(request,dataset)
+
   get = []
-  print("tfsagf")
   get += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING).limit(1)
   lt = get[0]["datetime"]
-  # print(datetime)
   dataset = {"datetime":str(lt.year)+"年"+str(lt.month)+"月"+str(lt.day)+"日"+str(lt.hour)+"時"+str(lt.minute)+"分","temperature":get[0]["temperature"],"moisture":get[0]["moisture"],"illuminance":get[0]["illuminance"]}
   print("tst2")
   return render_json_response(request,dataset)

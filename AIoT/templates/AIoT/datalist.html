@@ -400,12 +400,21 @@ var apiJson1 = {
 }
 
 //システム発話を表示・音声再生する
-function OnseiGousei(onsei) {
+function OnseiGousei(onsei,get) {
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
   newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="content'+num+'"></span></p>';
   target.appendChild(newTag);
-  eval("content"+num+".textContent = onsei");
+  if (get == true) {
+    var target_id = document.getElementById("content"+num);
+    var tag = "";
+    for (var i = 0; i < 4; i++){
+      tag = tag +onsei[i]+"<br>";
+    }
+    target_id.innerHTML = tag;
+  } else {
+    eval("content"+num+".textContent = onsei");
+  }
   num = num + 1;
   $(function(){
     $(".data_table_scr").scrollTop($("#list")[0].scrollHeight);
@@ -532,12 +541,18 @@ function DataGet(value) {
       url: make_url("get") + "?name=" + value,
       dataType: 'json',
       success: function(json){
-        OnseiGousei(json["datetime"]);
-        OnseiGousei("気温 ： "+json["temperature"]);
-        OnseiGousei("水分量 ： "+json["moisture"]);
-        OnseiGousei("照度 ： "+json["illuminance"]);
-        // GazouHyosaji("zu1");
-        OnseiGousei("(例)水やりはどうですか？");
+        if(json["get"] == "success"){
+          var json_list = [];
+          json_list[0] = json["datetime"];
+          json_list[1] = "気温 ： "+json["temperature"];
+          json_list[2] = "水分量 ： "+json["moisture"];
+          json_list[3] = "照度 ： "+json["illuminance"];
+          OnseiGousei(json_list,true);
+          GazouHyouji();
+        } else{
+          OnseiGousei("取得に失敗しました。。");
+        }
+        // OnseiGousei("(例)水やりはどうですか？");
       }
   });
   // GazouHyouji();
