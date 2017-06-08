@@ -267,6 +267,7 @@ td {
       <font size="6px" color="blue" style="font-weight: bold;">リンク</font>
       <a id="pict_list"></a>
       <a id="getdata"></a>
+      <a id="mailaddress"></a>
     </div>
   </div>
 </div>
@@ -285,6 +286,10 @@ td {
     "href": "{% url 'AIoT:getdata' %}",
     "style": "font-size: 1.4em;font-weight: bold;"
   }).text("取得データ一覧");
+  d3.select("#mailaddress").attr({
+    "class": "btn btn=info btn-sm btn-block",
+    "href": "{% url 'AIoT:mailaddress' %}",
+  }).text("メールアドレス変更");
 
   //画像切り替え用の関数(引数paraは文字列)
   function pict_change(para) {

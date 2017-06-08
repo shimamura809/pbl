@@ -97,6 +97,10 @@ def getdata(request):
   dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING)
   return render_to_response('AIoT/getdata.html', {"dataset":dataset})
 
+#メールアドレス変更画面
+def mailaddress(request):
+  return render_to_response('AIoT/mailaddress.html')
+
 #メモ保存用
 def memo_json(request):
   #urlから各値を取得

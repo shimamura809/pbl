@@ -1,0 +1,58 @@
+
+{% extends "base.html" %}
+
+{% block title %}メールアドレス変更{% endblock title %}
+
+{% block extrahead %}
+<style>
+table {
+  margin-top: 8px;
+}
+td {
+ vertical-align: middle;
+}
+h3 {
+  font-weight: bold;
+}
+#back_main{
+  float: right;
+  display: inline-flex;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+  <h3 class="page-header">メールアドレス変更</h3>
+  <div id="back_main" float="right" display="inline">
+    <a class="btn btn-info btn-sm" href="{% url 'AIoT:datalist' %}">メインページ</a>
+  </div><br><br>
+  <p><font size="3px" color="black">メールアドレスの変更はメールの受信が確認されてから、正式な変更となります。<br>メールに記載されている認証用URLにアクセスすることでメールアドレスの変更が完了します。</font></p>
+  <p><font size="5px" color="blue">新しいメールアドレス</font></p>
+  <form name="mailaddress_form" action="Sample.html">
+    <textarea id="mailaddress" name="mailaddress"></textarea><br>
+  <p><font size="5px" color="blue">新しいメールアドレス(確認)</font></p>
+  <form name="re_mailaddress_form" action="Sample.html">
+    <textarea id="re_mailaddress" name="re_mailaddress"></textarea><br>
+    <a id="mailaddress_write_button" onclick="mailaddress_write()" class="btn btn-info btn-block">変更</a>
+  </form>
+
+  <script type="text/javascript">
+    function mailaddress_write(){
+      var mailaddress_text = document.mailaddress_form.mailaddress.value;
+      var re_mailaddress_text = document.re_mailaddress_form.re_mailaddress.value;
+      if("mailaddress_text" != "re_mailaddress"){
+        console.log("miss");
+        window.alert("2つのメールアドレスが異なります。\nもう一度確認下さい。");
+      }
+      else{
+        $.ajax({
+          type: 'GET',
+          url: make_url("mailaddress") + "?mailaddress=" + mailaddress_text,
+          dataType: 'json',
+        });
+#        window.alert("アドレス変更用のメールを送信しました。\nメールの認証用URLよりアドレス変更を完了して下さい");
+      }
+    }
+  </script>
+
+{% endblock content %}
