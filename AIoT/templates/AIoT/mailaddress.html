@@ -1,7 +1,7 @@
 
 {% extends "base.html" %}
 
-{% block title %}���[���A�h���X�ύX{% endblock title %}
+{% block title %}メールアドレス変更{% endblock title %}
 
 {% block extrahead %}
 <style>
@@ -22,18 +22,18 @@ h3 {
 {% endblock %}
 
 {% block content %}
-  <h3 class="page-header">���[���A�h���X�ύX</h3>
+  <h3 class="page-header">メールアドレス変更</h3>
   <div id="back_main" float="right" display="inline">
-    <a class="btn btn-info btn-sm" href="{% url 'AIoT:datalist' %}">���C���y�[�W</a>
+    <a class="btn btn-info btn-sm" href="{% url 'AIoT:datalist' %}">メインページ</a>
   </div><br><br>
-  <p><font size="3px" color="black">���[���A�h���X�̕ύX�̓��[���̎�M���m�F����Ă���A�����ȕύX�ƂȂ�܂��B<br>���[���ɋL�ڂ���Ă���F�ؗpURL�ɃA�N�Z�X���邱�ƂŃ��[���A�h���X�̕ύX���������܂��B</font></p>
-  <p><font size="5px" color="blue">�V�������[���A�h���X</font></p>
+  <p><font size="3px" color="black">メールアドレスの変更はメールの受信が確認されてから、正式な変更となります。<br>メールに記載されている認証用URLにアクセスすることでメールアドレスの変更が完了します。</font></p>
+  <p><font size="5px" color="blue">新しいメールアドレス</font></p>
   <form name="mailaddress_form" action="Sample.html">
     <textarea id="mailaddress" name="mailaddress"></textarea><br>
-  <p><font size="5px" color="blue">�V�������[���A�h���X(�m�F)</font></p>
+  <p><font size="5px" color="blue">新しいメールアドレス(確認)</font></p>
   <form name="re_mailaddress_form" action="Sample.html">
     <textarea id="re_mailaddress" name="re_mailaddress"></textarea><br>
-    <a id="mailaddress_write_button" onclick="mailaddress_write()" class="btn btn-info btn-block">�ύX</a>
+    <a id="mailaddress_write_button" onclick="mailaddress_write()" class="btn btn-info btn-block">変更</a>
   </form>
 
   <script type="text/javascript">
@@ -42,7 +42,7 @@ h3 {
       var re_mailaddress_text = document.re_mailaddress_form.re_mailaddress.value;
       if("mailaddress_text" != "re_mailaddress"){
         console.log("miss");
-        window.alert("2�̃��[���A�h���X���قȂ�܂��B\n������x�m�F�������B");
+        window.alert("2つのメールアドレスが異なります。\nもう一度確認下さい。");
       }
       else{
         $.ajax({
@@ -50,7 +50,7 @@ h3 {
           url: make_url("mailaddress") + "?mailaddress=" + mailaddress_text,
           dataType: 'json',
         });
-#        window.alert("�A�h���X�ύX�p�̃��[���𑗐M���܂����B\n���[���̔F�ؗpURL���A�h���X�ύX���������ĉ�����");
+#        window.alert("アドレス変更用のメールを送信しました。\nメールの認証用URLよりアドレス変更を完了して下さい");
       }
     }
   </script>

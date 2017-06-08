@@ -39,9 +39,7 @@ def on_message(client, userdata, msg):
         dstr = d.strftime('%Y-%m-%d %H:%M:%S')
         client.publish("AIoT/data/", "datetime:"+dstr+"/temperature:"+str(temperature())+"/moisture:"+str(moisture())+"/illuminance:"+str(illuminance()))
         # 画像送信用
-        # subprocess.getoutput(on)
-        # or
-        # pythonを実行？
+        subprocess.getoutput("sh ./cron/photo_cron.sh")
 
 
 watering = watering.Pomp()
