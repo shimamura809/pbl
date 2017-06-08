@@ -27,7 +27,7 @@ def split_data(tmp_str):
     data_dict["illuminance"] = float(tmp[3].split("illuminance:")[1])
     if db.threshold.count() != 0:
         if float(threshold[0]["threshold"]) > data_dict["moisture"]:
-            mail_to_user()
+            mail_to_user(float(threshold[0]["threshold"]),data_dict["moisture"])
 
 def on_message(client, userdata, msg):
     print(msg.topic + ' ' + str(msg.payload))
