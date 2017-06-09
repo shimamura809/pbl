@@ -18,13 +18,30 @@ h3 {
   float: right;
   display: inline-flex;
 }
+select {
+  width: 150px;
+  height: 2.5em;
+}
+#all_record{
+  float: left;
+}
+#record{
+  float: right;
+}
 </style>
 {% endblock %}
 
 {% block content %}
     <h3 class="page-header">取得データ一覧</h3>
-    <div  id="back_main" float="right" display="inline">
-    <a class="btn btn-info btn-sm" href="{% url 'AIoT:datalist' %}">メインページ</a></div><br><br>
+    <div>
+      <div id="all_record">
+        <font size="5px" color="blue" style="font-weight: bold;">現在の総件数：{{all_record}}</font>
+      </div>
+      <div  id="back_main" float="right" display="inline">
+        <a class="btn btn-info btn-sm" href="{% url 'AIoT:datalist' %}">メインページ</a></div>
+      <div id="record" display="inline"></div>
+    </div>
+    <br><br>
     <table class="table table-striped table-bordered sortable-theme-bootstrap" data-sortable>
       <thead>
         <tr class="info">
@@ -49,4 +66,36 @@ h3 {
         {% endfor %}
       </tbody>
     </table>
+    <script type="text/javascript">
+      //写真の列数関連
+      var num = [50,100,200,500,1000,2000,5000,"全"];
+      var num_form = d3.select("#record").append("form").attr({
+        "name":"num_form",
+        "id":"num_form",
+        // "float":"left",
+        "display":"inline",
+      });
+      var num_select = num_form.append("select").attr({
+        "name":"num_select",
+        "id":"num_select",
+      });
+      num_select.selectAll("num").data(num).enter().append("option").attr({
+        "id":function(d){return "num"+d;},
+        "value":function(d){return d;},
+      }).text(function(d){return d + "件";});
+
+      d3.select("#num_form").append("a").attr({
+        "name":"num_reload",
+        "id":"num_reload",
+        // "type":"button",
+        "onclick":"record_change()",
+        "class":"btn btn-default btn-sm",
+        // "href": "{% url 'AIoT:getdata' %}" + "?num=" + document.num_form.num_select.value,
+      }).text("変更");
+      //初期列数を5に設定
+      document.num_form.num_select.value = "{{record_num}}";
+      function record_change(){
+        location.href = "{% url 'AIoT:getdata' %}" + "?num=" + document.num_form.num_select.value;
+      }
+    </script>
 {% endblock content %}

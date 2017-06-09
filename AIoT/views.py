@@ -92,10 +92,15 @@ def pict_list(request):
 
 #取得データ一覧用
 def getdata(request):
+  record_num = request.GET.get('num', "100")
   dt = datetime.now()
   dataset = []
-  dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING)
-  return render_to_response('AIoT/getdata.html', {"dataset":dataset})
+  all_record = db.collect_data.count()
+  if record_num == "全":
+    dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING)
+  else:
+    dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING).limit(int(record_num))
+  return render_to_response('AIoT/getdata.html', {"dataset":dataset,"record_num":record_num, "all_record":all_record})
 
 #メールアドレス変更画面
 def mailaddress(request):
