@@ -33,7 +33,7 @@ body {
 }
 .zu1 {
   height: 500px;
-  width: 430px;
+  width: 320px;
   border: 4px solid hotpink;
   /*margin-left: 1px;
   margin-right: 1px;*/
@@ -198,7 +198,7 @@ td {
   <div id="left">
   <div class="data_table_scr" id="list">
     <div id="chat-frame">
-      <p class="chat-talk mytalk">
+      <!--<p class="chat-talk mytalk">
         <span class="talk-content">
           {% for i in dataset %}
             {{ i.datetime.year }}年{{ i.datetime.month }}月{{ i.datetime.day }}日{{ i.datetime.hour }}時{{ i.datetime.minute }}分<br>
@@ -207,15 +207,15 @@ td {
             照度：{{ i.illuminance }}</br>
           {% endfor %}
         </span>
-        <span class="talk-content">
+        <span class="talk-content">-->
         <!--<span class="talk-content" id="text">-->
-          本日の水やり時刻は<br>
+          <!--本日の水やり時刻は<br>
           {% for i in watertime %}
           {{i}}<br>
           {% endfor %}
           です。
         </span>
-      </p>
+      </p>-->
     </div>
   </div>
   <form name="js">
@@ -251,7 +251,7 @@ td {
     </form>
     </div> -->
     <div class="Calendar" align="center">
-      <div style="background-color: yellow; border-top: 4px solid royalblue; border-bottom: 4px solid royalblue;">
+      <div style="background-color: khaki; border-top: 4px solid royalblue; border-bottom: 4px solid royalblue;">
         <font size="5px" color="blue" style="font-weight: bold;">アーカイブ</font>
       </div>
       <div id="cal0" class="cal_wrapper">
@@ -266,7 +266,7 @@ td {
     </form>
     </div>
     <div id="link_list" align="center">
-      <div style="background-color: yellow; border-top: 4px solid royalblue; border-bottom: 4px solid royalblue;">
+      <div style="background-color: khaki; border-top: 4px solid royalblue; border-bottom: 4px solid royalblue;">
       <font size="5px" color="blue" style="font-weight: bold;">リンク</font>
       </div>
       <br>
@@ -392,7 +392,7 @@ function make_url(str) {
 
 ///////////////////////////////////////////////////////実行部//////////////////////////////////////////////
 db_get();
-pict_change("zu1");
+pict_change("zu_normal");
 var water;
 var flag_water = false;
 

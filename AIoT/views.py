@@ -17,6 +17,7 @@ import json
 import math
 from datetime import datetime, timedelta
 import locale
+import random
 
 client = MongoClient()
 db = client.pbl
@@ -98,12 +99,18 @@ def getdata(request):
   if record_num == "全":
     dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING)
   else:
-    dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING).limit(int(record_num))
-  return render_to_response('AIoT/getdata.html', {"dataset":dataset,"record_num":record_num, "all_record":all_record})
+    dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING).limit(all_record)
+  return render_to_response('AIoT/getdata.html', {"dataset":dataset,"record_num":record_num,"all_record":all_record})
 
 #メールアドレス変更画面
 def mailaddress(request):
   return render_to_response('AIoT/mailaddress.html')
+
+  #メールアドレス変更確認画面
+def mailconfirm(request):
+  key = db.randstr
+  newaddress = db.newaddress
+  return render_to_response('AIoT/mailconfirm.html',{"key":key,"newaddress":newaddress})
 
 #メモ保存用
 def memo_json(request):
@@ -176,6 +183,34 @@ def get_json(request):
     else:
       sleep(0.5)
   dataset = {"get":"failure"}
+  return render_json_response(request,dataset)
+
+#認証メール送信用
+def mailsend_json(request):
+  address = request.GET.get('sendaddress','')
+  db.mailaddress.remove({"newaddress"})
+  db.mailaddress.insert({"newaddress":address})
+  db.mailaddress.remove({"randstr"})
+  source_str = 'abcdefghijklmnopqrstuvwxyz'
+  rand_str="".join([random.choice(source_str) for x in xrange(10)])
+  db.mailaddress.insert({"randstr":rand_str})
+  message = "以下のURLより、ぷらんとーくの通知を受け取るメールアドレスの変更を完了してください。\n"
+  url = "http://localhost/AIoT/mailconfirm/?randstr="+rand_str
+  subject = "ぷらんとーく通知メールアドレス変更の認証"
+#  subprocess.getoutput(message+" "+url+"  | mail -s "+ subject + " " +address)
+
+  dataset = {"sendaddress":sendaddress}
+  return render_json_response(request,dataset)
+
+#認証メール送信用
+def mailregister_json(request):
+  address = request.GET.get('newaddress','')
+  db.mailaddress.remove({"nowaddress"})
+  db.mailaddress.insert({"nowaddress":address})
+  db.mailaddress.remove({"newaddress"})
+  db.mailaddress.remove({"randstr"})
+
+  dataset = {"nowaddress":sendaddress}
   return render_json_response(request,dataset)
 
 #時刻の形式変換関数（14文字の文字列→ISO形式）

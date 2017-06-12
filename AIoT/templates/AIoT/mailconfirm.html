@@ -1,0 +1,65 @@
+
+{% extends "base.html" %}
+
+{% block title %}メールアドレス変更確認{% endblock title %}
+
+{% block extrahead %}
+<style>
+table {
+  margin-top: 8px;
+}
+td {
+ vertical-align: middle;
+}
+h3 {
+  font-weight: bold;
+}
+#back_main{
+  float: right;
+  display: inline-flex;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+  <h3 class="page-header">メールアドレス変更確認</h3>
+  <div id="back_main" float="right" display="inline">
+    <a class="btn btn-info btn-sm" href="{% url 'AIoT:datalist' %}">メインページ</a>
+  </div><br><br>
+  <p><font size="3px" color="black"><br>「変更」ボタンを押下することでメールアドレスの変更が完了します。</font></p>
+    <a id="mailaddress_register_button" onclick="mailaddress_register()" class="btn btn-info btn-block" style="width:50px;">変更</a>
+  </form>
+
+  <script type="text/javascript">
+    function getparam(){
+      var query = document.location.search.substring(1);
+      var parameters = query.split('&');
+      var result = new Object();
+      for (var i = 0; i < parameters.length; i++) {
+        var element = parameters[i].split('=');
+        var paramName = decodeURIComponent(element[0]);
+        var paramValue = decodeURIComponent(element[1]);
+        result[paramName] = decodeURIComponent(paramValue);
+      }
+      return result;
+    }
+    function mailaddress_register(){
+      var key = {{key}};
+      var param = getparam();
+      if (param == key){
+/*        $.ajax({
+          type: 'GET',
+          url: "{% url 'AIoT:mailregister_json' %}" + "?changeaddress=" + "{{newaddress}}",
+          dataType: 'json',
+        });*/
+        console.log("succeed");
+        window.alert("アドレスの変更が完了しました。");
+      }
+      else{
+        console.log("miss");
+        window.alert("アドレスの変更に失敗しました。\nメールアドレス変更ページよりもう一度やり直してください。");
+      }
+    }
+  </script>
+
+{% endblock content %}

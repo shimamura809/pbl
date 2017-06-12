@@ -41,3 +41,11 @@ class watertime(Document):
     datetime   = DateTimeField()
 
     meta = DB_ALIAS
+
+class mailaddress(Document):
+    _id         = StringField(max_length=255)
+    nowaddress  = StringField(max_length=255)
+    newaddress  = StringField(max_length=255)
+    randstr     = StringField(max_length=255)
+
+    meta = DB_ALIAS
