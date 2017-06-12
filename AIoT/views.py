@@ -79,16 +79,15 @@ def detail(request):
 
 # 画像一覧用の関数
 def pict_list(request):
-  # pict_list = []
-  pict_list = os.listdir(os.path.dirname(os.path.abspath(__file__)) + '/../media/')
-  pict_list.remove('no_data.jpg')
-  pict_list.remove('zu1.jpg')
-  print(pict_list)
-  for i in range(len(pict_list)):
-    pict_list[i] = (pict_list[i].split(".jpg"))[0]
+  tmp_pict_list = os.listdir(os.path.dirname(os.path.abspath(__file__)) + '/../media/')
+  print(tmp_pict_list)
+  pict_list = []
+  for i in range(len(tmp_pict_list)):
+    if (tmp_pict_list[i].split(".jpg"))[0].isdigit():
+      pict_list.append((tmp_pict_list[i].split(".jpg"))[0])
   pict_list.sort()
   print(pict_list)
-  return render_to_response('AIoT/pict_list.html', {"pict_list":pict_list})
+  return render_to_response('AIoT/pict_list.html', {"pict_list":pict_list,"pict_num":len(pict_list)})
 
 #取得データ一覧用
 def getdata(request):

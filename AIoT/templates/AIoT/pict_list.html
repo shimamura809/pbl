@@ -34,6 +34,10 @@ body {
   overflow: scroll;
 }
 
+select {
+  width: 50px;
+  height: 2.5em;
+}
 </style>
 {% endblock %}
 {% block content %}
@@ -55,13 +59,20 @@ d3.select("#header_area").append("div").attr({
   "class":"right",
   "y":"30px",
 }).style("display","inline-flex");
+d3.select("#header_area").append("font").attr({
+    "display":"inline",
+    "float":"left",
+    "size": "5px",
+    "color": "blue",
+    "style": "font-weight: bold;",
+  }).text("総枚数：" + {{pict_num}});
 d3.select(".right").append("a").attr({
     "id": "back_main",
     "class": "btn btn-info btn-sm",
     "href": "{% url 'AIoT:datalist' %}",
     "display":"inline",
     // "float":"right",
-  }).text("< メインページ");
+  }).text("メインページ");
 
 d3.select(".right").append("a").attr({
     "id": "slide_show",
@@ -73,8 +84,10 @@ d3.select(".right").append("a").attr({
   }).text("スライドショー");
 
 function make_pict(){
-  window_width = window.innerWidth;
-  window_height = window_width * 2 / 3;
+  window_width = window.innerWidth * 0.95;
+  margin_width = window.innerWidth * 0.05;
+  console.log(window_width);
+  window_height = window_width * 3 / 4;
   var images = document.getElementById('svg1');
   images.textContent = null;
   var svgArea = d3.select('#svg1');
@@ -82,13 +95,13 @@ function make_pict(){
     "href": function(d){return "{% url 'AIoT:detail' %}" + "?datetime=" +d;},
   });
   var row = document.row_form.row_select.value;
-  var column = Math.floor(pict_list.length/row+1);
-  d3.select("#svg1").attr("width",window_width + "px");
-  if (window_width > window.innerHeight) {
-    d3.select("#svg1").attr("height",String((column + 1) * window_height / row)+"px");
-  } else {
-    d3.select("#svg1").attr("height",String((column + 2) * window_height / row)+"px");
+
+  var column = Math.floor(pict_list.length/row);
+  if (pict_list.length%row != 0) {
+    column = column + 1;
   }
+  d3.select("#svg1").attr("width",window_width + "px");
+  d3.select("#svg1").attr("height",String(column * window_height / row * 1.1 + 50)+"px");
   svgImgs.append("image").attr({
       "xlink:href":function (d){return "/site_media/"+d+".jpg";},
       "opacity":"1",
@@ -99,14 +112,14 @@ function make_pict(){
       "margin" : "auto",
       "display": "block",
       'x' : function (d, i) {
-        return i%row * window_width / row + 10;},
+        return (i%row) * window_width / row + margin_width / 2;},
       "y" : function (d, i) {
         return Math.floor(i/row) * (window_height / row * 1.1) + 50 ;},
     });
 
   svgImgs.append("text").text(function(d){return d})
   .attr({
-    'x' : function (d, i) { return i%row * window_width / row + window_width / row / 3;},
+    'x' : function (d, i) { return i%row * window_width / row +  + margin_width / 2 + window_width / row / 3.5;},
     "y" : function (d, i) { return Math.floor(i/row) * window_height / row * 1.1 + 50 + window_height / row; },
     "font-size":function(d){return String(window_width/15/row)+"px"},
   });
@@ -203,7 +216,7 @@ var state_slide = "stop";
 var cnt = 0, show;
 
 //写真の列数関連
-var rows = [2,3,4,5,6];
+var rows = [2,3,4,5,6,7,8,9];
 var row_form = d3.select(".right").append("form").attr({
   "name":"row_form",
   "id":"row_form",
