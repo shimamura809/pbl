@@ -157,18 +157,19 @@ def get_json(request):
   #DB内のデータの数をカウント
   data_num = db.collect_data.count()
   #画像の数をカウント
-  pict_list = os.listdir(os.path.dirname(os.path.abspath(__file__)) + '/../media/')
+  pict_list = os.listdir(os.path.dirname(os.path.abspath(__file__)) + '/../media/now/')
   pict_num = len(pict_list)
   # ラズパイに指示出し
   subprocess.getoutput("mosquitto_pub -h localhost -t get -m " + name)
-  # mqtt()
   for i in range(20):
     if data_num < db.collect_data.count():
-      if pict_num < len(pict_list):
+      if pict_num < len(os.listdir(os.path.dirname(os.path.abspath(__file__)) + '/../media/now/')):
         get = []
         get += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING).limit(1)
+        pict_list = os.listdir(os.path.dirname(os.path.abspath(__file__)) + '/../media/now/')
+        pict_list.sort()
         lt = get[0]["datetime"]
-        dataset = {"datetime":str(lt.year)+"年"+str(lt.month)+"月"+str(lt.day)+"日"+str(lt.hour)+"時"+str(lt.minute)+"分","temperature":get[0]["temperature"],"moisture":get[0]["moisture"],"illuminance":get[0]["illuminance"],"get":"success"}
+        dataset = {"datetime":str(lt.year)+"年"+str(lt.month)+"月"+str(lt.day)+"日"+str(lt.hour)+"時"+str(lt.minute)+"分","temperature":get[0]["temperature"],"moisture":get[0]["moisture"],"illuminance":get[0]["illuminance"],"get":"success","file":pict_list[-1]}
         return render_json_response(request,dataset)
       else:
         sleep(0.5)
@@ -176,44 +177,6 @@ def get_json(request):
       sleep(0.5)
   dataset = {"get":"failure"}
   return render_json_response(request,dataset)
-
-  get = []
-  get += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING).limit(1)
-  lt = get[0]["datetime"]
-  dataset = {"datetime":str(lt.year)+"年"+str(lt.month)+"月"+str(lt.day)+"日"+str(lt.hour)+"時"+str(lt.minute)+"分","temperature":get[0]["temperature"],"moisture":get[0]["moisture"],"illuminance":get[0]["illuminance"]}
-  print("tst2")
-  return render_json_response(request,dataset)
-
-# def mqtt():
-#   host = 'localhost'
-#   port = 1883
-#   topic = '#'
-#   print("test2")
-#   client = mqtt.Client(protocol=mqtt.MQTTv311)
-#   client.on_connect = on_connect
-#   client.on_message = on_message
-#   client.connect(host, port=port, keepalive=60)
-#   # 待ち受け状態にする
-#   client.loop_start()
-
-# def on_connect(client, userdata, flags, respons_code):
-#     print("test3")
-#     client.subscribe("#")
-
-# def on_message(client, userdata, msg):
-#     if msg.topic == "send":
-#       print("message")
-#       client.disconnect()
-#     else:
-#       print("dlasgfuia")
-# #現在のデータ・画像取得後ページに反映する関数
-# def send_json(request):
-#   #urlから値を取得
-#   name = request.GET.get('name', '')
-#   # ラズパイに指示出し
-#   subprocess.getoutput("mosquitto_pub -h localhost -t get -m " + name)
-
-#   return render_json_response(request)
 
 #時刻の形式変換関数（14文字の文字列→ISO形式）
 def dt_from_14digits_to_iso(dt):

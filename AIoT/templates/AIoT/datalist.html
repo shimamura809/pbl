@@ -559,7 +559,7 @@ function DataGet(value) {
           json_list[2] = "水分量 ： "+json["moisture"];
           json_list[3] = "照度 ： "+json["illuminance"];
           OnseiGousei(json_list,true);
-          GazouHyouji();
+          GazouHyouji(json["file"]);
         } else{
           OnseiGousei("取得に失敗しました。。");
         }
@@ -570,7 +570,7 @@ function DataGet(value) {
 }
 
 //画像表示用の関数
-function GazouHyouji(){
+function GazouHyouji(file){
   // var date = value;
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
@@ -578,7 +578,7 @@ function GazouHyouji(){
   target.appendChild(newTag);
   // eval("content"+num+".textContent = str1");
   d3.select("#pict"+num).append("image").attr({
-      "xlink:href": "/site_media/zu1.jpg",
+      "xlink:href": "/site_media/now/" + file,
       "opacity":"1",
       'width' : "240px",
       'height' : "150px",
@@ -716,7 +716,7 @@ function getTextContents(text1) {
         OnseiGousei("了解しました");
         setTimeout(move_page, 2500, "今日")
       }
-    }　else if(text1.match(/あ/)){
+    }　else if(text1.match(/現在/)){
       OnseiHyouji_User(text1);
       // OnseiGousei("少々お待ちください。");
       DataGet("test");

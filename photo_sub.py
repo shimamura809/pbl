@@ -16,7 +16,7 @@ def on_message(client, userdata, msg):
 
     # print(msg.topic+" "+str(msg.payload))
     if msg.topic == 'AIoT/Photo/now':
-        filename = "./media/" + datetime.datetime.today().strftime("%Y%m%d%H%M%S")+"now.jpg"
+        filename = "./media/now/" + datetime.datetime.today().strftime("%Y%m%d%H%M%S")+".jpg"
     else:
         filename = "./media/" + datetime.datetime.today().strftime("%Y%m%d")+".jpg"
     #outfile=open( filename , 'w')
