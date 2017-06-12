@@ -17,6 +17,8 @@ import json
 import math
 from datetime import datetime, timedelta
 import locale
+import subprocess
+import random
 
 client = MongoClient()
 db = client.pbl
@@ -92,19 +94,20 @@ def pict_list(request):
 
 #取得データ一覧用
 def getdata(request):
-  record_num = request.GET.get('num', "100")
   dt = datetime.now()
   dataset = []
-  all_record = db.collect_data.count()
-  if record_num == "全":
-    dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING)
-  else:
-    dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING).limit(int(record_num))
-  return render_to_response('AIoT/getdata.html', {"dataset":dataset,"record_num":record_num, "all_record":all_record})
+  dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING)
+  return render_to_response('AIoT/getdata.html', {"dataset":dataset})
 
 #メールアドレス変更画面
 def mailaddress(request):
   return render_to_response('AIoT/mailaddress.html')
+
+  #メールアドレス変更確認画面
+def mailconfirm(request):
+  key = db.randstr
+  newaddress = db.newaddress
+  return render_to_response('AIoT/mailconfirm.html',{"key":key,"newaddress":newaddress})
 
 #メモ保存用
 def memo_json(request):
@@ -183,6 +186,34 @@ def get_json(request):
   lt = get[0]["datetime"]
   dataset = {"datetime":str(lt.year)+"年"+str(lt.month)+"月"+str(lt.day)+"日"+str(lt.hour)+"時"+str(lt.minute)+"分","temperature":get[0]["temperature"],"moisture":get[0]["moisture"],"illuminance":get[0]["illuminance"]}
   print("tst2")
+  return render_json_response(request,dataset)
+
+#認証メール送信用
+def mailsend_json(request):
+  address = request.GET.get('sendaddress','')
+  db.mailaddress.remove({"newaddress"})
+  db.mailaddress.insert({"newaddress":address})
+  db.mailaddress.remove({"randstr"})
+  source_str = 'abcdefghijklmnopqrstuvwxyz'
+  rand_str="".join([random.choice(source_str) for x in xrange(10)])
+  db.mailaddress.insert({"randstr":rand_str})
+  message = "以下のURLより、ぷらんとーくの通知を受け取るメールアドレスの変更を完了してください。\n"
+  url = "http://localhost/AIoT/mailconfirm/?randstr="+rand_str
+  subject = "ぷらんとーく通知メールアドレス変更の認証"
+#  subprocess.getoutput(message+" "+url+"  | mail -s "+ subject + " " +address)
+
+  dataset = {"sendaddress":sendaddress}
+  return render_json_response(request,dataset)
+
+#認証メール送信用
+def mailregister_json(request):
+  address = request.GET.get('newaddress','')
+  db.mailaddress.remove({"nowaddress"})
+  db.mailaddress.insert({"nowaddress":address})
+  db.mailaddress.remove({"newaddress"})
+  db.mailaddress.remove({"randstr"})
+
+  dataset = {"nowaddress":sendaddress}
   return render_json_response(request,dataset)
 
 # def mqtt():

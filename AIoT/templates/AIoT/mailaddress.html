@@ -29,28 +29,29 @@ h3 {
   <p><font size="3px" color="black">メールアドレスの変更はメールの受信が確認されてから、正式な変更となります。<br>メールに記載されている認証用URLにアクセスすることでメールアドレスの変更が完了します。</font></p>
   <p><font size="5px" color="blue">新しいメールアドレス</font></p>
   <form name="mailaddress_form" action="Sample.html">
-    <textarea id="mailaddress" name="mailaddress"></textarea><br>
+  <input type="text" id="mailaddress" name="mailaddress" style="width:300px;"></form><br>
   <p><font size="5px" color="blue">新しいメールアドレス(確認)</font></p>
-  <form name="re_mailaddress_form" action="Sample.html">
-    <textarea id="re_mailaddress" name="re_mailaddress"></textarea><br>
-    <a id="mailaddress_write_button" onclick="mailaddress_write()" class="btn btn-info btn-block">変更</a>
+  <form name="re_mailaddress_form" action="Sample.html"><br><br>
+  <input type="text" id="re_mailaddress" name="re_mailaddress" style="width:300px;"></form><br>
+    <a id="mailaddress_write_button" onclick="mailaddress_write()" class="btn btn-info btn-block" style="width:150px;">認証メール送信</a>
   </form>
 
   <script type="text/javascript">
     function mailaddress_write(){
       var mailaddress_text = document.mailaddress_form.mailaddress.value;
       var re_mailaddress_text = document.re_mailaddress_form.re_mailaddress.value;
-      if("mailaddress_text" != "re_mailaddress"){
+      if(mailaddress_text != re_mailaddress_text){
         console.log("miss");
         window.alert("2つのメールアドレスが異なります。\nもう一度確認下さい。");
       }
       else{
-        $.ajax({
+/*        $.ajax({
           type: 'GET',
-          url: make_url("mailaddress") + "?mailaddress=" + mailaddress_text,
+          url: "{% url 'AIoT:mailsend_json' %}" + "?sendaddress=" + mailaddress_text,
           dataType: 'json',
-        });
-#        window.alert("アドレス変更用のメールを送信しました。\nメールの認証用URLよりアドレス変更を完了して下さい");
+        });*/
+        console.log("succeed");
+        window.alert("アドレス変更用のメールを送信しました。\nメールの認証用URLよりアドレス変更を完了して下さい。");
       }
     }
   </script>
