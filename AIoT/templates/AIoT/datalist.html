@@ -610,12 +610,16 @@ function OnseiHyouji_User_API(value){
   var str1 = value;
   var str2 = tmp_text;
 
-  var target = document.getElementById("chat-frame");
-  var newTag = document.createElement("span");
-  newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="content'+num+'"></span></p>';
-  target.appendChild(newTag);
-  eval("content"+num+".textContent = str1");
-  num = num + 1;
+  if(value.match(/NOTTALK/)){
+    console.log("nottalk")
+  }else{
+    var target = document.getElementById("chat-frame");
+    var newTag = document.createElement("span");
+    newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="content'+num+'"></span></p>';
+    target.appendChild(newTag);
+    eval("content"+num+".textContent = str1");
+    num = num + 1; 
+  }
 
   //雑談対話へのリクエストの用意
   var apiJson3 = {
@@ -724,6 +728,16 @@ function getTextContents(text1) {
       OnseiHyouji_User_API(text1);
     }
 }
+
+//ページ開始時に水分量を判定(テスト用)
+var MoisJudge = Math.floor( Math.random() * 10 ) ;
+
+if(MoisJudge == 0){
+  OnseiHyouji_User_API("NOTTALKMOISTNO");
+} else{
+  OnseiHyouji_User_API("NOTTALKMOISTOK");
+}
+
 Speech_Rec();
 </script>
 
