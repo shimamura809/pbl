@@ -14,6 +14,6 @@ urlpatterns = patterns('',
     url(r'^getdata/$', views.getdata, name='getdata'), #取得データ一覧用
     url(r'^get_json/$', views.get_json, name='get_json'), #現在のデータ取得用
     url(r'^mailsend_json/$', views.mailsend_json, name='mailsend_json'), #認証メール送信用json
-    url(r'^mailregister_json/$', views.mailregister_json, name='mailregister_json'), #アドレス登録用json
+    # url(r'^mailregister_json/$', views.mailregister_json, name='mailregister_json'), #アドレス登録用json
     # url(r'^datalist_json/$', views.datalist_json, name='datalist_json'), #datalist用JSON
 )

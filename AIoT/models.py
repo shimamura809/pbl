@@ -44,8 +44,8 @@ class watertime(Document):
 
 class mailaddress(Document):
     _id         = StringField(max_length=255)
-    nowaddress  = StringField(max_length=255)
-    newaddress  = StringField(max_length=255)
+    address  = StringField(max_length=255)
+    status  = StringField(max_length=255)
     randstr     = StringField(max_length=255)
 
     meta = DB_ALIAS

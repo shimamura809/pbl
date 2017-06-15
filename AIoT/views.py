@@ -99,7 +99,7 @@ def getdata(request):
   if record_num == "全":
     dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING)
   else:
-    dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING).limit(all_record)
+    dataset += db.collect_data.find({"datetime":{"$lte":dt}}).sort("datetime", DESCENDING).limit(int(record_num))
   return render_to_response('AIoT/getdata.html', {"dataset":dataset,"record_num":record_num,"all_record":all_record})
 
 #メールアドレス変更画面
@@ -108,9 +108,19 @@ def mailaddress(request):
 
   #メールアドレス変更確認画面
 def mailconfirm(request):
-  key = db.randstr
-  newaddress = db.newaddress
-  return render_to_response('AIoT/mailconfirm.html',{"key":key,"newaddress":newaddress})
+  randstr = request.GET.get('randstr', '')
+  newaddress = []
+  newaddress += db.mailaddress.find({"randstr":randstr})
+
+  if len(newaddress) != 0:
+    db.mailaddress.remove({"status":"now"})
+    db.mailaddress.insert({"status":"now","address":newaddress[0]["address"]})
+    db.mailaddress.remove({"status":"new"})
+    change = "success"
+  else:
+    db.mailaddress.remove({"status":"new"})
+    change = "failure"
+  return render_to_response('AIoT/mailconfirm.html', {"change":change})
 
 #メモ保存用
 def memo_json(request):
@@ -188,30 +198,27 @@ def get_json(request):
 #認証メール送信用
 def mailsend_json(request):
   address = request.GET.get('sendaddress','')
-  db.mailaddress.remove({"newaddress"})
-  db.mailaddress.insert({"newaddress":address})
-  db.mailaddress.remove({"randstr"})
+  db.mailaddress.remove({"status":"new"})
   source_str = 'abcdefghijklmnopqrstuvwxyz'
-  rand_str="".join([random.choice(source_str) for x in xrange(10)])
-  db.mailaddress.insert({"randstr":rand_str})
-  message = "以下のURLより、ぷらんとーくの通知を受け取るメールアドレスの変更を完了してください。\n"
-  url = "http://localhost/AIoT/mailconfirm/?randstr="+rand_str
+  rand_str="".join([random.choice(source_str) for x in range(10)])
+  db.mailaddress.insert({"address":address, "status":"new", "randstr":rand_str})
+  message = "echo '以下のURLより、ぷらんとーくの通知を受け取るメールアドレスの変更を完了してください。\n'"
+  url = "http://210.152.14.37/AIoT/mailconfirm/?randstr="+rand_str
   subject = "ぷらんとーく通知メールアドレス変更の認証"
-#  subprocess.getoutput(message+" "+url+"  | mail -s "+ subject + " " +address)
-
-  dataset = {"sendaddress":sendaddress}
+  subprocess.getoutput(message+" "+url+"  | mail -s "+ subject + " " +address)
+  dataset = {"send":"success"}
   return render_json_response(request,dataset)
 
-#認証メール送信用
-def mailregister_json(request):
-  address = request.GET.get('newaddress','')
-  db.mailaddress.remove({"nowaddress"})
-  db.mailaddress.insert({"nowaddress":address})
-  db.mailaddress.remove({"newaddress"})
-  db.mailaddress.remove({"randstr"})
+# #認証メール送信用
+# def mailregister_json(request):
+#   address = request.GET.get('newaddress','')
+#   db.mailaddress.remove({"nowaddress"})
+#   db.mailaddress.insert({"nowaddress":address})
+#   db.mailaddress.remove({"newaddress"})
+#   db.mailaddress.remove({"randstr"})
 
-  dataset = {"nowaddress":sendaddress}
-  return render_json_response(request,dataset)
+#   dataset = {"nowaddress":sendaddress}
+#   return render_json_response(request,dataset)
 
 #時刻の形式変換関数（14文字の文字列→ISO形式）
 def dt_from_14digits_to_iso(dt):
