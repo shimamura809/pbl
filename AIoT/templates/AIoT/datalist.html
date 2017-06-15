@@ -505,8 +505,12 @@ function callAPI(hatsuwa,RequestZatsudan){
       if(res1["expression"] == "NOMATCH"){//返答がNOMATCHならcallBotにリクエスト
         callBot(RequestZatsudan);
       }else{
-      console.log(res1["expression"]);
-      OnseiGousei(res1["utterance"]);
+        console.log(res1["expression"]);
+        if(res1["expression"].match(/NOTTALK/)){
+          NotTalkOperation(res1["expression"]);
+        }else{
+          OnseiGousei(res1["utterance"]);
+        }
       }
     }
   };
@@ -519,7 +523,15 @@ function callAPI(hatsuwa,RequestZatsudan){
   };
   request.send(JSON.stringify(body1));
 }
-
+function NotTalkOperation(NotTalkCode){
+  if(NotTalkCode.match(/WATERING/)){
+      water_control();
+    } else if(NotTalkCode.match(/CONDITION/)){
+      // OnseiGousei("少々お待ちください。");
+      console.log("condition")
+      DataGet("test");
+    }
+}
 /*
 //定期的な雑談対話システム発話
 repetition = setTimeout("callBot(apiJson1)", 70000);
@@ -694,11 +706,7 @@ function Speech_Rec(){
 
 //ユーザ発話のマッチング
 function getTextContents(text1) {
-    if(text1.match(/水/)){
-      water_control();
-      OnseiHyouji_User(text1);
-      OnseiGousei("ごくごく．．．ちょうど水がほしかったんだ！ありがとう！！");
-    } else if(text1.match(/画像/)){
+    if(text1.match(/画像/)){
       OnseiHyouji_User(text1);
       OnseiGousei("了解しました");
       setTimeout(move_page, 2500, "画像")
@@ -720,11 +728,7 @@ function getTextContents(text1) {
         OnseiGousei("了解しました");
         setTimeout(move_page, 2500, "今日")
       }
-    }　else if(text1.match(/現在/)){
-      OnseiHyouji_User(text1);
-      // OnseiGousei("少々お待ちください。");
-      DataGet("test");
-    } else {
+    }　else {
       OnseiHyouji_User_API(text1);
     }
 }
