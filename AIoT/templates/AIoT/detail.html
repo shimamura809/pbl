@@ -195,9 +195,9 @@ p.tabs
     float: right;
     display: inline-block;
   }
-/*#memo_area form{
-  width: 50%;
-}*/
+  #memo_area form{
+    width: (window_width-40)*0.3+"px";
+  }
 </style>
 <script type="text/javascript">
 if (window.innerWidth - window.innerHeight > 200){
@@ -212,13 +212,13 @@ $(function() {
         $("#content_area").css("width", window_width-40+"px");
       });
 $(function() {
-        $(".tmp_table").css("width", (window_width-50)*0.6+"px");
+        $(".tmp_table").css("width", (window_width-40)*0.65+"px");
       });
 $(function() {
-        $(".moi_table").css("width", (window_width-50)*0.6+"px");
+        $(".moi_table").css("width", (window_width-40)*0.65+"px");
       });
 $(function() {
-        $(".ill_table").css("width", (window_width-50)*0.6+"px");
+        $(".ill_table").css("width", (window_width-40)*0.65+"px");
       });
 </script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
@@ -228,10 +228,10 @@ $(function() {
     <div id="header_area">
     <div class="left" y="30"></div>
     <p class="page-header" id="header" align="center"></p>
-    <div class="right" y="30"></div></div><br>
+    <div class="right" y="0"></div></div><br>
     <div id="content_area">
     <svg id="picture">
-    <image id="zu1" x="0" y="0" width="320px" height="240px" opacity="1"></image>
+    <image id="zu1" x="0" y="40" width="360px" height="270px" opacity="1"></image>
     </svg>
     <div id="graph_area">
     <div class="tabbox" id="tabbox"></div>
@@ -240,7 +240,7 @@ $(function() {
     <div id="memo_area">
       <p><font size="6px" color="blue">Memo</font></p>
       <form id="memo_form" name="memo_form" action="Sample.html">
-        <textarea id="memo" class="control-form" name="memo" rows="5" cols="58" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}"></textarea><br>
+        <textarea id="memo" class="control-form" name="memo" style="height:110px; width:350px" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}"></textarea><br>
         <a id="memo_write_button" onclick="memo_write()" class="btn btn-info btn-block">送信</a>
       </form>
     </div>
@@ -580,10 +580,10 @@ function make_link() {
 //画面に応じた描画に変更
 function resize(){
   d3.select("#picture").attr({
-    "width": (window_width-40)*0.3+"px",
-    "height": (window_width-40)*0.5*2/3+"px",
+    "width": (window_width-40)*0.33+"px",
+    "height": (window_width-40)*0.33+"px",
   });
-  d3.select("#memo").style("width",(window_width-40)*0.35+"px");
+  d3.select("#memo").style("width",(window_width-40)*0.33+"px");
 }
 
 // データ
