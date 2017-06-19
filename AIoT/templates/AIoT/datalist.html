@@ -446,7 +446,7 @@ function OnseiGousei(onsei,get) {
   };
   data1 = datax;
   xhr.send(data1);
-  var recstopsec = onsei.length * 300;
+  var recstopsec = onsei.length * 200 + 1000;
   console.log(recstopsec)
   setTimeout("Speech_Rec()",recstopsec);
 };
@@ -707,7 +707,7 @@ function Speech_Rec(){
           }
           else{
             console.log("notlistentimeout")      
-            setTimeout("Speech_Rec()",text1.length * 300);
+            setTimeout("Speech_Rec()",text1.length * 200 +1000);
           }
 
     }
