@@ -705,7 +705,11 @@ function Speech_Rec(){
           if(i == 1) {
             getTextContents(text1);
           }
-          //Speech_Rec();
+          else{
+            console.log("notlistentimeout")      
+            setTimeout("Speech_Rec()",text1.length * 300);
+          }
+
     }
   }
 }
