@@ -3,7 +3,7 @@ import watering
 import time
 import threading
 import datetime
-import subprocess
+import os
 from pub import temperature, illuminance, moisture
 
 WATERON_MODE = 1
@@ -38,8 +38,7 @@ def on_message(client, userdata, msg):
         d = datetime.datetime.today()
         dstr = d.strftime('%Y-%m-%d %H:%M:%S')
         client.publish("AIoT/data/", "datetime:"+dstr+"/temperature:"+str(temperature())+"/moisture:"+str(moisture())+"/illuminance:"+str(illuminance()))
-        # 画像送信用
-        subprocess.getoutput("sh ./cron/photo_cron.sh")
+        os.system("sh /home/pi/pbl2/cron/photo_cron.sh")
 
 
 watering = watering.Pomp()

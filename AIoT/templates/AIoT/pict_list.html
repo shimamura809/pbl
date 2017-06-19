@@ -22,7 +22,7 @@
 .left {
   float: left;
   display: inline;
-  margin-top: 20px;
+  /*margin-top: 20px;*/
 }
 .right {
   float: right;
@@ -43,50 +43,10 @@ select {
 {% block content %}
 <script type="text/javascript">
 
-//画面の表示サイズを確認
-var window_width = window.innerWidth;
-var window_height = window.innerHeight;
-
-d3.select("body").append("div").attr("id","header_area");
-d3.select("#header_area").append("div").attr({
-  "class":"page-header",
-  "id":"header",
-  "align":"center",
-  "margin-left": String(window_width/2)+"px"
-}).append("text").text("画像一覧");
-
-d3.select("#header_area").append("div").attr({
-  "class":"right",
-  "y":"30px",
-}).style("display","inline-flex");
-d3.select("#header_area").append("font").attr({
-    "display":"inline",
-    "float":"left",
-    "size": "5px",
-    "color": "blue",
-    "style": "font-weight: bold;",
-  }).text("総枚数：" + {{pict_num}});
-d3.select(".right").append("a").attr({
-    "id": "back_main",
-    "class": "btn btn-info btn-sm",
-    "href": "{% url 'AIoT:datalist' %}",
-    "display":"inline",
-    // "float":"right",
-  }).text("メインページ");
-
-d3.select(".right").append("a").attr({
-    "id": "slide_show",
-    "class": "btn btn-success btn-sm",
-    "margin-left":"3px",
-    "onclick":"slide_show()",
-    "display":"inline",
-    // "float":"right",
-  }).text("スライドショー");
-
+//画像一覧表示用の関数
 function make_pict(){
   window_width = window.innerWidth * 0.95;
   margin_width = window.innerWidth * 0.05;
-  console.log(window_width);
   window_height = window_width * 3 / 4;
   var images = document.getElementById('svg1');
   images.textContent = null;
@@ -95,7 +55,6 @@ function make_pict(){
     "href": function(d){return "{% url 'AIoT:detail' %}" + "?datetime=" +d;},
   });
   var row = document.row_form.row_select.value;
-
   var column = Math.floor(pict_list.length/row);
   if (pict_list.length%row != 0) {
     column = column + 1;
@@ -125,95 +84,202 @@ function make_pict(){
   });
 }
 
+//スライドショー用の関数
 function slide_show() {
-
-  d3.select("#svg1").attr("display", "none");
-  window_width = window.innerWidth;
-  window_height = window.innerHeight;
-  d3.select("#slide").attr({
-    "x":String(window_width/2)+"px",
-    "y":String(window_height/2)+"px",
-    'width' : String(window_width*0.9)+"px",
-    'height' : String(window_height*0.9)+"px",
-  });
-  var tmp = d3.select("#slide").append("svg").attr({
-      'width' : String(window_width)+"px",
-      'height' : String(window_height)+"px",
-      "id": "slide_"+pict_list[cnt],
-  });
-  if (state_slide == "stop") {
-    state_slide = "start";
-    d3.select("#slide_show").attr("class","btn btn-default btn-sm");
-    tmp.append("image").attr({
-      "xlink:href":"/site_media/"+pict_list[cnt]+".jpg",
-      'width' : String(window_width)+"px",
-      'height' : String(window_height)+"px",
-      "margin" : "auto",
-    }).style("opacity",0)
+  if (state_slide == "start" || state_slide == "restart") {
+    d3.select("#slide_next").remove();
+    d3.select("#slide_previous").remove();
+    d3.select("#header_text").text(pict_list[cnt]);
+    if(state_slide == "start"){
+      d3.select("#slide").attr("display", "block");
+      d3.select("#svg1").attr("display", "none");
+      d3.select(".left").append("a").attr({
+        "id": "slide_end",
+        "class": "btn btn-danger btn-sm",
+        "margin-left":"3px",
+        "onclick":"slide_order('end')",
+        "display":"inline",
+      }).text("終了");
+      d3.select("#slide_show").attr({
+        "class":"btn btn-success btn-sm",
+        "id":"slide_stop",
+        "onclick":"slide_order('stop')",
+      }).text("停止");
+      d3.select(".right").style({
+        "display":"none",
+      });
+    } else{
+      d3.select("#slide_restart").attr({
+        "class":"btn btn-default btn-sm",
+        "id":"slide_stop",
+        "onclick":"slide_order('stop')",
+      }).text("停止");
+    }
+    console.log("start:" + cnt);
+    console.log("list:" + pict_list[cnt]);
+    d3.select("#slide_"+pict_list[cnt])
     .transition("open").duration(1500).style("opacity",1)
     .transition("close").duration(1500).style("opacity",0);
-    cnt++;
     show = setInterval(slide_open, 3200, pict_list[cnt]);
-  } else if (state_slide == "start"){
-    state_slide = "restart";
+  } else if (state_slide == "stop"){
     clearInterval(show);
-    d3.select("#slide_show").attr("class","btn btn-success btn-sm");
-    d3.select("#slide_"+pict_list[cnt]).attr("id","restart");
-    tmp.append("image").attr({
-      "xlink:href":"/site_media/"+pict_list[cnt]+".jpg",
-      'width' : String(window_width)+"px",
-      'height' : String(window_height)+"px",
-      "margin" : "auto",
-    }).style("opacity",1);
-  } else if (state_slide == "restart"){
-    d3.select("#restart").remove();
-    state_slide = "start";
-    d3.select("#slide_show").attr("class","btn btn-default btn-sm");
-    tmp.append("image").attr({
-      "xlink:href":"/site_media/"+pict_list[cnt]+".jpg",
-      'width' : String(window_width)+"px",
-      'height' : String(window_height)+"px",
-      "margin" : "auto",
-    }).style("opacity",0)
-    .transition("open").duration(1500).style("opacity",1)
-    .transition("close").duration(1500).style("opacity",0);
-    cnt++;
-    show = setInterval(slide_open, 3200, pict_list[cnt]);
+    d3.select("#slide_"+pict_list[cnt]).interrupt();
+    d3.select("#slide_"+pict_list[cnt]).interrupt();
+    d3.select("#slide_"+pict_list[cnt]).style("opacity",1);
+    d3.select("#slide_stop").attr({
+      "class":"btn btn-success btn-sm",
+      "id":"slide_restart",
+      "onclick":"slide_order('restart')",
+    }).text("再開");
+    d3.select(".left").append("a").attr({
+      "id": "slide_previous",
+      "class": "btn btn-default btn-sm",
+      "margin-left":"3px",
+      "onclick":"slide_order('previous')",
+      "display":"inline",
+    }).text("前へ");
+    d3.select(".left").append("a").attr({
+      "id": "slide_next",
+      "class": "btn btn-default btn-sm",
+      "margin-left":"3px",
+      "onclick":"slide_order('next')",
+      "display":"inline",
+    }).text("次へ");
+    console.log("stop:" + cnt);
+  } else if (state_slide == "end"){
+    clearInterval(show);
+    d3.select("#slide_"+pict_list[cnt]).interrupt();
+    d3.select("#slide_"+pict_list[cnt]).interrupt();
+    d3.select("#slide_"+pict_list[cnt]).style("opacity",0);
+    d3.select("#slide_stop").attr({
+      "class":"btn btn-success btn-sm",
+      "id":"slide_show",
+      "onclick":"slide_order('start')",
+    }).text("スライドショー");
+    d3.select("#slide_restart").attr({
+      "class":"btn btn-success btn-sm",
+      "id":"slide_show",
+      "onclick":"slide_order('start')",
+    }).text("スライドショー");
+    d3.select("#slide").attr("display","none");
+    d3.select(".right").style({
+      "display":"inline-flex",
+    });
+    cnt = 0;
+    d3.select("#slide_next").remove();
+    d3.select("#slide_previous").remove();
+    d3.select("#slide_end").remove();
+    d3.select("#header_text").text("画像一覧");
+    d3.select("#svg1").attr("display", "block");
   }
 }
 
 function slide_open() {
-  console.log(state_slide);
-  if (state_slide == "start") {
+  if (state_slide == "start" || state_slide == "restart") {
     if (cnt < pict_list.length) {
-      var tmp = d3.select("#slide").append("svg").attr({
-        'width' : String(window_width)+"px",
-        'height' : String(window_height)+"px",
-        "id": "slide_"+pict_list[cnt],
-      });
-      tmp.append("image").attr({
-        "xlink:href":"/site_media/"+pict_list[cnt]+".jpg",
-        'width' : String(window_width)+"px",
-        'height' : String(window_height)+"px",
-        "margin" : "auto",
-      }).style("opacity",0)
-      .transition("open").duration(1500).style("opacity",1)
-      .transition("close").duration(1500).style("opacity",0);
       cnt++;
+      d3.select("#header_text").text(pict_list[cnt]);
+      d3.select("#slide_"+pict_list[cnt]).transition("open").duration(1500).style("opacity",1)
+      .transition("close").duration(1500).style("opacity",0);
     } else {
-      console.log("clear");
-      clearInterval(show);
-      document.getElementById('slide').textContent = null;
-      state_slide = "stop";
-      d3.select("#slide_show").attr("class","btn btn-success btn-sm");
-      cnt = 0;
-      d3.select("#svg1").attr("display", "block");
+      slide_order("end");
     }
   }
 }
 
-var state_slide = "stop";
+function slide_order(str) {
+  if(str == "next") {
+    d3.select("#slide_"+pict_list[cnt]).style("opacity",0);
+    cnt = cnt + 1;
+    if (cnt == pict_list.length) {
+      cnt = cnt -1;
+    }
+    console.log("next:" + cnt);
+    d3.select("#header_text").text(pict_list[cnt]);
+    d3.select("#slide_"+pict_list[cnt]).style("opacity",1);
+  } else if(str == "previous") {
+    d3.select("#slide_"+pict_list[cnt]).style("opacity",0);
+    cnt = cnt - 1;
+    if (cnt < 0) {
+      cnt = 0;
+    }
+    console.log("previous:" + cnt);
+    d3.select("#header_text").text(pict_list[cnt]);
+    d3.select("#slide_"+pict_list[cnt]).style("opacity",1);
+  } else{
+    state_slide = str;
+    slide_show();
+  }
+}
+
+//画像順ソート用関数
+function pict_sort(){
+  pict_list.reverse();
+  make_pict();
+  if (sort == true){
+    document.getElementById("sort").innerHTML="降順";
+    sort = false;
+  }　else {
+    document.getElementById("sort").innerHTML="昇順";
+    sort = true;
+  }
+}
+
+//画面の表示サイズを確認
+var window_width = window.innerWidth;
+var window_height = window.innerHeight;
+
+d3.select("body").append("div").attr("id","header_area");
+d3.select("#header_area").append("div").attr({
+  "class":"page-header",
+  "id":"header",
+  "align":"center",
+  "margin-left": String(window_width/2)+"px"
+}).append("text").attr("id","header_text").text("画像一覧");
+
+d3.select("#header_area").append("div").attr({
+  "class":"left",
+  "y":"30px",
+}).style("display","inline-flex");
+d3.select("#header_area").append("div").attr({
+  "class":"right",
+  "y":"30px",
+}).style("display","inline-flex");
+d3.select(".left").append("font").attr({
+    "display":"inline",
+    "float":"left",
+    "size": "5px",
+    "color": "blue",
+    "style": "font-weight: bold;",
+  }).text("総枚数：" + {{pict_num}});
+d3.select(".left").append("a").attr({
+    "id": "back_main",
+    "class": "btn btn-info btn-sm",
+    "href": "{% url 'AIoT:datalist' %}",
+    "display":"inline",
+    "style": "margin-left: 5px;",
+  }).text("メインページ");
+
+d3.select(".left").append("a").attr({
+    "id": "slide_show",
+    "class": "btn btn-success btn-sm",
+    "margin-left":"3px",
+    "onclick":"slide_order('start')",
+    "display":"inline",
+    "style": "margin-left: 5px;",
+  }).text("スライドショー");
+
+d3.select(".right").append("a").attr({
+    "id": "sort",
+    "class": "btn btn-warning btn-sm",
+    "margin-left":"3px",
+    "onclick":"pict_sort()",
+    "display":"inline",
+  }).text("昇順");
+
+var state_slide = "end";
 var cnt = 0, show;
+var sort = true;
 
 //写真の列数関連
 var rows = [2,3,4,5,6,7,8,9];
@@ -257,18 +323,31 @@ if (pict_list.length == 0){
   d3.select("#svg1").attr("width",window_width + "px");
   d3.select("#svg1").attr("height",window_height/2 + "px");
   var msg = d3.select("#svg1").append("svg").attr({
-    // 'height': 500,
     "x":String(window_width)+"px",
     "y":String(window_height/4)+"px",
   });
   msg.append("text").text("画像がありません").attr({
     "font-size":"100px",
-    // "x":"0px",
     "y":String(window_height/6)+"px",
   })
 } else {
   make_pict();
-  d3.select("body").append("svg").attr("id","slide");
+  d3.select("body").append("svg").attr({
+    "id":"slide",
+    "width": innerWidth * 0.98 + "px",
+    "height": innerHeight * 3 / 4 + "px",
+  });
+  for(i=0; i < pict_list.length; i++) {
+    var tmp = d3.select("#slide").append("svg").attr({
+        "id": "slide_"+pict_list[i],
+    }).style("opacity", 0);
+    tmp.append("image").attr({
+      "xlink:href":"/site_media/"+pict_list[i]+".jpg",
+      'width' : String(innerWidth * 0.5),
+      'height' : String(innerWidth * 0.5 * 3 / 4),
+      "x":String(innerWidth * 0.5 / 2),
+    });
+  }
 }
 
 </script>
