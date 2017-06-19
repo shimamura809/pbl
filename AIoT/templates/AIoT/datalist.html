@@ -392,7 +392,7 @@ function make_url(str) {
 
 ///////////////////////////////////////////////////////実行部//////////////////////////////////////////////
 db_get();
-pict_change("zu_normal");
+//pict_change("zu_normal");
 var water;
 var flag_water = false;
 
@@ -751,6 +751,36 @@ if(MoisJudge == 0){
 } else{
   OnseiHyouji_User_API("NOTTALKMOISTOK");
 }*/
+
+//メインページの画像切り替え
+{% for i in dataset %}
+if ({{i.temperature}} >= 30) {
+  pict_change("zu_hot")
+}else if ({{i.temperature}} <= 10) {
+  pict_change("zu_cold")
+}else if ({{i.moisture}} >= 700) {
+  pict_change("zu_moist")
+}else if ({{i.moisture}} <= 250) {
+  pict_change("zu_dry")
+}else {
+  pict_change("zu_normal")
+}
+{% endfor %}
+/*
+var temperature = Math.floor( Math.random() * 10 ) ;
+var moisture = Math.floor( Math.random() * 10 ) ;
+if (temperature>=9) {
+  pict_change("zu_hot")
+}else if (temperature<=0) {
+  pict_change("zu_cold")
+}else if (moisture>=8) {
+  pict_change("zu_moist")
+}else if (moisture<=2) {
+  pict_change("zu_dry")
+}else {
+  pict_change("zu_normal")
+}
+*/
 
 Speech_Rec();
 </script>
