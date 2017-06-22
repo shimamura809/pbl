@@ -110,7 +110,7 @@ function slide_show() {
       });
     } else{
       d3.select("#slide_restart").attr({
-        "class":"btn btn-default btn-sm",
+        "class":"btn btn-success btn-sm",
         "id":"slide_stop",
         "onclick":"slide_order('stop')",
       }).text("停止");
@@ -320,16 +320,18 @@ d3.select("body").append("svg").attr({
 })
 
 if (pict_list.length == 0){
-  d3.select("#svg1").attr("width",window_width + "px");
-  d3.select("#svg1").attr("height",window_height/2 + "px");
-  var msg = d3.select("#svg1").append("svg").attr({
-    "x":String(window_width)+"px",
-    "y":String(window_height/4)+"px",
-  });
-  msg.append("text").text("画像がありません").attr({
-    "font-size":"100px",
-    "y":String(window_height/6)+"px",
-  })
+  d3.select("body").append("div").attr({
+    "id":"msg_area",
+    "align":"center",
+  }).append("font").attr({
+    "id":"msg",
+    "display":"inline",
+    "size": "300px",
+    "color": "blue",
+    "style": "font-weight: bold;",
+  }).text("画像がありません");
+  d3.select("#slide_show").remove();
+  d3.select(".right").style("display","none");
 } else {
   make_pict();
   d3.select("body").append("svg").attr({

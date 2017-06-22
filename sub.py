@@ -33,7 +33,13 @@ def split_data(tmp_str):
         data_dict["illuminance"] = float(tmp[3].split("illuminance:")[1])
         if db.threshold.count() != 0:
             if float(threshold[0]["threshold"]) > data_dict["moisture"]:
-                mail_to_user(float(threshold[0]["threshold"]),data_dict["moisture"])
+                if db.mail_count.count() < 3:
+                    address = []
+                    address += db.mailaddress.find({"status":"now"})
+                    db.mail_count.insert({"count":db.mail_count.count()})
+                    mail_to_user(float(threshold[0]["threshold"]),data_dict["moisture"],address[0]["address"])
+                else:
+                    db.mail_count.remove()
         return True
 
 def on_message(client, userdata, msg):
