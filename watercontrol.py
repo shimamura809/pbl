@@ -37,7 +37,7 @@ def on_message(client, userdata, msg):
     elif msg.topic == "get":
         d = datetime.datetime.today()
         dstr = d.strftime('%Y-%m-%d %H:%M:%S')
-        client.publish("AIoT/data/", "datetime:"+dstr+"/temperature:"+str(temperature())+"/moisture:"+str(moisture())+"/illuminance:"+str(illuminance()))
+        client.publish("AIoT/data/", "datetime:"+dstr+"/temperature:"+str(temperature())+"/moisture:"+str(moisture())+"/illuminance:"+str(illuminance())+"/now")
         os.system("sh /home/pi/pbl2/cron/photo_cron.sh")
 
 

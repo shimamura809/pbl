@@ -31,7 +31,7 @@ def split_data(tmp_str):
         data_dict["temperature"] = float(tmp[1].split("temperature:")[1])
         data_dict["moisture"] = float(tmp[2].split("moisture:")[1])
         data_dict["illuminance"] = float(tmp[3].split("illuminance:")[1])
-        if db.threshold.count() != 0:
+        if db.threshold.count() != 0 and len(tmp) != 5:
             if float(threshold[0]["threshold"]) > data_dict["moisture"]:
                 if db.mail_count.count() < 3:
                     address = []
