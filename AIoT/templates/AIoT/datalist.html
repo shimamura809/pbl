@@ -14,10 +14,10 @@ h3 {
   width: 1200px;
   }
 table {
-  margin-top: 8px;
+  /*margin-top: 8px;*/
 }
 body {
-  background-color: mintcream;
+  background-color: white;
 }
 .data_table_scr {
   height:485px;
@@ -37,7 +37,7 @@ body {
     height: 488px;
     width: 320px;
     border: double 9px orange;
-    border-radius: 10px;
+    /*border-radius: 10px;*/
 }
 .zu1 image {
     margin: 0; 
@@ -196,6 +196,7 @@ td {
 position: relative;
 display: inline-block;
 padding: 0 55px;
+font-weight: bold;
 }
 .midashi1:before, .midashi1:after{
 content: '';
@@ -219,7 +220,7 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
 .box1{
     padding: 0.5em 1em;
     /*margin: 2em 0;*/
-    color: #5989cf;
+    color: dimgray;
     background: #c6e4ff;
     border-bottom: solid 6px #aac5de;
     border-radius: 9px;
@@ -269,6 +270,7 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
   <div id="center">
   <svg class="zu1" id="svg1" width="400" height="450">
     <image id="zu1" x="0" y="0" width="100%" height="100%" opacity="1"></image>
+    <div style="background-color: dimgray;">
     <div id="watertime_select" class="box1" align="center">
     <form name="water_form" action="Sample.html">
     <font size="4px" style="font-weight: bold;">水やり時間</font>
@@ -281,6 +283,7 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
       </script>
       <a id="water_control_button" onclick="water_control()" class="btn btn-info">水遣りスタート</a>
     </form>
+    </div>
     </div>
   </svg>
   </div>
@@ -306,13 +309,12 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
         <input id="threshold" name="threshold" maxlength="4" cols="4" rows="1"></input>
       <a id="threshold_write_button" onclick="threshold_write()" class="btn btn-info">更新</a>
       </form></p>
-    </div>
+    </div><br>
     <div id="link_list" align="center">
       <!--<div style="background-color: khaki; border-top: 4px solid royalblue; border-bottom: 4px solid royalblue;">
         <font size="5px" color="blue" style="font-weight: bold;">リンク</font>
       </div>-->
       <div class="midashi1"><font size="5px">リンク</font></div>
-      <br><br>
       <a id="pict_list"></a>
       <a id="getdata"></a>
       <a id="mailaddress"></a>
