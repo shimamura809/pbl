@@ -499,7 +499,8 @@ function callAPI(hatsuwa,RequestZatsudan){
   var request = new XMLHttpRequest();
   request.open('POST', 'https://api.repl-ai.jp/v1/dialogue', true);
   request.setRequestHeader("Content-Type", "application/json");
-  request.setRequestHeader("x-api-key", "utzD4E0CtN3Vw6lauIXS04JpvyGxoBrk9xUoOHiQ");
+  //request.setRequestHeader("x-api-key", "utzD4E0CtN3Vw6lauIXS04JpvyGxoBrk9xUoOHiQ");
+  request.setRequestHeader("x-api-key", "CmeU4zJNIg6CQZ9qbP2MV1nsfKCOb0j83vmLdeTj");
   request.onload = function (e) {
     if( request.status == 200){
       //console.log(request.responseText);
@@ -518,8 +519,10 @@ function callAPI(hatsuwa,RequestZatsudan){
     }
   };
   var body1 = {
-    appUserId:'o8gkTuc0E9gnjSYPVifLgeQ7ajD6eVqA',
-    botId:'plantalk',
+    //appUserId:'o8gkTuc0E9gnjSYPVifLgeQ7ajD6eVqA',
+    appUserId:'bWEUFo0RMIJQ2omAa5hJXneXBxUttF75',
+    //botId:'plantalk',
+    botId:'plantalk2',
     voiceText:hatsuwa,
     initTalkingFlag:false,
     initTopicId:'talk1'
@@ -644,8 +647,8 @@ function OnseiHyouji_User_API(value){
     "mode": "dialog"
   }
 
-  callBot(apiJson3);
-  //callAPI(str1,apiJson3);
+  //callBot(apiJson3);
+  callAPI(str1,apiJson3);
 }
 
 //履歴を保存する変数
