@@ -20,7 +20,7 @@ def temperature():
     trytemp = 0
     tmp1 = grovepi.dht(th_sensor,0) [0]
     while trytemp < retry_limit:
-        if isinstance(tmp1,str) or tmp1 < 0:
+        if float(tmp1) != float(tmp1) or tmp1 < 0:
             tmp1 = grovepi.dht(th_sensor,0) [0]
             trytemp += 1
             sleep(tryspan)
@@ -33,8 +33,8 @@ def moisture():
     trymois = 0
     tmp2 = grovepi.analogRead(m_sensor)
     while trymois < retry_limit:
-        if isinstance(tmp2,str) or tmp2 < 0:
-            tmp2 = grovepi.dht(th_sensor,0) [0]
+        if float(tmp2) != float(tmp2) or tmp2 < 0:
+            tmp2 = grovepi.analogRead(m_sensor)
             trymois += 1
             sleep(tryspan)
         else:
@@ -45,9 +45,9 @@ def illuminance():
     startill =datetime.datetime.today()
     tryill = 0
     tmp3 = grovepi.analogRead(l_sensor)
-    while (datetime.datetime.today() - startill).total_seconds() < retry_limit:
-        if isinstance(tmp3,str) or tmp3 < 0:
-            tmp3 = grovepi.dht(th_sensor,0) [0]
+    while tryill < retry_limit:
+        if float(tmp3) != float(tmp3) or tmp3 < 0:
+            tmp3 = grovepi.analogRead(l_sensor)
             tryill += 1
             sleep(tryspan)
         else:
