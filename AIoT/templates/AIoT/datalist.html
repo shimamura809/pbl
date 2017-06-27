@@ -20,7 +20,7 @@ body {
   background-color: mintcream;
 }
 .data_table_scr {
-  height:519px;
+  height:485px;
   width:350px;
   overflow-y:scroll;
   background-color: #D8F3F0;
@@ -29,21 +29,25 @@ body {
 #threshold_select{
   /*margin-top: 10px;*/
   /*border: 4px solid #ccc;*/
-  background-color: white;
+  /*background-color: white;*/
 }
 .zu1 {
-  height: 500px;
-  width: 320px;
-  border: 4px solid hotpink;
-  /*margin-left: 1px;
-  margin-right: 1px;*/
-  background-color: white;
+    /*padding: 0.5em 1em;
+    margin: 2em 0;*/
+    height: 488px;
+    width: 320px;
+    border: double 9px orange;
+    border-radius: 10px;
+}
+.zu1 image {
+    margin: 0; 
+    padding: 0;
 }
 .memo {
   height:300px;
   width:400px;
 }
-.Calendar {
+#Calendar {
   width: 367px;
   /*margin: auto;*/
 }
@@ -188,6 +192,42 @@ td {
 #threshold{
   width: 50px
 }
+.midashi1{
+position: relative;
+display: inline-block;
+padding: 0 55px;
+}
+.midashi1:before, .midashi1:after{
+content: '';
+position: absolute;
+top: 50%;
+display: inline-block;
+width: 45px;
+height: 3px;
+border-top: solid 1px black;
+border-bottom: solid 1px black;
+}
+.midashi1:before {left:0;}
+.midashi1:after {right: 0;}
+.midashi2 {
+background: #191970; /*背景色*/
+padding: 0.5em;/*文字周りの余白*/
+color: white;/*文字を白に*/
+/*border-radius: 0.5em;/*角の丸み*/
+font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
+}
+.box1{
+    padding: 0.5em 1em;
+    /*margin: 2em 0;*/
+    color: #5989cf;
+    background: #c6e4ff;
+    border-bottom: solid 6px #aac5de;
+    border-radius: 9px;
+}
+.box1 p {
+    margin: 0; 
+    padding: 0;
+}
 </style>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
 {% endblock %}
@@ -196,6 +236,7 @@ td {
 
 <div id="area1">
   <div id="left">
+  <div class="midashi2">ぷらんとーく</div>
   <div class="data_table_scr" id="list">
     <div id="chat-frame">
       <!--<p class="chat-talk mytalk">
@@ -228,7 +269,7 @@ td {
   <div id="center">
   <svg class="zu1" id="svg1" width="400" height="450">
     <image id="zu1" x="0" y="0" width="100%" height="100%" opacity="1"></image>
-    <div id="watertime_select" align="center" style="background-color: lightblue; border: 4px solid greenyellow;">
+    <div id="watertime_select" class="box1" align="center">
     <form name="water_form" action="Sample.html">
     <font size="4px" style="font-weight: bold;">水やり時間</font>
       <script type="text/javascript">
@@ -241,7 +282,8 @@ td {
       <a id="water_control_button" onclick="water_control()" class="btn btn-info">水遣りスタート</a>
     </form>
     </div>
-  </svg></div>
+  </svg>
+  </div>
   <div id="right">
     <!-- <div id="memo_area" width="600" height="560">
       <p><font size="6px" color="blue">Memo</font></p>
@@ -250,26 +292,27 @@ td {
       <a id="memo_write_button" onclick="memo_write()" class="btn btn-info btn-block">送信</a>
     </form>
     </div> -->
-    <div class="Calendar" align="center">
-      <div style="background-color: khaki; border-top: 4px solid royalblue; border-bottom: 4px solid royalblue;">
+    <div id="Calendar" align="center">
+      <!--<div style="background-color: khaki; border-top: 4px solid royalblue; border-bottom: 4px solid royalblue;">
         <font size="5px" color="blue" style="font-weight: bold;">アーカイブ</font>
-      </div>
+      </div>-->
+      <div class="midashi1"><font size="5px">アーカイブ</font></div>
       <div id="cal0" class="cal_wrapper">
         Calendar Loading
       </div>
-    </div>
-    <div id="threshold_select" align="center" style="background-color: lightblue; border: 4px solid greenyellow;">
-    <form name="threshold_form" action="Sample.html">
-    <font size="4px" style="font-weight: bold;">水分量閾値</font>
-      <input id="threshold" name="threshold" maxlength="4" cols="4" rows="1"></input>
+    <div id="threshold_select" class="box1" align="center">
+      <p><form name="threshold_form" action="Sample.html">
+        <font size="4px" style="font-weight: bold;">水分量閾値</font>
+        <input id="threshold" name="threshold" maxlength="4" cols="4" rows="1"></input>
       <a id="threshold_write_button" onclick="threshold_write()" class="btn btn-info">更新</a>
-    </form>
+      </form></p>
     </div>
     <div id="link_list" align="center">
-      <div style="background-color: khaki; border-top: 4px solid royalblue; border-bottom: 4px solid royalblue;">
-      <font size="5px" color="blue" style="font-weight: bold;">リンク</font>
-      </div>
-      <br>
+      <!--<div style="background-color: khaki; border-top: 4px solid royalblue; border-bottom: 4px solid royalblue;">
+        <font size="5px" color="blue" style="font-weight: bold;">リンク</font>
+      </div>-->
+      <div class="midashi1"><font size="5px">リンク</font></div>
+      <br><br>
       <a id="pict_list"></a>
       <a id="getdata"></a>
       <a id="mailaddress"></a>
