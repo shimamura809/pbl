@@ -40,7 +40,7 @@ body {
     /*border-radius: 10px;*/
 }
 .zu1 image {
-    margin: 0; 
+    margin: 0;
     padding: 0;
 }
 .memo {
@@ -226,7 +226,7 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
     border-radius: 9px;
 }
 .box1 p {
-    margin: 0; 
+    margin: 0;
     padding: 0;
 }
 </style>
@@ -437,7 +437,6 @@ function make_url(str) {
 
 ///////////////////////////////////////////////////////実行部//////////////////////////////////////////////
 db_get();
-//pict_change("zu_normal");
 var water;
 var flag_water = false;
 
@@ -682,7 +681,7 @@ function OnseiHyouji_User_API(value){
     newTag.innerHTML = '<p class="chat-talk"><span class="talk-content" id="content'+num+'"></span></p>';
     target.appendChild(newTag);
     eval("content"+num+".textContent = str1");
-    num = num + 1; 
+    num = num + 1;
   }
 
   //雑談対話へのリクエストの用意
@@ -754,7 +753,7 @@ function Speech_Rec(){
             getTextContents(text1);
           }
           else{
-            console.log("notlistentimeout")      
+            console.log("notlistentimeout")
             setTimeout("Speech_Rec()",text1.length * 200 +1000);
           }
 
@@ -803,30 +802,30 @@ if(MoisJudge == 0){
 //メインページの画像切り替え
 {% for i in dataset %}
 if ({{i.temperature}} >= 30) {
-  pict_change("zu_hot")
+  pict_change("hot")
 }else if ({{i.temperature}} <= 10) {
-  pict_change("zu_cold")
+  pict_change("cold")
 }else if ({{i.moisture}} >= 700) {
-  pict_change("zu_moist")
+  pict_change("moist")
 }else if ({{i.moisture}} <= 250) {
-  pict_change("zu_dry")
+  pict_change("dry")
 }else {
-  pict_change("zu_normal")
+  pict_change("normal")
 }
 {% endfor %}
 /*
 var temperature = Math.floor( Math.random() * 10 ) ;
 var moisture = Math.floor( Math.random() * 10 ) ;
 if (temperature>=9) {
-  pict_change("zu_hot")
+  pict_change("hot")
 }else if (temperature<=0) {
-  pict_change("zu_cold")
+  pict_change("cold")
 }else if (moisture>=8) {
-  pict_change("zu_moist")
+  pict_change("moist")
 }else if (moisture<=2) {
-  pict_change("zu_dry")
+  pict_change("dry")
 }else {
-  pict_change("zu_normal")
+  pict_change("normal")
 }
 */
 
