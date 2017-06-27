@@ -57,5 +57,124 @@ h3 {
       }).text("変更ページより再度変更してください");
     }
 
+    //システム発話を表示・音声再生する
+    function OnseiGousei(onsei,get) {
+      xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://api.apigw.smt.docomo.ne.jp/voiceText/v1/textToSpeech?APIKEY=4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338', true);
+      xhr.responseType = 'arraybuffer'
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+      var datax = "text="+onsei+"&speaker=hikari&emotion=happiness&emotion_level=2&format=ogg";
+      xhr.onload = function (e) {
+        if( this.status == 200){
+          view = new Uint8Array(this.response);
+          blob = new Blob([view], { "type" : "audio/wav" });
+          URL = window.URL || window.webkitURL;
+          audio = new Audio(URL.createObjectURL(blob));
+          audio.play();
+        }
+      };
+      data1 = datax;
+      xhr.send(data1);
+    };
+
+    //音声によるページ推移用関数
+    function move_page(str,date) {
+      if (str == "取得データ") {
+        location.href = "{% url 'AIoT:getdata' %}";
+      } else if (str == "画像") {
+        location.href = "{% url 'AIoT:pict_list' %}";
+      } else if (str == "メインページ") {
+        location.href = "{% url 'AIoT:datalist' %}";
+      } else if (str == "詳細") {
+        location.href = "{% url 'AIoT:detail' %}" + "?datetime=" + date;
+      }　else if (str == "本日") {
+        location.href = "{% url 'AIoT:detail' %}";
+      }
+    }
+
+    //ユーザ発話のマッチング
+    function getTextContents(text1) {
+        console.log(text1);
+        if(text1.match(/取得データ/)){
+          OnseiGousei("了解です");
+          setTimeout(move_page, 2500, "取得データ")
+        } else if(text1.match(/画像/)){
+          OnseiGousei("了解です");
+          setTimeout(move_page, 2500, "画像")
+        } else if(text1.match(/メイン/)||text1.match(/バック/)){
+          OnseiGousei("了解です");
+          setTimeout(move_page, 2500, "メインページ")
+        } else if(text1.match(/詳細/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/))){
+          OnseiGousei("日付は？");
+          i = 2;
+        }
+    }
+    var i = 1;
+    function Speech_Rec(){
+      var speech = new webkitSpeechRecognition(); //音声認識APIの使用
+      var j = 0;
+      var speech_status = 0;
+      speech.start();
+      speech.continuous = true;
+      speech.interimResults = true;
+      speech.lang = "ja"; //言語を日本語に設定
+      speech.onerror = function(){
+        if(speech_status == 0)
+          console.log("error")
+          Speech_Rec();
+      }
+      speech.onsoundend = function(){
+        Speech_Rec();
+      }
+      speech.onresult = function(e){
+        // ➁音声認識した結果を得る処理
+        var results = e.results;
+        var text1;
+        for (var j = e.resultIndex; j <results.length; j++){
+          if(results[j].isFinal){
+            text1 = results[j][0].transcript;
+          }　else{
+            text1 = "[認識中…]" + results[j][0].transcript;
+            speech_status = 1;
+            }
+        }
+      switch(text1) {
+        default:
+          if(i == 1) {
+            getTextContents(text1);
+          } else if(i == 2) {
+            console.log(text1);
+            if(text1.match(/今日/)||text1.match(/本日/)){
+              OnseiGousei("了解です");
+              setTimeout(move_page, 2500, "本日")
+            } else if(text1.match(/キャンセル/)||text1.match(/止/)||text1.match(/ストップ/)){
+              OnseiGousei("了解");
+              i = 1;
+            } else {
+              var tmp_dates = text1.replace(/年/g, '/').replace(/月/g, '/').replace(/日/g, '/').split(".").join("/");
+              var dates = tmp_dates.split("/");
+              dates[1] = ("0"+dates[1]).slice(-2);
+              dates[2] = ("0"+dates[2]).slice(-2);
+              var date = dates[0]+dates[1]+dates[2];
+              if((date.length == 8)&&(isNaN(date) == false)) {
+                OnseiGousei("了解です");
+                setTimeout(move_page, 2500, "詳細", date)
+              } else {
+                OnseiGousei("もう一回");
+              }
+            }
+          } else{
+            Speech_Rec();
+          }
+        }
+      }
+    }
+
+    //ここから音声対話
+    var apiUrl = 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY=';
+    var apiKey = '4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338';
+    var api = apiUrl + apiKey;
+    Speech_Rec();
+
   </script>
 {% endblock content %}

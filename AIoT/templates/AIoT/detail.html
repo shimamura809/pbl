@@ -577,6 +577,133 @@ function make_link() {
   }).text("翌日 >");
 }
 
+//システム発話を表示・音声再生する
+function OnseiGousei(onsei,get) {
+  xhr = new XMLHttpRequest();
+  xhr.open('POST', 'https://api.apigw.smt.docomo.ne.jp/voiceText/v1/textToSpeech?APIKEY=4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338', true);
+  xhr.responseType = 'arraybuffer'
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+  var datax = "text="+onsei+"&speaker=hikari&emotion=happiness&emotion_level=2&format=ogg";
+  xhr.onload = function (e) {
+    if( this.status == 200){
+      view = new Uint8Array(this.response);
+      blob = new Blob([view], { "type" : "audio/wav" });
+      URL = window.URL || window.webkitURL;
+      audio = new Audio(URL.createObjectURL(blob));
+      audio.play();
+    }
+  };
+  data1 = datax;
+  xhr.send(data1);
+};
+
+
+//音声によるページ推移用関数
+  function move_page(str) {
+    if (str == "画像") {
+      location.href = "{% url 'AIoT:pict_list' %}";
+    } else if (str == "取得データ") {
+      location.href = "{% url 'AIoT:getdata' %}";
+    } else if (str == "メインページ") {
+      location.href = "{% url 'AIoT:datalist' %}";
+    } else if (str == "翌日") {
+      location.href = "{% url 'AIoT:detail' %}" + "?datetime=" + next_dt + "&tab=" + parameter;
+    } else if (str == "前日") {
+      location.href = "{% url 'AIoT:detail' %}" + "?datetime=" + prev_dt + "&tab=" + parameter;
+    }
+  }
+
+//ユーザ発話のマッチング
+function getTextContents(text1) {
+    console.log(text1);
+    if(text1.match(/画像/)){
+      OnseiGousei("了解です");
+      setTimeout(move_page, 2500, "画像")
+    }　else if(text1.match(/取得データ/)){
+      OnseiGousei("了解です");
+      setTimeout(move_page, 2500, "取得データ")
+    }　else if(text1.match(/メイン/)||text1.match(/バック/)){
+      OnseiGousei("了解です");
+      setTimeout(move_page, 2500, "メインページ")
+    }　else if(text1.match(/水分/)){
+      setTimeout(select_para, 500, "moisture")
+    }　else if(text1.match(/照度/)||text1.match(/明るさ/)){
+      setTimeout(select_para, 500, "illuminance")
+    }　else if(text1.match(/温度/)||text1.match(/気温/)){
+      setTimeout(select_para, 500, "temperature")
+    }　else if(text1.match(/翌日/)||text1.match(/次の日/)){
+      OnseiGousei("了解です");
+      setTimeout(move_page, 2500, "翌日")
+    }　else if(text1.match(/前日/)||text1.match(/前の日/)){
+      OnseiGousei("了解です");
+      setTimeout(move_page, 2500, "前日")
+    }　else if(text1.match(/メモ/)&&(text1.match(/よろしく/)||text1.match(/お願い/))){
+      OnseiGousei("どうぞ。");
+      i = 2;
+    }
+}
+
+var i = 1;
+function Speech_Rec(){
+  var speech = new webkitSpeechRecognition(); //音声認識APIの使用
+
+  var j = 0;
+  var speech_status = 0;
+  speech.start();
+  speech.continuous = true;
+  speech.interimResults = true;
+  speech.lang = "ja"; //言語を日本語に設定
+  speech.onerror = function(){
+    if(speech_status == 0)
+      console.log("error")
+      Speech_Rec();
+  }
+  speech.onsoundend = function(){
+    Speech_Rec();
+  }
+  speech.onresult = function(e){
+      // ➁音声認識した結果を得る処理
+      var results = e.results;
+      var text1;
+      for (var j = e.resultIndex; j <results.length; j++){
+        if(results[j].isFinal){
+          text1 = results[j][0].transcript;
+        }
+        else{
+          text1 = "[認識中…]" + results[j][0].transcript;
+          speech_status = 1;
+        }
+      }
+      switch(text1) {
+        // case "聞いて":
+        //   i = 1;
+        //   console.log(i)
+        //   OnseiGousei("何でも聞きますよ");
+        //   break;
+        default:
+          if(i == 1) {
+            getTextContents(text1);
+          }
+          else if(i == 2){
+            var memo_text = text1;
+            memo_text = memo_text.replace(/\r\n/g, '\n');
+            var memo_lines = memo_text.split('\n');
+            $.ajax({
+              type: 'GET',
+              url: make_url("memo") + "&memo=" + memo_lines,
+              dataType: 'json',
+            });
+            document.memo_form.memo.value = text1;
+            i = 1;
+          }
+          else{
+            Speech_Rec();
+          }
+
+    }
+  }
+}
+
 //画面に応じた描画に変更
 function resize(){
   d3.select("#picture").attr({
@@ -619,5 +746,11 @@ var prev_dt = moment(dt).subtract(1,"days").format("YYYYMMDD");
 var next_dt = moment(dt).add(1,"days").format("YYYYMMDD");
 //リンクを作成
 make_link();
+
+//ここから音声対話
+var apiUrl = 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY=';
+var apiKey = '4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338';
+var api = apiUrl + apiKey;
+Speech_Rec();
 </script>
 {% endblock content %}
