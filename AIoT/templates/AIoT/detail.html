@@ -738,7 +738,7 @@ if(window.innerWidth - window.innerHeight > 200){
   var window_width = 1000;
 }
 resize();
-make_linegraph("temperature");
+make_linegraph(parameter);
 memo_get();
 //昨日・今日・明日の日付を決定
 var dt = new Date({{datetime.year}},{{datetime.month}}-1,{{datetime.day}});

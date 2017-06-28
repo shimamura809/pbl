@@ -281,6 +281,7 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
       for (var i = 1; i < 11; i++) {
         document.write('<option value="'+i+'"/>'+i+"秒"+'</option>');};
       document.write('</select>');
+      water_form.water_time.value = 3;
       </script>
       <a id="water_control_button" onclick="water_control()" class="btn btn-info">水遣りスタート</a>
     </form>
@@ -348,6 +349,7 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
 
   //画像切り替え用の関数(引数paraは文字列)
   function pict_change(para) {
+    console.log("pichan")
     d3.select("#zu1").attr("xlink:href","/site_media/character/"+para+".jpg");
   }
 
@@ -482,6 +484,10 @@ function OnseiGousei(onsei,get) {
   xhr.open('POST', 'https://api.apigw.smt.docomo.ne.jp/voiceText/v1/textToSpeech?APIKEY=4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338', true);
   xhr.responseType = 'arraybuffer'
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+  if(get != true){
+    onsei = onsei.split("http");
+    onsei = onsei[0];
+  }
   var datax = "text="+onsei+"&speaker=hikari&emotion=happiness&emotion_level=2&format=ogg";
   xhr.onload = function (e) {
     if( this.status == 200){
@@ -554,12 +560,18 @@ function callAPI(hatsuwa,RequestZatsudan){
       //console.log(request.responseText);
       var res = JSON.parse(request.responseText);
       var res1 = res["systemText"];
-      if(res1["expression"] == "NOMATCH"){//返答がNOMATCHならcallBotにリクエスト
+      if(res1["expression"] == "NOMATCH"){//返答がNOMATCHならcallBotにリクエス
+        console.log("NOMATCH")
         callBot(RequestZatsudan);
       }else{
         console.log(res1["expression"]);
         if(res1["expression"].match(/NOTTALK/)){
-          NotTalkOperation(res1["expression"]);
+          var res = res1["expression"].split(",");
+          NotTalkOperation(res[0]);
+          if (res[1]){
+            console.log("afterNT")
+            OnseiGousei(res[1]);
+          }
         }else{
           OnseiGousei(res1["utterance"]);
         }
@@ -573,18 +585,22 @@ function callAPI(hatsuwa,RequestZatsudan){
     botId:'plantalk2',
     voiceText:hatsuwa,
     initTalkingFlag:false,
-    initTopicId:'talk1'
+    initTopicId:'Talk1'
   };
   request.send(JSON.stringify(body1));
 }
 
 function NotTalkOperation(NotTalkCode){
   if(NotTalkCode.match(/WATERING/)){
+      console.log("watering");
       water_control();
-    } else if(NotTalkCode.match(/CONDITION/)){
-      // OnseiGousei("少々お待ちください。");
+    }else if(NotTalkCode.match(/CONDITION/)){
       console.log("condition")
       DataGet("test");
+      OnseiHyouji_User_API("NOTTALKCONDITION");
+    }else if(NotTalkCode.match(/MOVEDETAIL/)){
+      OnseiGousei("了解しました");
+      setTimeout(move_page, 2500, "今日")
     }
 }
 /*
@@ -676,7 +692,6 @@ function enter(code){
 function OnseiHyouji_User_API(value){
   var str1 = value;
   var str2 = tmp_text;
-
   if(value.match(/NOTTALK/)){
     console.log("nottalk")
   }else{
@@ -701,7 +716,7 @@ function OnseiHyouji_User_API(value){
 
 //履歴を保存する変数
 var tmp_text = "";
-var i = 0;
+var i = 1;
 function Speech_Rec(){
   console.log("Rec_start")
   //ここから音声認識
@@ -722,10 +737,7 @@ function Speech_Rec(){
   speech.onerror = function(){
     if(speech_status == 0)
       console.log("error")
-      setTimeout(Speech_Rec(),5000);
-  }
-  speech.onsoundend = function(){
-    //Speech_Rec();
+      Speech_Rec();
   }
   speech.onresult = function(e){
       // ➁音声認識した結果を得る処理
@@ -784,7 +796,7 @@ function getTextContents(text1) {
         OnseiHyouji_User(text1);
         OnseiGousei("了解しました");
         setTimeout(move_page, 2500, "先週")
-      } else {
+      } else{
         OnseiHyouji_User(text1);
         OnseiGousei("了解しました");
         setTimeout(move_page, 2500, "今日")
@@ -795,13 +807,14 @@ function getTextContents(text1) {
 }
 
 //ページ開始時に水分量を判定(テスト用)
-/*var MoisJudge = Math.floor( Math.random() * 10 ) ;
-
+var MoisJudge = Math.floor( Math.random() * 10 ) ;
 if(MoisJudge == 0){
   OnseiHyouji_User_API("NOTTALKMOISTNO");
+  console.log("no")
 } else{
   OnseiHyouji_User_API("NOTTALKMOISTOK");
-}*/
+  console.log("ok")
+}
 
 //メインページの画像切り替え
 {% for i in dataset %}
@@ -816,6 +829,14 @@ if ({{i.temperature}} >= 30) {
 }else {
   pict_change("normal")
 }
+
+/*if ({{i.moisture}} >= 0) {
+  OnseiHyouji_User_API("NOTTALKMOISTOK");
+  console.log("ok")
+}else {
+  OnseiHyouji_User_API("NOTTALKMOISTNO");
+  console.log("on")
+}*/
 {% endfor %}
 /*
 var temperature = Math.floor( Math.random() * 10 ) ;
@@ -832,8 +853,6 @@ if (temperature>=9) {
   pict_change("normal")
 }
 */
-
-Speech_Rec();
 </script>
 
 {% endblock content %}
