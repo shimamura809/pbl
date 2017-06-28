@@ -391,17 +391,17 @@ function move_page(str,date) {
 //ユーザ発話のマッチング
 function getTextContents(text1) {
     console.log(text1);
-    if(text1.match(/取得データ/)){
+    if(text1.match(/取得データ/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/))){
       OnseiGousei("了解です");
       setTimeout(move_page, 2500, "取得データ")
-    }　else if(text1.match(/メイン/)||text1.match(/バック/)){
+    }　else if(text1.match(/メイン/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/)||text1.match(/バック/)||text1.match(/戻/))){
       OnseiGousei("了解です");
       setTimeout(move_page, 2500, "メインページ")
-    }　else if(text1.match(/詳細/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/))){
+    }　else if(text1.match(/詳細/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/))){
       OnseiGousei("日付は？");
       i = 2;
-    } else if(text1.match(/表示/)||text1.match(/列/)){
-      OnseiGousei("何列？");
+    } else if((text1.match(/表示/)||text1.match(/列/)||text1.match(/数/))&&(text1.match(/変/)||text1.match(/代/)||text1.match(/チェンジ/))){
+      OnseiGousei("何列にする？");
       i = 3;
     } else if((text1.match(/降順/)||text1.match(/新/))&&(sort == true)){
       pict_list.reverse();
@@ -424,8 +424,8 @@ function getTextContents(text1) {
       slide_order('next');
     } else if((state_slide=="stop")&&(text1.match(/前/)||text1.match(/戻/))){
       slide_order('previous');
-    } else if((state_slide=="stop")&&(text1.match(/再開/)||text1.match(/スタート/))){
-      OnseiGousei("再開しましす");
+    } else if((state_slide=="stop")&&(text1.match(/開/)||text1.match(/スタート/)||text1.match(/初/)||text1.match(/始/))){
+      OnseiGousei("再開します");
       setTimeout(slide_order, 2500, "restart");
       // slide_order('restart');
     } else if((state_slide!="end")&&(text1.match(/終/)||text1.match(/おしまい/))){
