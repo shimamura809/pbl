@@ -458,6 +458,7 @@ var apiJson1 = {
 
 //システム発話を表示・音声再生する
 function OnseiGousei(onsei,get) {
+  ChangeRecMode(0);
   var target = document.getElementById("chat-frame");
   var newTag = document.createElement("span");
   newTag.innerHTML = '<p class="chat-talk mytalk"><span class="talk-content" id="content'+num+'"></span></p>';
@@ -496,9 +497,8 @@ function OnseiGousei(onsei,get) {
   xhr.send(data1);
   var recstopsec = onsei.length * 200 + 1000;
   console.log(recstopsec)
-  setTimeout("Speech_Rec()",recstopsec);
+  setTimeout("ChangeRecMode(1)",recstopsec);
 };
-
 //雑談対話Bot
 function callBot(apiJson){
     $.ajax({
@@ -591,9 +591,13 @@ function NotTalkOperation(NotTalkCode){
     }else if(NotTalkCode.match(/CONDITION/)){
       console.log("condition")
       DataGet("test");
-      OnseiHyouji_User_API("NOTTALKCONDITION");
+      if(threshold_form.threshold.value*1.2 > nowmoisture){
+        OnseiHyouji_User_API("NOTTALKTHRESHOLDNO");
+      }else{
+        OnseiHyouji_User_API("NOTTALKTHRESHOLDOK");
+      }
     }else if(NotTalkCode.match(/MOVEDETAIL/)){
-      OnseiGousei("了解しました");
+      OnseiGousei("了解です");
       setTimeout(move_page, 2500, "今日")
     }
 }
@@ -622,6 +626,7 @@ function OnseiHyouji_User(value){
   num = num + 1;
 }
 
+var nowmoisture = 0;
 //データ・画像取得用関数
 function DataGet(value) {
   $.ajax({
@@ -640,6 +645,7 @@ function DataGet(value) {
         } else{
           OnseiGousei("取得に失敗しました。。");
         }
+        nowmoisture = json["moisture"]
         // OnseiGousei("(例)水やりはどうですか？");
       }
   });
@@ -710,7 +716,7 @@ function OnseiHyouji_User_API(value){
 
 //履歴を保存する変数
 var tmp_text = "";
-var i = 1;
+var  Rec_Mode = 0;
 function Speech_Rec(){
   console.log("Rec_start")
   //ここから音声認識
@@ -724,7 +730,7 @@ function Speech_Rec(){
   speech.continuous = true;
   speech.interimResults = true;
   speech.lang = "ja"; //言語を日本語に設定
-  /*btn.addEventListener( 'click' , function() {
+  /*btn.addEventListener( 'click' , function() 
       // ➀ボタンをクリックした時の処理
       speech.start(); // 音声認識をスタート
   } );*/
@@ -732,6 +738,9 @@ function Speech_Rec(){
     if(speech_status == 0)
       console.log("error")
       Speech_Rec();
+  }
+  speech.onsoundend = function(){
+    Speech_Rec();
   }
   speech.onresult = function(e){
       // ➁音声認識した結果を得る処理
@@ -750,21 +759,20 @@ function Speech_Rec(){
       console.log(text1)
       switch(text1) {
         case "聞いて":
-          i = 1;
-          console.log(i)
+          console.log(Rec_Mode)
           OnseiGousei("何でも聞きますよ");
           break;
         case "さよなら":
-          i = 0;
           OnseiGousei("またお話しましょう");
+          ChangeRecMode(0);
           break;
         default:
-          if(i == 1) {
+          if(Rec_Mode == 1) {
             getTextContents(text1);
           }
           else{
             console.log("notlistentimeout")
-            setTimeout("Speech_Rec()",text1.length * 200 +1000);
+            Speech_Rec();
           }
 
     }
@@ -773,6 +781,7 @@ function Speech_Rec(){
 
 //ユーザ発話のマッチング
 function getTextContents(text1) {
+    ChangeRecMode(0);
     if(text1.match(/画像/)){
       OnseiHyouji_User(text1);
       OnseiGousei("了解しました");
@@ -798,6 +807,11 @@ function getTextContents(text1) {
     }　else {
       OnseiHyouji_User_API(text1);
     }
+}
+
+function ChangeRecMode(value){
+  console.log(value);
+  Rec_Mode = value;
 }
 
 //ページ開始時に水分量を判定(テスト用)
@@ -847,6 +861,7 @@ if (temperature>=9) {
   pict_change("normal")
 }
 */
+Speech_Rec();
 </script>
 
 {% endblock content %}
