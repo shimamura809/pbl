@@ -480,8 +480,10 @@ function OnseiGousei(onsei,get) {
   xhr.open('POST', 'https://api.apigw.smt.docomo.ne.jp/voiceText/v1/textToSpeech?APIKEY=4243356f65594f4435517944436f43345a42515767785831573876323459627a5938487839776c4d725338', true);
   xhr.responseType = 'arraybuffer'
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
-  onsei = onsei.split("http");
-  onsei = onsei[0];
+  if(get != true){
+    onsei = onsei.split("http");
+    onsei = onsei[0];
+  }
   var datax = "text="+onsei+"&speaker=hikari&emotion=happiness&emotion_level=2&format=ogg";
   xhr.onload = function (e) {
     if( this.status == 200){
@@ -790,7 +792,7 @@ function getTextContents(text1) {
         OnseiHyouji_User(text1);
         OnseiGousei("了解しました");
         setTimeout(move_page, 2500, "先週")
-      } else {
+      } else{
         OnseiHyouji_User(text1);
         OnseiGousei("了解しました");
         setTimeout(move_page, 2500, "今日")
