@@ -113,8 +113,9 @@ color: black;
 }
 #picture {
   float: left;
+  margin-top: 0px;
   /*display: block;*/
-  /*border: 3px solid black;*/
+  border: 3px solid black;
   /*background-color: black;*/
   /*position: absolute;*/
   /*clear: left;*/
@@ -122,6 +123,9 @@ color: black;
 body{
     background-color: mintcream;
   }
+#picture_area{
+  float: left;
+}
 #memo_area {
   float: left;
   /*display: block;*/
@@ -230,15 +234,18 @@ $(function() {
     <p class="page-header" id="header" align="center"></p>
     <div class="right" y="0"></div></div><br>
     <div id="content_area">
+    <div id="picture_area">
+    <p><font size="6px" color="blue">植物の様子</font></p>
     <svg id="picture">
-    <image id="zu1" x="0" y="40" width="360px" height="270px" opacity="1"></image>
+    <image id="zu1" x="0" y="0" width="360px" height="270px" opacity="1"></image>
     </svg>
+    </div>
     <div id="graph_area">
     <div class="tabbox" id="tabbox"></div>
     <svg id="line_graph" x="1024" y="560">
     </svg></div>
     <div id="memo_area">
-      <p><font size="6px" color="blue">Memo</font></p>
+      <p><font size="6px" color="blue">メモ</font></p>
       <form id="memo_form" name="memo_form" action="Sample.html">
         <textarea id="memo" class="control-form" name="memo" style="height:110px; width:350px" wrap="soft" onfocus="if(this.value==this.defaultValue){this.value=''}" onblur="if(this.value==''){this.value=this.defaultValue}"></textarea><br>
         <a id="memo_write_button" onclick="memo_write()" class="btn btn-info btn-block">送信</a>
@@ -708,7 +715,7 @@ function Speech_Rec(){
 function resize(){
   d3.select("#picture").attr({
     "width": (window_width-40)*0.33+"px",
-    "height": (window_width-40)*0.33+"px",
+    "height": (window_width-40)*0.33-85+"px",
   });
   d3.select("#memo").style("width",(window_width-40)*0.33+"px");
 }
