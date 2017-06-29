@@ -623,28 +623,28 @@ function OnseiGousei(onsei,get) {
 //ユーザ発話のマッチング
 function getTextContents(text1) {
     console.log(text1);
-    if(text1.match(/画像/)){
+    if(text1.match(/画像/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/)||text1.match(/一覧/))){
       OnseiGousei("了解です");
       setTimeout(move_page, 2500, "画像")
-    }　else if(text1.match(/取得データ/)){
+    }　else if(text1.match(/取得データ/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/))){
       OnseiGousei("了解です");
       setTimeout(move_page, 2500, "取得データ")
-    }　else if(text1.match(/メイン/)||text1.match(/バック/)){
+    }　else if(text1.match(/メイン/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/)||text1.match(/バック/)||text1.match(/戻/))){
       OnseiGousei("了解です");
       setTimeout(move_page, 2500, "メインページ")
-    }　else if(text1.match(/水分/)){
+    }　else if(text1.match(/水分/)&&(text1.match(/タブ/)||text1.match(/切/)||text1.match(/変/)||text1.match(/替/))){
       setTimeout(select_para, 500, "moisture")
-    }　else if(text1.match(/照度/)||text1.match(/明るさ/)){
+    }　else if(text1.match(/照度/)&&(text1.match(/明るさ/)||text1.match(/タブ/)||text1.match(/切/)||text1.match(/変/)||text1.match(/替/))){
       setTimeout(select_para, 500, "illuminance")
-    }　else if(text1.match(/温度/)||text1.match(/気温/)){
+    }　else if(text1.match(/温度/)&&(text1.match(/気温/)||text1.match(/タブ/)||text1.match(/切/)||text1.match(/変/)||text1.match(/替/))){
       setTimeout(select_para, 500, "temperature")
-    }　else if(text1.match(/翌日/)||text1.match(/次の日/)){
+    }　else if(text1.match(/翌日/)||text1.match(/次の日/)||text1.match(/ネクスト/)){
       OnseiGousei("了解です");
       setTimeout(move_page, 2500, "翌日")
     }　else if(text1.match(/前日/)||text1.match(/前の日/)){
       OnseiGousei("了解です");
       setTimeout(move_page, 2500, "前日")
-    }　else if(text1.match(/メモ/)&&(text1.match(/よろしく/)||text1.match(/お願い/))){
+    }　else if(text1.match(/メモ/)&&(text1.match(/よろしく/)||text1.match(/お願い/)||text1.match(/入力/)||text1.match(/書/)||text1.match(/打/)||text1.match(/更新/))){
       OnseiGousei("どうぞ。");
       i = 2;
     }
@@ -745,7 +745,7 @@ if(window.innerWidth - window.innerHeight > 200){
   var window_width = 1000;
 }
 resize();
-make_linegraph("temperature");
+make_linegraph(parameter);
 memo_get();
 //昨日・今日・明日の日付を決定
 var dt = new Date({{datetime.year}},{{datetime.month}}-1,{{datetime.day}});
