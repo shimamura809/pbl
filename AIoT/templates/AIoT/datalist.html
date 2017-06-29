@@ -604,7 +604,7 @@ function callAPI(hatsuwa,RequestZatsudan){
           }
           for ( var i = 0; i < res.length; ++i ) {
             newres = newres + res[i];
-          }          
+          }
           NotTalkOperation(res1["expression"]);
           if (res){
             OnseiGousei(newres);
@@ -911,7 +911,7 @@ if ({{i.temperature}} >= 30) {
 }else if ({{i.moisture}} >= 700) {
   pict_change("moist")
 }else if ({{i.moisture}} <= 250) {
-  pict_change("dry")
+  pict_change("thirsty")
 }else {
   pict_change("normal")
 }
