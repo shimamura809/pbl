@@ -264,7 +264,7 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
   <form name="js">
   <input class="tbox" type="text" name="txtb" value="" onkeypress="enter(event.keyCode);">
   <input type="text" style="display: none;"/>
-  <input id="input" type="button" value="送信" onclick="tbox1()">
+  <input id="input" type="button" value="応答待ち">
   </form>
   <!-- <button id="btn">マイク</button> -->
   </div>
@@ -348,9 +348,13 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
   }).text("メールアドレス変更");
 
   //画像切り替え用の関数(引数paraは文字列)
-  function pict_change(para) {
-    console.log("pichan")
-    d3.select("#zu1").attr("xlink:href","/site_media/character/"+para+".jpg");
+  function pict_change(para,mic) {
+    pict_name = para;
+    if(mic == "on"){
+      d3.select("#zu1").attr("xlink:href","/site_media/character/"+para+"_mic.jpg");
+    } else {
+      d3.select("#zu1").attr("xlink:href","/site_media/character/"+para+".jpg");
+    }
   }
 
   //memoをデータベースに転送
@@ -368,7 +372,6 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
   function threshold_write() {
     var threshold_text = document.threshold_form.threshold.value;
     if(threshold_text.match(/[^0-9]/g)||(parseInt(threshold_text, 10) + "" != threshold_text)){
-      console.log("miss");
       window.alert("半角数字で入力してください");
     } else{
       $.ajax({
@@ -381,7 +384,7 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
   //水やりの命令を管理する関数
   function water_control() {
     var time = water_form.water_time.value * 1000;
-    console.log(time);
+    // console.log(time);
     flag_water = !flag_water;
     if (flag_water) {
       $.ajax({
@@ -445,6 +448,7 @@ function make_url(str) {
 db_get();
 var water;
 var flag_water = false;
+var pict_name;
 
 
 //ここから音声対話
@@ -497,13 +501,24 @@ function OnseiGousei(onsei,get) {
       URL = window.URL || window.webkitURL;
       audio = new Audio(URL.createObjectURL(blob));
       audio.play();
+      var recstopsec = onsei.length * 200;
+      // console.log(recstopsec)
+      if(onsei == "またお話しましょう") {
+        setTimeout("ChangeRecMode(2)",recstopsec);
+      } else{
+        setTimeout("ChangeRecMode(1)",recstopsec);
+      }
     }
   };
   data1 = datax;
   xhr.send(data1);
-  var recstopsec = onsei.length * 200 + 1000;
-  console.log(recstopsec)
-  setTimeout("ChangeRecMode(1)",recstopsec);
+  // var recstopsec = onsei.length * 200 + 1000;
+  // console.log(recstopsec)
+  // if(onsei == "またお話しましょう") {
+  //   setTimeout("ChangeRecMode(2)",recstopsec);
+  // } else{
+  //   setTimeout("ChangeRecMode(1)",recstopsec);
+  // }
 };
 
 
@@ -736,7 +751,7 @@ function OnseiHyouji_User_API(value){
 var tmp_text = "";
 var  Rec_Mode = 0;
 function Speech_Rec(){
-  console.log("Rec_start")
+  // console.log("Rec_start")
   //ここから音声認識
   //var btn = document.getElementById('btn');
   //var content1 = document.getElementById('content');
@@ -748,13 +763,13 @@ function Speech_Rec(){
   speech.continuous = true;
   speech.interimResults = true;
   speech.lang = "ja"; //言語を日本語に設定
-  /*btn.addEventListener( 'click' , function() 
+  /*btn.addEventListener( 'click' , function()
       // ➀ボタンをクリックした時の処理
       speech.start(); // 音声認識をスタート
   } );*/
   speech.onerror = function(){
     if(speech_status == 0)
-      console.log("error")
+      // console.log("error")
       Speech_Rec();
   }
   speech.onsoundend = function(){
@@ -776,17 +791,24 @@ function Speech_Rec(){
       //var text1 = e.results[0][0].transcript; // 認識された「言葉」を、変数「text」に格納
       console.log(text1)
       switch(text1) {
-        case "聞いて":
-          console.log(Rec_Mode)
-          OnseiGousei("何でも聞きますよ");
-          break;
-        case "さよなら":
-          OnseiGousei("またお話しましょう");
-          ChangeRecMode(0);
-          break;
+        // case "聞いて":
+        //   console.log(Rec_Mode)
+        //   OnseiGousei("何でも聞きますよ");
+        //   break;
+        // case "さよなら":
+        //   OnseiGousei("またお話しましょう");
+        //   break;
         default:
           if(Rec_Mode == 1) {
-            getTextContents(text1);
+            if(text1 == "さよなら"){
+              OnseiGousei("またお話しましょう");
+            } else{
+              getTextContents(text1);
+            }
+          } else if(Rec_Mode == 2){
+            if(text1 == "聞いて"){
+              OnseiGousei("何でも聞きますよ");
+            }
           }
           else{
             console.log("notlistentimeout")
@@ -800,15 +822,15 @@ function Speech_Rec(){
 //ユーザ発話のマッチング
 function getTextContents(text1) {
     ChangeRecMode(0);
-    if(text1.match(/画像/)){
+    if(text1.match(/画像/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/)||text1.match(/一覧/))){
       OnseiHyouji_User(text1);
       OnseiGousei("了解しました");
       setTimeout(move_page, 2500, "画像")
-    }　else if(text1.match(/取得データ/)){
+    }　else if(text1.match(/取得データ/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/))){
       OnseiHyouji_User(text1);
       OnseiGousei("了解しました");
       setTimeout(move_page, 2500, "取得データ")
-    }　else if(text1.match(/情報/)||text1.match(/詳細/)){
+    }　else if((text1.match(/情報/)||text1.match(/詳細/))&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/))){
       if(text1.match(/昨日/)){
         OnseiHyouji_User(text1);
         OnseiGousei("了解しました");
@@ -828,8 +850,29 @@ function getTextContents(text1) {
 }
 
 function ChangeRecMode(value){
-  console.log(value);
   Rec_Mode = value;
+  if(value == 0){
+    pict_change(pict_name);
+    // console.log("mode:0");
+    d3.select("#input").attr({
+      "onclick":null,
+      "value":"応答待ち",
+    });
+  } else if(value == 1) {
+    pict_change(pict_name,"on");
+    // console.log("mode:1");
+    d3.select("#input").attr({
+      "onclick":"tbox1()",
+      "value":"送信",
+    });
+  } else if(value == 2) {
+    pict_change(pict_name);
+    // console.log("mode:2");
+    d3.select("#input").attr({
+      "onclick":"tbox1()",
+      "value":"送信",
+    });
+  }
 }
 
 //ページ開始時に水分量を判定(テスト用)
