@@ -501,16 +501,14 @@ function OnseiGousei(onsei,get) {
       URL = window.URL || window.webkitURL;
       audio = new Audio(URL.createObjectURL(blob));
       audio.play();
-      var  recstopsec = 0
       if (get == true){
-        recstopsec = 13000;
         if(threshold_form.threshold.value*1.2 < nowmoisture){
-          setTimeout(OnseiHyouji_User_API("NOTTALKTHRESHOLDOK"),recstopsec);
+          setTimeout(OnseiHyouji_User_API("NOTTALKTHRESHOLDOK"),13000);
         }else{
-          setTimeout(OnseiHyouji_User_API("NOTTALKTHRESHOLDNO"),recstopsec);
+          setTimeout(OnseiHyouji_User_API("NOTTALKTHRESHOLDNO"),13000);
         }
       }else{
-        recstopsec = onsei.length * 200;
+        var recstopsec = onsei.length * 200;
         // console.log(recstopsec)
         if(onsei == "またお話しましょう") {
           setTimeout("ChangeRecMode(2)",recstopsec);
