@@ -501,6 +501,15 @@ function OnseiGousei(onsei,get) {
       URL = window.URL || window.webkitURL;
       audio = new Audio(URL.createObjectURL(blob));
       audio.play();
+      var  recstopsec = 0
+      if (get = true){
+        recstopsec = 13000;
+        if(threshold_form.threshold.value*1.2 < nowmoisture){
+          setTimeout(OnseiHyouji_User_API("NOTTALKTHRESHOLDOK"),recstopsec);
+        }else{
+          setTimeout(OnseiHyouji_User_API("NOTTALKTHRESHOLDNO"),recstopsec);
+        }
+      }
       var recstopsec = onsei.length * 200;
       // console.log(recstopsec)
       if(onsei == "またお話しましょう") {
@@ -510,6 +519,8 @@ function OnseiGousei(onsei,get) {
       }
     }
   };
+  else{
+
   data1 = datax;
   xhr.send(data1);
   // var recstopsec = onsei.length * 200 + 1000;
@@ -675,8 +686,11 @@ function DataGet(value,start) {
             }else{
               OnseiHyouji_User_API("NOTTALKMOISTNO");
             }
-          }
-        }else{
+          }else{
+            OnseiGousei(json_list,true);
+            GazouHyouji(json["file"]);
+        }
+      }else{
           OnseiGousei("取得に失敗しました。。");
         }
               // OnseiGousei("(例)水やりはどうですか？");
