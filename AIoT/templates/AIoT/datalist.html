@@ -349,7 +349,6 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
 
   //画像切り替え用の関数(引数paraは文字列)
   function pict_change(para,mic) {
-    // console.log("pichan")
     pict_name = para;
     if(mic == "on"){
       d3.select("#zu1").attr("xlink:href","/site_media/character/"+para+"_mic.jpg");
@@ -373,7 +372,6 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
   function threshold_write() {
     var threshold_text = document.threshold_form.threshold.value;
     if(threshold_text.match(/[^0-9]/g)||(parseInt(threshold_text, 10) + "" != threshold_text)){
-      console.log("miss");
       window.alert("半角数字で入力してください");
     } else{
       $.ajax({
@@ -386,7 +384,7 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
   //水やりの命令を管理する関数
   function water_control() {
     var time = water_form.water_time.value * 1000;
-    console.log(time);
+    // console.log(time);
     flag_water = !flag_water;
     if (flag_water) {
       $.ajax({
@@ -504,7 +502,7 @@ function OnseiGousei(onsei,get) {
       audio = new Audio(URL.createObjectURL(blob));
       audio.play();
       var recstopsec = onsei.length * 200;
-      console.log(recstopsec)
+      // console.log(recstopsec)
       if(onsei == "またお話しましょう") {
         setTimeout("ChangeRecMode(2)",recstopsec);
       } else{
@@ -840,26 +838,24 @@ function getTextContents(text1) {
 }
 
 function ChangeRecMode(value){
-  console.log(value);
   Rec_Mode = value;
-  console.log(document.getElementById("zu1").href.baseVal.split("/")[3].slice());
   if(value == 0){
     pict_change(pict_name);
-    console.log("mode:0");
+    // console.log("mode:0");
     d3.select("#input").attr({
       "onclick":null,
       "value":"応答待ち",
     });
   } else if(value == 1) {
     pict_change(pict_name,"on");
-    console.log("mode:1");
+    // console.log("mode:1");
     d3.select("#input").attr({
       "onclick":"tbox1()",
       "value":"送信",
     });
   } else if(value == 2) {
     pict_change(pict_name);
-    console.log("mode:2");
+    // console.log("mode:2");
     d3.select("#input").attr({
       "onclick":"tbox1()",
       "value":"送信",
