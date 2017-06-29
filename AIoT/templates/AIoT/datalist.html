@@ -520,6 +520,8 @@ function OnseiGousei(onsei,get) {
   //   setTimeout("ChangeRecMode(1)",recstopsec);
   // }
 };
+
+
 //雑談対話Bot
 function callBot(apiJson){
     $.ajax({
@@ -575,17 +577,25 @@ function callAPI(hatsuwa,RequestZatsudan){
       //console.log(request.responseText);
       var res = JSON.parse(request.responseText);
       var res1 = res["systemText"];
+      var newres = ""
       if(res1["expression"] == "NOMATCH"){//返答がNOMATCHならcallBotにリクエス
         console.log("NOMATCH")
-        callBot(RequestZatsudan);
+          callBot(RequestZatsudan);
       }else{
         console.log(res1["expression"]);
         if(res1["expression"].match(/NOTTALK/)){
           var res = res1["expression"].split(",");
-          NotTalkOperation(res[0]);
-          if (res[1]){
-            console.log("afterNT")
-            OnseiGousei(res[1]);
+          for ( var i = 0; i < res.length; ++i ) {
+            if (res[i].match(/NOTTALK/)){
+              res.splice(i,1);
+            }
+          }
+          for ( var i = 0; i < res.length; ++i ) {
+            newres = newres + res[i];
+          }          
+          NotTalkOperation(res1["expression"]);
+          if (res){
+            OnseiGousei(newres);
           }
         }else{
           OnseiGousei(res1["utterance"]);
@@ -609,14 +619,11 @@ function NotTalkOperation(NotTalkCode){
   if(NotTalkCode.match(/WATERING/)){
       console.log("watering");
       water_control();
+    }
+    else if(NotTalkCode.match(/NOTTALKBOTON/)){
     }else if(NotTalkCode.match(/CONDITION/)){
       console.log("condition")
-      DataGet("test");
-      if(threshold_form.threshold.value*1.2 > nowmoisture){
-        OnseiHyouji_User_API("NOTTALKTHRESHOLDNO");
-      }else{
-        OnseiHyouji_User_API("NOTTALKTHRESHOLDOK");
-      }
+      DataGet("test","condition");
     }else if(NotTalkCode.match(/MOVEDETAIL/)){
       OnseiGousei("了解です");
       setTimeout(move_page, 2500, "今日")
@@ -649,7 +656,7 @@ function OnseiHyouji_User(value){
 
 var nowmoisture = 0;
 //データ・画像取得用関数
-function DataGet(value) {
+function DataGet(value,start) {
   $.ajax({
       type: 'GET',
       url: make_url("get") + "?name=" + value,
@@ -661,13 +668,18 @@ function DataGet(value) {
           json_list[1] = "気温 ： "+json["temperature"];
           json_list[2] = "水分量 ： "+json["moisture"];
           json_list[3] = "照度 ： "+json["illuminance"];
-          OnseiGousei(json_list,true);
-          GazouHyouji(json["file"]);
-        } else{
+          nowmoisture = json["moisture"]
+          if(start == "start"){
+            if(threshold_form.threshold.value > nowmoisture){
+              OnseiHyouji_User_API("NOTTALKMOISTOK")
+            }else{
+              OnseiHyouji_User_API("NOTTALKMOISTNO");
+            }
+          }
+        }else{
           OnseiGousei("取得に失敗しました。。");
         }
-        nowmoisture = json["moisture"]
-        // OnseiGousei("(例)水やりはどうですか？");
+              // OnseiGousei("(例)水やりはどうですか？");
       }
   });
   // GazouHyouji();
