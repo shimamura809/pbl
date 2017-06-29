@@ -818,6 +818,7 @@ function Speech_Rec(){
         default:
           if(Rec_Mode == 1) {
             if(text1 == "さよなら"){
+              OnseiHyouji_User(text1);
               OnseiGousei("またお話しましょう");
             } else{
               getTextContents(text1);
