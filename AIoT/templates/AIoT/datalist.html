@@ -309,7 +309,8 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
     <div id="threshold_select" class="box1" align="center">
       <p><form name="threshold_form" action="Sample.html">
         <font size="4px" style="font-weight: bold;">水分量閾値</font>
-        <input id="threshold" name="threshold" maxlength="4" cols="4" rows="1"></input>
+        <input id="threshold" name="threshold" maxlength="4" cols="4" rows="1" onkeypress="enter2(event.keyCode);"></input>
+        <input type="text" style="display: none;"/>
       <a id="threshold_write_button" onclick="threshold_write()" class="btn btn-info">更新</a>
       </form></p>
     </div>
@@ -731,7 +732,16 @@ function tbox1(){
 function enter(code){
   //エンターキー押下なら
   if(13 === code){
-    tbox1();
+    if(Rec_Mode != 0){
+      tbox1();
+    }
+  }
+}
+
+function enter2(code){
+  //エンターキー押下なら
+  if(13 === code){
+    threshold_write();
   }
 }
 
