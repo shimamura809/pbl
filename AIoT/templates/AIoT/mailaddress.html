@@ -41,7 +41,7 @@ h3 {
       var mailaddress_text = document.mailaddress_form.mailform.value;
       var re_mailaddress_text = document.re_mailaddress_form.re_mailform.value;
       if(mailaddress_text != re_mailaddress_text){
-        console.log("miss");
+        // console.log("miss");
         window.alert("2つのメールアドレスが異なります。\nもう一度確認下さい。");
       }
       else{
@@ -50,7 +50,7 @@ h3 {
           url: "{% url 'AIoT:mailsend_json' %}" + "?sendaddress=" + mailaddress_text,
           dataType: 'json',
         });
-        console.log("succeed");
+        // console.log("succeed");
         window.alert("アドレス変更用のメールを送信しました。\nメールの認証用URLよりアドレス変更を完了して下さい。");
       }
     }
@@ -118,7 +118,7 @@ h3 {
       speech.lang = "ja"; //言語を日本語に設定
       speech.onerror = function(){
         if(speech_status == 0)
-          console.log("error")
+          // console.log("error")
           Speech_Rec();
       }
       speech.onsoundend = function(){

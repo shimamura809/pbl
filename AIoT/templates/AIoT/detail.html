@@ -662,7 +662,7 @@ function Speech_Rec(){
   speech.lang = "ja"; //言語を日本語に設定
   speech.onerror = function(){
     if(speech_status == 0)
-      console.log("error")
+      // console.log("error")
       Speech_Rec();
   }
   speech.onsoundend = function(){
