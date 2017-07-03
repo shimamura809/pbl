@@ -502,10 +502,14 @@ function OnseiGousei(onsei,get) {
       audio = new Audio(URL.createObjectURL(blob));
       audio.play();
       if (get == true){
+        console.log("true");
+        var ThresholdJudge = ""
         if(threshold_form.threshold.value*1.2 < nowmoisture){
-          setTimeout(OnseiHyouji_User_API("NOTTALKTHRESHOLDOK"),13000);
+          console.log("wait1");
+          setTimeout(OnseiHyouji_User_API,13000,"NOTTALKTHRESHOLDOK");
         }else{
-          setTimeout(OnseiHyouji_User_API("NOTTALKTHRESHOLDNO"),13000);
+          console.log("wait2")
+          setTimeout(OnseiHyouji_User_API,13000,"NOTTALKTHRESHOLDNO");
         }
       }else{
         var recstopsec = onsei.length * 200;
@@ -604,7 +608,8 @@ function callAPI(hatsuwa,RequestZatsudan){
             newres = newres + res[i];
           }
           NotTalkOperation(res1["expression"]);
-          if (res){
+          if (newres){
+            console("restrue");
             OnseiGousei(newres);
           }
         }else{
@@ -631,8 +636,6 @@ function NotTalkOperation(NotTalkCode){
   if(NotTalkCode.match(/WATERING/)){
       console.log("watering");
       water_control();
-    }
-    else if(NotTalkCode.match(/NOTTALKBOTON/)){
     }else if(NotTalkCode.match(/CONDITION/)){
       console.log("condition")
       DataGet("test","condition");
@@ -682,7 +685,8 @@ function DataGet(value,start) {
           json_list[3] = "照度 ： "+json["illuminance"];
           nowmoisture = json["moisture"]
           if(start == "start"){
-            if(threshold_form.threshold.value > nowmoisture){
+            console.log("start")
+            if(threshold_form.threshold.value < nowmoisture){
               OnseiHyouji_User_API("NOTTALKMOISTOK")
             }else{
               OnseiHyouji_User_API("NOTTALKMOISTNO");
@@ -741,7 +745,7 @@ function OnseiHyouji_User_API(value){
   var str1 = value;
   var str2 = tmp_text;
   if(value.match(/NOTTALK/)){
-    console.log("nottalk")
+    console.log(value)
   }else{
     var target = document.getElementById("chat-frame");
     var newTag = document.createElement("span");
@@ -891,14 +895,17 @@ function ChangeRecMode(value){
 }
 
 //ページ開始時に水分量を判定(テスト用)
-var MoisJudge = Math.floor( Math.random() * 10 ) ;
+/*var MoisJudge = Math.floor( Math.random() * 10 ) ;
 if(MoisJudge == 0){
   OnseiHyouji_User_API("NOTTALKMOISTNO");
   console.log("no")
 } else{
   OnseiHyouji_User_API("NOTTALKMOISTOK");
   console.log("ok")
-}
+}*/
+//ページ開始前に水分量を判定
+DataGet("test","start");
+
 
 //メインページの画像切り替え
 {% for i in dataset %}
