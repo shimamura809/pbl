@@ -569,17 +569,17 @@ function floatnum(number) {
 function make_link() {
   d3.select(".right").append("a").attr({
     "id": "back_main",
-    "class": "btn btn-default btn-sm",
+    "class": "btn btn-info btn-sm",
     "href": "{% url 'AIoT:datalist' %}",
   }).text("メインページ");
   d3.select(".right").append("a").attr({
     "id": "prev_day",
-    "class": "btn btn-info btn-sm",
+    "class": "btn btn-default btn-sm",
     "href": "{% url 'AIoT:detail' %}" + "?datetime=" + prev_dt + "&tab=" + parameter,
   }).text("< 前日");
   d3.select(".right").append("a").attr({
     "id": "next_day",
-    "class": "btn btn-info btn-sm",
+    "class": "btn btn-default btn-sm",
     "href": "{% url 'AIoT:detail' %}" + "?datetime=" + next_dt + "&tab=" + parameter,
   }).text("翌日 >");
 }
