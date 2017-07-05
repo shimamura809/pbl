@@ -907,9 +907,9 @@ if ({{i.temperature}} >= 30) {
   pict_change("hot")
 }else if ({{i.temperature}} <= 10) {
   pict_change("cold")
-}else if ({{i.moisture}} >= 700) {
+}else if ({{i.moisture}} >= threshold_form.threshold.value*2 + 100) {
   pict_change("moist")
-}else if ({{i.moisture}} <= 250) {
+}else if ({{i.moisture}} <= threshold_form.threshold.value) {
   pict_change("thirsty")
 }else {
   pict_change("normal")
