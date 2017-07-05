@@ -385,7 +385,6 @@ font-family:"HGP創英角ﾎﾟｯﾌﾟ体";
   //水やりの命令を管理する関数
   function water_control() {
     var time = water_form.water_time.value * 1000;
-    // console.log(time);
     flag_water = !flag_water;
     if (flag_water) {
       $.ajax({
@@ -503,18 +502,14 @@ function OnseiGousei(onsei,get) {
       audio = new Audio(URL.createObjectURL(blob));
       audio.play();
       if (get == true){
-        console.log("true");
         var ThresholdJudge = ""
         if(threshold_form.threshold.value*1.2 < nowmoisture){
-          console.log("wait1");
           setTimeout(OnseiHyouji_User_API,13000,"NOTTALKTHRESHOLDOK");
         }else{
-          console.log("wait2")
           setTimeout(OnseiHyouji_User_API,13000,"NOTTALKTHRESHOLDNO");
         }
       }else{
         var recstopsec = onsei.length * 200;
-        // console.log(recstopsec)
         if(onsei == "またお話しましょう") {
           setTimeout("ChangeRecMode(2)",recstopsec);
         }else{
@@ -527,7 +522,6 @@ function OnseiGousei(onsei,get) {
   data1 = datax;
   xhr.send(data1);
   // var recstopsec = onsei.length * 200 + 1000;
-  // console.log(recstopsec)
   // if(onsei == "またお話しましょう") {
   //   setTimeout("ChangeRecMode(2)",recstopsec);
   // } else{
@@ -546,13 +540,11 @@ function callBot(apiJson){
         dataType : 'JSON',
         scriptCharset: 'utf-8'
     })
-    .done(function(data){
-        console.log(data.yomi); // ←いろんな雑話が返ってくる
+    .done(function(data){ // ←いろんな雑話が返ってくる
         tmp_text = data.context;
         OnseiGousei(data.yomi);
       })
-    .fail(function(data){
-    console.log(data.responseText); // ←エラー時の処理
+    .fail(function(data){ // ←エラー時の処理
   })
 }
 /*
@@ -563,10 +555,8 @@ request.setRequestHeader("Content-Type", "application/json");
 request.setRequestHeader("x-api-key", "utzD4E0CtN3Vw6lauIXS04JpvyGxoBrk9xUoOHiQ");
 request.onload = function (e) {
   if(request.status == 200){
-    //console.log(request.responseText);
     var res = JSON.parse(request.responseText);
     var res1 = res["systemText"];
-    console.log(res1["expression"]);
     OnseiGousei(res1["utterance"]);
   }
 };
@@ -589,7 +579,6 @@ function callAPI(hatsuwa,RequestZatsudan){
   //request.setRequestHeader("x-api-key", "zRtoYKMkCb3zxGvQ5rFh04IA3F7wuiJk2UxZ5DQs");
   request.onload = function (e) {
     if( request.status == 200){
-      //console.log(request.responseText);
       var res = JSON.parse(request.responseText);
       var res1 = res["systemText"];
       var newres = ""
@@ -597,7 +586,6 @@ function callAPI(hatsuwa,RequestZatsudan){
         console.log("NOMATCH")
           callBot(RequestZatsudan);
       }else{
-        console.log(res1["expression"]);
         if(res1["expression"].match(/NOTTALK/)){
           var res = res1["expression"].split(",");
           for ( var i = 0; i < res.length; ++i ) {
@@ -610,7 +598,6 @@ function callAPI(hatsuwa,RequestZatsudan){
           }
           NotTalkOperation(res1["expression"]);
           if (newres){
-            console("restrue");
             OnseiGousei(newres);
           }
         }else{
@@ -635,10 +622,8 @@ function callAPI(hatsuwa,RequestZatsudan){
 
 function NotTalkOperation(NotTalkCode){
   if(NotTalkCode.match(/WATERING/)){
-      console.log("watering");
       water_control();
     }else if(NotTalkCode.match(/CONDITION/)){
-      console.log("condition")
       DataGet("test","condition");
     }else if(NotTalkCode.match(/MOVEDETAIL/)){
       OnseiGousei("了解です");
@@ -686,7 +671,6 @@ function DataGet(value,start) {
           json_list[3] = "照度 ： "+json["illuminance"];
           nowmoisture = json["moisture"]
           if(start == "start"){
-            console.log("start")
             if(threshold_form.threshold.value < nowmoisture){
               OnseiHyouji_User_API("NOTTALKMOISTOK")
             }else{
@@ -728,7 +712,6 @@ function GazouHyouji(file){
 //テキストボックスの文字を取得する
 function tbox1(){
   var str1 = document.js.txtb.value;
-  console.log(str1);
   getTextContents(String(str1));
 }
 
@@ -755,7 +738,6 @@ function OnseiHyouji_User_API(value){
   var str1 = value;
   var str2 = tmp_text;
   if(value.match(/NOTTALK/)){
-    console.log(value)
   }else{
     var target = document.getElementById("chat-frame");
     var newTag = document.createElement("span");
@@ -780,7 +762,6 @@ function OnseiHyouji_User_API(value){
 var tmp_text = "";
 var  Rec_Mode = 0;
 function Speech_Rec(){
-  // console.log("Rec_start")
   //ここから音声認識
   //var btn = document.getElementById('btn');
   //var content1 = document.getElementById('content');
@@ -798,7 +779,6 @@ function Speech_Rec(){
   } );*/
   speech.onerror = function(){
     if(speech_status == 0)
-      // console.log("error")
       Speech_Rec();
   }
   speech.onsoundend = function(){
@@ -818,10 +798,8 @@ function Speech_Rec(){
         }
       }
       //var text1 = e.results[0][0].transcript; // 認識された「言葉」を、変数「text」に格納
-      console.log(text1)
       switch(text1) {
         // case "聞いて":
-        //   console.log(Rec_Mode)
         //   OnseiGousei("何でも聞きますよ");
         //   break;
         // case "さよなら":
@@ -841,7 +819,6 @@ function Speech_Rec(){
             }
           }
           else{
-            console.log("notlistentimeout")
             Speech_Rec();
           }
 
