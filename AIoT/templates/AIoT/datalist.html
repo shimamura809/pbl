@@ -672,7 +672,7 @@ function DataGet(value,start) {
           nowmoisture = json["moisture"]
           if(start == "start"){
             if(threshold_form.threshold.value < nowmoisture){
-              OnseiHyouji_User_API("NOTTALKMOISTOK")
+              OnseiHyouji_User_API("NOTTALKMOISTOK");
             }else{
               OnseiHyouji_User_API("NOTTALKMOISTNO");
             }
@@ -681,10 +681,15 @@ function DataGet(value,start) {
             GazouHyouji(json["file"]);
         }
       }else{
+        if(start == "start"){
+          console.log("datafailed");
+          OnseiHyouji_User_API("NOTTALKMOISTOK");
+        }else{
           OnseiGousei("取得に失敗しました。。");
         }
-              // OnseiGousei("(例)水やりはどうですか？");
       }
+              // OnseiGousei("(例)水やりはどうですか？");
+    }
   });
   // GazouHyouji();
 }
