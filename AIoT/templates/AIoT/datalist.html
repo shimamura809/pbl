@@ -576,8 +576,8 @@ function callAPI(hatsuwa,RequestZatsudan){
   var request = new XMLHttpRequest();
   request.open('POST', 'https://api.repl-ai.jp/v1/dialogue', true);
   request.setRequestHeader("Content-Type", "application/json");
-  //request.setRequestHeader("x-api-key", "utzD4E0CtN3Vw6lauIXS04JpvyGxoBrk9xUoOHiQ");
-  request.setRequestHeader("x-api-key", "CmeU4zJNIg6CQZ9qbP2MV1nsfKCOb0j83vmLdeTj");
+  request.setRequestHeader("x-api-key", "utzD4E0CtN3Vw6lauIXS04JpvyGxoBrk9xUoOHiQ");
+  //request.setRequestHeader("x-api-key", "CmeU4zJNIg6CQZ9qbP2MV1nsfKCOb0j83vmLdeTj");
   //request.setRequestHeader("x-api-key", "zRtoYKMkCb3zxGvQ5rFh04IA3F7wuiJk2UxZ5DQs");
   request.onload = function (e) {
     if( request.status == 200){
@@ -609,11 +609,11 @@ function callAPI(hatsuwa,RequestZatsudan){
     }
   };
   var body1 = {
-    //appUserId:'o8gkTuc0E9gnjSYPVifLgeQ7ajD6eVqA',
-    appUserId:'bWEUFo0RMIJQ2omAa5hJXneXBxUttF75',
+    appUserId:'o8gkTuc0E9gnjSYPVifLgeQ7ajD6eVqA',
+    //appUserId:'bWEUFo0RMIJQ2omAa5hJXneXBxUttF75',
     //appUserId:'iGvTtnAhRGAotjC6ip1jys0YOXfqqGBz',
-    //botId:'plantalk',
-    botId:'plantalk2',
+    botId:'plantalk',
+    //botId:'plantalk2',
     //botId:'plantalk3',
     voiceText:hatsuwa,
     initTalkingFlag:false,
