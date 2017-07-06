@@ -632,11 +632,11 @@ function getTextContents(text1) {
     }　else if(text1.match(/メイン/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/)||text1.match(/バック/)||text1.match(/戻/))){
       OnseiGousei("了解です");
       setTimeout(move_page, 2500, "メインページ")
-    }　else if(text1.match(/水分/)&&(text1.match(/タブ/)||text1.match(/切/)||text1.match(/変/)||text1.match(/替/))){
+    }　else if(text1.match(/水分/)&&(text1.match(/タブ/)||text1.match(/切/)||text1.match(/グラフ/)||text1.match(/変/)||text1.match(/替/))){
       setTimeout(select_para, 500, "moisture")
-    }　else if(text1.match(/照度/)&&(text1.match(/明るさ/)||text1.match(/タブ/)||text1.match(/切/)||text1.match(/変/)||text1.match(/替/))){
+    }　else if(text1.match(/照度/)&&(text1.match(/タブ/)||text1.match(/切/)||text1.match(/グラフ/)||text1.match(/変/)||text1.match(/替/))){
       setTimeout(select_para, 500, "illuminance")
-    }　else if(text1.match(/温度/)&&(text1.match(/気温/)||text1.match(/タブ/)||text1.match(/切/)||text1.match(/変/)||text1.match(/替/))){
+    }　else if(text1.match(/温度/)&&(text1.match(/タブ/)||text1.match(/切/)||text1.match(/グラフ/)||text1.match(/変/)||text1.match(/替/))){
       setTimeout(select_para, 500, "temperature")
     }　else if(text1.match(/翌日/)||text1.match(/次の日/)||text1.match(/ネクスト/)){
       OnseiGousei("了解です");
