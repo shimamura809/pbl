@@ -391,49 +391,49 @@ function move_page(str,date) {
 
 //ユーザ発話のマッチング
 function getTextContents(text1) {
-    console.log(text1);
+    // console.log(text1);
     if(text1.match(/取得データ/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/))){
       OnseiGousei("了解です");
       setTimeout(move_page, 2500, "取得データ")
     }　else if(text1.match(/メイン/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/)||text1.match(/バック/)||text1.match(/戻/))){
       OnseiGousei("了解です");
       setTimeout(move_page, 2500, "メインページ")
-    }　else if(text1.match(/詳細/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/))){
-      OnseiGousei("日付は？");
-      i = 2;
-    } else if((text1.match(/表示/)||text1.match(/列/)||text1.match(/数/))&&(text1.match(/変/)||text1.match(/代/)||text1.match(/チェンジ/))){
-      OnseiGousei("何列にする？");
-      i = 3;
-    } else if((text1.match(/降順/)||text1.match(/新/))&&(sort == true)){
-      pict_list.reverse();
-      make_pict();
-      document.getElementById("sort").innerHTML="降順";
-      sort = false;
-    } else if((text1.match(/昇順/)||text1.match(/古/))&&(sort == false)){
-      pict_list.reverse();
-      make_pict();
-      document.getElementById("sort").innerHTML="昇順";
-      sort = true;
-    } else if((state_slide=="end")&&text1.match(/スライド/)&&(text1.match(/始/)||text1.match(/スタート/)||text1.match(/初/))){
-      OnseiGousei("はじめます");
-      setTimeout(slide_order, 2500, "start");
-      // slide_order('start');
-    } else if((state_slide=="start"||state_slide=="restart")&&(text1.match(/停/)||text1.match(/止/)||text1.match(/中断/))){
-      OnseiGousei("停止");
-      slide_order('stop');
-    } else if((state_slide=="stop")&&(text1.match(/次/)||text1.match(/進/))){
-      slide_order('next');
-    } else if((state_slide=="stop")&&(text1.match(/前/)||text1.match(/戻/))){
-      slide_order('previous');
-    } else if((state_slide=="stop")&&(text1.match(/開/)||text1.match(/スタート/)||text1.match(/初/)||text1.match(/始/))){
-      OnseiGousei("再開します");
-      setTimeout(slide_order, 2500, "restart");
-      // slide_order('restart');
-    } else if((state_slide!="end")&&(text1.match(/終/)||text1.match(/おしまい/))){
-      OnseiGousei("終了します");
-      // slide_order('end');
-      setTimeout(slide_order, 2500, "end");
-    }
+    // }　else if(text1.match(/詳細/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/))){
+    //   OnseiGousei("日付は？");
+    //   i = 2;
+    // } else if((text1.match(/表示/)||text1.match(/列/)||text1.match(/数/))&&(text1.match(/変/)||text1.match(/代/)||text1.match(/チェンジ/))){
+    //   OnseiGousei("何列にする？");
+    //   i = 3;
+    // } else if((text1.match(/降順/)||text1.match(/新/))&&(sort == true)){
+    //   pict_list.reverse();
+    //   make_pict();
+    //   document.getElementById("sort").innerHTML="降順";
+    //   sort = false;
+    // } else if((text1.match(/昇順/)||text1.match(/古/))&&(sort == false)){
+    //   pict_list.reverse();
+    //   make_pict();
+    //   document.getElementById("sort").innerHTML="昇順";
+    //   sort = true;
+    // } else if((state_slide=="end")&&text1.match(/スライド/)&&(text1.match(/始/)||text1.match(/スタート/)||text1.match(/初/))){
+    //   OnseiGousei("はじめます");
+    //   setTimeout(slide_order, 2500, "start");
+    //   // slide_order('start');
+    // } else if((state_slide=="start"||state_slide=="restart")&&(text1.match(/停/)||text1.match(/止/)||text1.match(/中断/))){
+    //   OnseiGousei("停止");
+    //   slide_order('stop');
+    // } else if((state_slide=="stop")&&(text1.match(/次/)||text1.match(/進/))){
+    //   slide_order('next');
+    // } else if((state_slide=="stop")&&(text1.match(/前/)||text1.match(/戻/))){
+    //   slide_order('previous');
+    // } else if((state_slide=="stop")&&(text1.match(/開/)||text1.match(/スタート/)||text1.match(/初/)||text1.match(/始/))){
+    //   OnseiGousei("再開します");
+    //   setTimeout(slide_order, 2500, "restart");
+    //   // slide_order('restart');
+    // } else if((state_slide!="end")&&(text1.match(/終/)||text1.match(/おしまい/))){
+    //   OnseiGousei("終了します");
+    //   // slide_order('end');
+    //   setTimeout(slide_order, 2500, "end");
+    // }
 }
 var i = 1;
 function Speech_Rec(){
@@ -469,7 +469,7 @@ function Speech_Rec(){
       if(i == 1) {
         getTextContents(text1);
       } else if(i == 2) {
-        console.log(text1);
+        // console.log(text1);
         if(text1.match(/今日/)||text1.match(/本日/)){
           OnseiGousei("了解です");
           setTimeout(move_page, 2500, "本日")
@@ -490,7 +490,7 @@ function Speech_Rec(){
           }
         }
       } else if(i == 3) {
-        console.log(text1);
+        // console.log(text1);
         if(text1.match(/列/)||(isNaN(text1) == false)){
           var row_num = text1.replace(/列/g, '');
           if (isNaN(row_num) == false){

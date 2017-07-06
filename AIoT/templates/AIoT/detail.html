@@ -622,7 +622,7 @@ function OnseiGousei(onsei,get) {
 
 //ユーザ発話のマッチング
 function getTextContents(text1) {
-    console.log(text1);
+    // console.log(text1);
     if(text1.match(/画像/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/)||text1.match(/一覧/))){
       OnseiGousei("了解です");
       setTimeout(move_page, 2500, "画像")

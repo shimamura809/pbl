@@ -94,7 +94,7 @@ h3 {
 
     //ユーザ発話のマッチング
     function getTextContents(text1) {
-        console.log(text1);
+        // console.log(text1);
         if(text1.match(/取得データ/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/))){
           OnseiGousei("了解です");
           setTimeout(move_page, 2500, "取得データ")
@@ -143,7 +143,7 @@ h3 {
           if(i == 1) {
             getTextContents(text1);
           } else if(i == 2) {
-            console.log(text1);
+            // console.log(text1);
             if(text1.match(/今日/)||text1.match(/本日/)){
               OnseiGousei("了解です");
               setTimeout(move_page, 2500, "本日")

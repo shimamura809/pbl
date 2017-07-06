@@ -154,20 +154,20 @@ select {
 
       //ユーザ発話のマッチング
       function getTextContents(text1) {
-          console.log(text1);
-          if(text1.match(/画像/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/)||text1.match(/一覧/))){
-            OnseiGousei("了解です");
-            setTimeout(move_page, 2500, "画像")
-          }　else if(text1.match(/メイン/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/)||text1.match(/バック/)||text1.match(/戻/))){
-            OnseiGousei("了解です");
-            setTimeout(move_page, 2500, "メインページ")
-          }　else if(text1.match(/詳細/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/))){
-            OnseiGousei("日付は？");
-            i = 2;
-          }　else if((text1.match(/表示/)||text1.match(/件/)||text1.match(/数/))&&(text1.match(/変/)||text1.match(/代/)||text1.match(/チェンジ/))){
-            OnseiGousei("何件？");
-            i = 3;
-          }　
+          // console.log(text1);
+          // if(text1.match(/画像/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/)||text1.match(/一覧/))){
+          //   OnseiGousei("了解です");
+          //   setTimeout(move_page, 2500, "画像")
+          // }　else if(text1.match(/メイン/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/)||text1.match(/バック/)||text1.match(/戻/))){
+          //   OnseiGousei("了解です");
+          //   setTimeout(move_page, 2500, "メインページ")
+          // }　else if(text1.match(/詳細/)&&(text1.match(/よろしく/)||text1.match(/願/)||text1.match(/移/)||text1.match(/見/)||text1.match(/飛/)||text1.match(/おねがい/)||text1.match(/表/)||text1.match(/示/))){
+          //   OnseiGousei("日付は？");
+          //   i = 2;
+          // }　else if((text1.match(/表示/)||text1.match(/件/)||text1.match(/数/))&&(text1.match(/変/)||text1.match(/代/)||text1.match(/チェンジ/))){
+          //   OnseiGousei("何件？");
+          //   i = 3;
+          // }　
       }
       var i = 1;
       function Speech_Rec(){
@@ -205,7 +205,7 @@ select {
                   getTextContents(text1);
                 }
                 else　if(i == 2) {
-                  console.log(text1);
+                  // console.log(text1);
                   if(text1.match(/今日/)||text1.match(/本日/)){
                     OnseiGousei("了解です");
                     setTimeout(move_page, 2500, "本日")
@@ -227,7 +227,7 @@ select {
                   }
                 }
                 else　if(i == 3) {
-                  console.log(text1);
+                  // console.log(text1);
                   if(text1.match(/件/)||(isNaN(text1) == false)){
                     var record = text1.replace(/件/g, '');
                     if (isNaN(record) == false){
