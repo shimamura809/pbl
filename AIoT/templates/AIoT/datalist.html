@@ -509,7 +509,9 @@ function OnseiGousei(onsei,get) {
           setTimeout(OnseiHyouji_User_API,13000,"NOTTALKTHRESHOLDNO");
         }
       }else{
+        console.log(onsei.length);
         var recstopsec = onsei.length * 200;
+        console.log(recstopsec);
         if(onsei == "またお話しましょう") {
           setTimeout("ChangeRecMode(2)",recstopsec);
         }else{
@@ -682,7 +684,6 @@ function DataGet(value,start) {
         }
       }else{
         if(start == "start"){
-          console.log("datafailed");
           OnseiHyouji_User_API("NOTTALKMOISTOK");
         }else{
           OnseiGousei("取得に失敗しました。。");
@@ -866,21 +867,21 @@ function ChangeRecMode(value){
   Rec_Mode = value;
   if(value == 0){
     pict_change(pict_name);
-    // console.log("mode:0");
+    //console.log("mode:0");
     d3.select("#input").attr({
       "onclick":null,
       "value":"応答待ち",
     });
   } else if(value == 1) {
     pict_change(pict_name,"on");
-    // console.log("mode:1");
+    //console.log("mode:1");
     d3.select("#input").attr({
       "onclick":"tbox1()",
       "value":"送信",
     });
   } else if(value == 2) {
     pict_change(pict_name);
-    // console.log("mode:2");
+    //console.log("mode:2");
     d3.select("#input").attr({
       "onclick":"tbox1()",
       "value":"送信",
@@ -898,7 +899,7 @@ if(MoisJudge == 0){
   console.log("ok")
 }*/
 //ページ開始前に水分量を判定
-DataGet("test","start");
+//DataGet("test","start");
 
 
 //メインページの画像切り替え
@@ -914,14 +915,11 @@ if ({{i.temperature}} >= 30) {
 }else {
   pict_change("normal")
 }
-
-/*if ({{i.moisture}} >= 0) {
+if ({{i.moisture}} >= threshold_form.threshold.value) {
   OnseiHyouji_User_API("NOTTALKMOISTOK");
-  console.log("ok")
 }else {
   OnseiHyouji_User_API("NOTTALKMOISTNO");
-  console.log("on")
-}*/
+}
 {% endfor %}
 /*
 var temperature = Math.floor( Math.random() * 10 ) ;
