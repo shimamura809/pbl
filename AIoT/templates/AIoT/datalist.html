@@ -718,7 +718,12 @@ function GazouHyouji(file){
 //テキストボックスの文字を取得する
 function tbox1(){
   var str1 = document.js.txtb.value;
-  getTextContents(String(str1));
+  if((String(str1) == "さよなら")&&(Rec_Mode == 1)){
+    OnseiHyouji_User((String(str1)));
+    OnseiGousei("またお話しましょう");
+  } else {
+    getTextContents(String(str1));
+  }
 }
 
 //入力フォームでエンター押下時も送信
